@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 30: Digital Business Models</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}html::-webkit-scrollbar{display:none}body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.slide-scale{width:1920px;height:1080px;position:relative;transform-origin:center center}.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:32px;position:relative;overflow:hidden}h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}h3{font-size:48px;font-weight:700;line-height:1.2}h4{font-size:36px;font-weight:600}.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}.subtitle{font-size:32px;color:var(--muted)}p{font-size:36px;line-height:1.6}.small{font-size:28px}.tiny{font-size:22px;color:var(--muted)}strong{color:var(--accent)}em{color:var(--accent2)}ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:18px}li{font-size:32px;line-height:1.5}li::marker{color:var(--accent)}table{width:100%;border-collapse:collapse;font-size:28px}th{background:var(--accent);color:#fff;padding:14px 18px;text-align:left;font-weight:600;font-size:24px}td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:26px}tr:nth-child(even) td{background:var(--card)}tr:hover td{background:var(--card2)}.box{background:var(--card);border-radius:16px;padding:32px;border:1px solid var(--border)}.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:28px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}.flex-col{display:flex;flex-direction:column;gap:14px}.stat-big{font-size:72px;font-weight:900;color:var(--accent);line-height:1}.stat-label{font-size:22px;color:var(--muted);margin-top:6px}.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:10px 0}.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}.qa-pause h3{color:var(--accent3)}.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 24px;transition:background .2s}.quiz-choice:hover{background:var(--card2)}.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:100}.nav-dots button{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:50px}h3{font-size:38px}p{font-size:30px}li{font-size:28px}td,th{font-size:22px}.grid-2{grid-template-columns:1fr}}@media(max-width:768px){body{font-size:28px}h1{font-size:48px}h2{font-size:38px}h3{font-size:30px}p{font-size:24px}li{font-size:22px}.slide{padding:28px 20px;gap:16px}.grid-2,.grid-3{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- S1 Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Good morning! Last session nag-learn ta about Lean Startup ug Business Model Canvas. Karon, mas deep dive ta into PLATFORM business models, network effects, ug how to evaluate if a digital business idea is actually viable. We'll also do your BMC presentations from last session's activity. Plus, I'll teach you the pitch deck structure for your final project defense. This session is very practical. Everything connects to your final project. Let's go!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 18</div>
+<h1 style="margin-top:20px">Digital Business<br><span style="color:var(--accent)">Models</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 30 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">Platforms</span><span class="tag" style="background:var(--accent2);color:#111">Network Effects</span><span class="tag" style="background:var(--accent3)">Viability</span><span class="tag">Pitch Deck</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- S2 Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Objectives. One: analyze platform business models like Grab, Shopee, Airbnb. Two: explain network effects and winner-take-all dynamics. Three: evaluate digital business viability for Philippine market. Four: describe funding stages for tech startups. Five: present Business Model Canvas proposals. Today combines theory with practice. Your BMC presentations are part of today's graded activity.">
+<div class="eyebrow">Session Objectives</div><h2>Learning Objectives</h2><div class="divider"></div>
+<ol style="gap:24px;margin-top:12px"><li><strong>Analyze</strong> platform business models (Grab, Shopee, Airbnb)</li><li><strong>Explain</strong> network effects and winner-take-all dynamics</li><li><strong>Evaluate</strong> digital business viability for Philippine market</li><li><strong>Describe</strong> funding stages for tech startups</li><li><strong>Present</strong> Business Model Canvas proposals (graded)</li></ol>
+</div></div></div>
+
+<!-- S3 Platform Business Model -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Platform business models. This is THE dominant model of the internet age. Platforms DON'T produce things. They CONNECT people. They facilitate transactions between two or more groups. Grab doesn't own cars. Shopee doesn't make products. Airbnb doesn't own hotels. Facebook doesn't create content. They create the SPACE where others interact. The value comes from FACILITATION, not production. This is fundamentally different from traditional business where you make something and sell it. Platforms make money by taking a cut of every interaction happening on their platform.">
+<h2>Platform Business Model</h2><div class="divider"></div>
+<div class="highlight-box"><p style="font-size:32px">Platforms <strong>don't produce</strong>. They <strong>CONNECT</strong> two or more user groups, creating value through facilitation.</p></div>
+<table style="margin-top:20px">
+<tr><th>Platform</th><th>Connects</th><th>Value Created</th><th>Revenue</th></tr>
+<tr><td><strong>Grab</strong></td><td>Riders + Drivers</td><td>Safe, cashless transport</td><td>20-25% commission</td></tr>
+<tr><td><strong>Shopee</strong></td><td>Buyers + Sellers</td><td>Access, variety, trust</td><td>2-5% + ads</td></tr>
+<tr><td><strong>Airbnb</strong></td><td>Travelers + Hosts</td><td>Affordable lodging</td><td>3% host + 14% guest</td></tr>
+<tr><td><strong>GCash</strong></td><td>Senders + Receivers</td><td>Instant money transfer</td><td>Fees + float interest</td></tr>
+<tr><td><strong>YouTube</strong></td><td>Creators + Viewers</td><td>Content access</td><td>Ad revenue (55/45 split)</td></tr>
+</table>
+</div></div></div>
+
+<!-- S4 Network Effects -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Network effects. This is the SECRET WEAPON of platforms. The more users join, the MORE VALUABLE the platform becomes. Think about it: Grab with 1 driver is useless. Grab with 100,000 drivers? Short wait times, competitive pricing, available everywhere. More drivers equals better service equals more riders join equals more drivers want to join. It's a VIRTUOUS CYCLE. Same with Shopee: more sellers means more products means more buyers means more sellers want to list. This creates WINNER-TAKE-ALL dynamics. Once one platform has strong network effects, it's almost IMPOSSIBLE for a competitor to catch up. That's why there's usually only one dominant platform per category per country.">
+<h2>Network Effects 🔄</h2><div class="divider"></div>
+<div class="highlight-box" style="text-align:center;margin-bottom:20px"><p style="font-size:36px;font-weight:700">More users join → Platform MORE valuable → More users join</p><p style="font-size:24px;color:var(--muted);margin-top:8px">Virtuous cycle that creates winner-take-all dynamics</p></div>
+<div class="grid-2">
+<div class="box"><h4 style="color:var(--accent2)">How It Works</h4>
+<ul style="gap:12px"><li style="font-size:26px">Grab: more drivers → shorter wait → more riders → more drivers</li><li style="font-size:26px">Shopee: more sellers → more products → more buyers → more sellers</li><li style="font-size:26px">Facebook: more friends there → more reason to stay → more friends join</li></ul></div>
+<div class="box"><h4 style="color:var(--accent)">Winner-Take-All</h4>
+<ul style="gap:12px"><li style="font-size:26px">Once one platform dominates, hard to compete</li><li style="font-size:26px">Users won't switch (their network is there)</li><li style="font-size:26px">Creates natural monopolies</li><li style="font-size:26px">That's why #2 often dies (Friendster → Facebook)</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S5 Chicken & Egg Problem -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The chicken and egg problem. Every platform faces this at the start. To attract riders, you need drivers. To attract drivers, you need riders. No sellers on Shopee? No buyers will come. No buyers? No sellers will list. How did successful platforms solve this? Grab: subsidized drivers initially, guaranteed minimum earnings even without riders. Shopee: gave sellers zero commission for first year AND gave buyers free shipping. Facebook: launched ONLY at Harvard first, creating intense local density before expanding. GCash: partnered with telcos who already had millions of users. The lesson: you need a strategy to solve the cold-start problem. Usually involves subsidizing ONE side heavily at the start.">
+<h2>The Chicken & Egg Problem 🐔🥚</h2><div class="divider"></div>
+<p class="small" style="margin-bottom:16px">Every platform faces this: need users to attract users. How did they solve it?</p>
+<table>
+<tr><th>Platform</th><th>Cold-Start Strategy</th></tr>
+<tr><td><strong>Grab</strong></td><td>Subsidized drivers (guaranteed minimum earnings without riders)</td></tr>
+<tr><td><strong>Shopee</strong></td><td>Zero commission for sellers + free shipping for buyers (first year)</td></tr>
+<tr><td><strong>Facebook</strong></td><td>Harvard ONLY first (intense local density before expanding)</td></tr>
+<tr><td><strong>GCash</strong></td><td>Partnered with Globe (existing millions of telecom users)</td></tr>
+<tr><td><strong>Airbnb</strong></td><td>Cross-posted to Craigslist (poached existing supply)</td></tr>
+<tr><td><strong>Uber</strong></td><td>Free rides for riders + signing bonuses for drivers</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px">Lesson: subsidize ONE side heavily at start to bootstrap the network.</p></div>
+</div></div></div>
+
+<!-- S6 Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick check! If you were launching a NEW food delivery app in GenSan to compete with Grab Food and FoodPanda, how would you solve the chicken and egg problem? You need restaurants AND customers. Neither will come first without the other. What's your cold-start strategy? Think about what's unique about GenSan. What do you know that Grab doesn't? Share with your group. 2 minutes!">
+<div class="qa-pause"><h3>⏸️ Strategy Challenge</h3><p style="font-size:32px;font-weight:600">You're launching a food delivery app in GenSan.<br>How do you solve the chicken & egg problem?</p><p class="small">You need restaurants AND customers. Neither comes first.</p><p class="tiny" style="margin-top:12px">💬 What's your cold-start strategy? What's unique about GenSan? (2 min)</p></div>
+</div></div></div>
+
+<!-- S7 Evaluating Viability -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="How to evaluate if a digital business idea is actually VIABLE. Seven questions. Problem: is it REAL and PAINFUL enough to pay for? If people won't pay, it's not a business. Market size: how many people have this problem? If only 50 people, maybe not worth it. Solution: is your solution 10x better than alternatives? If just slightly better, nobody switches. Revenue: how SPECIFICALLY do you make money? 'We'll figure it out later' kills startups. Competition: who else solves this? What's your unfair advantage? Team: do you have the skills? Timing: why NOW? What changed that makes this possible today but not 5 years ago?">
+<h2>Evaluating Business Viability</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">1</span><div><strong>Problem:</strong> Is it REAL and PAINFUL enough to PAY for?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">2</span><div><strong>Market:</strong> How many people have this problem?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">3</span><div><strong>Solution:</strong> Is it 10x BETTER than alternatives?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">4</span><div><strong>Revenue:</strong> How SPECIFICALLY do you make money?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">5</span><div><strong>Competition:</strong> Who else? What's your unfair advantage?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">6</span><div><strong>Team:</strong> Do you have the skills to build AND sell?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:28px">7</span><div><strong>Timing:</strong> Why NOW? What changed?</div></div>
+</div>
+</div></div></div>
+
+<!-- S8 Pitch Deck Structure -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="For your final project defense, use this pitch deck structure. Seven slides. Slide 1: Problem. What's broken? Make the audience FEEL the pain. Slide 2: Solution. How you fix it. Keep it simple, one sentence. Slide 3: Market size. How big? TAM, SAM, SOM. Slide 4: Business model. How you make money. Specifically. Slide 5: Traction. What you've done or validated. Prototype, user tests, feedback. Slide 6: Team. Why YOU? What skills do you bring? Slide 7: Ask. What do you need? For school, this is 'what we'd do next if we had time and resources.' This structure is used by EVERY startup pitching to investors. Learn it now, use it for life.">
+<h2>Pitch Deck Structure (Final Project)</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:70px">Slide 1</span><div><strong>Problem</strong> – What's broken? Make them FEEL the pain.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent2);font-weight:800;font-size:24px;min-width:70px">Slide 2</span><div><strong>Solution</strong> – How you fix it. One sentence.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent3);font-weight:800;font-size:24px;min-width:70px">Slide 3</span><div><strong>Market Size</strong> – How big? How many people?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:#b388ff;font-weight:800;font-size:24px;min-width:70px">Slide 4</span><div><strong>Business Model</strong> – How you make money. Specifically.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:70px">Slide 5</span><div><strong>Traction</strong> – What you've done. Prototype, tests, feedback.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent2);font-weight:800;font-size:24px;min-width:70px">Slide 6</span><div><strong>Team</strong> – Why YOU? What skills?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent3);font-weight:800;font-size:24px;min-width:70px">Slide 7</span><div><strong>Ask</strong> – What you need / what's next.</div></div>
+</div>
+</div></div></div>
+
+<!-- S9 Viability Case: GCash -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let's apply the viability framework to GCash. Problem: 46% of Filipinos unbanked. Can't send money easily, no bank accounts, financial exclusion. VERY real, very painful. Market: 50+ million unbanked Filipinos. MASSIVE. Solution: mobile wallet on ANY phone. No bank needed. 10x simpler than opening bank account. Revenue: transaction fees, merchant fees, float interest, financial products. Competition: at the time, banks were slow to digitize. Maya was the only real competitor. Team: backed by Globe Telecom (existing telco infrastructure + 80M subscribers). Timing: smartphone penetration hit 60%+, COVID accelerated digital payments. Result: 94+ million registered users. Unicorn status.">
+<h2>Viability Case: GCash</h2><div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Factor</th><th>GCash's Answer</th><th>Score</th></tr>
+<tr><td><strong>Problem</strong></td><td>46% unbanked, financial exclusion, can't send money</td><td>🔥 Very painful</td></tr>
+<tr><td><strong>Market</strong></td><td>50M+ unbanked Filipinos</td><td>🔥 Massive</td></tr>
+<tr><td><strong>Solution</strong></td><td>Mobile wallet on any phone, no bank needed</td><td>🔥 10x simpler</td></tr>
+<tr><td><strong>Revenue</strong></td><td>Tx fees, merchant fees, float interest, loans</td><td>✅ Multiple streams</td></tr>
+<tr><td><strong>Competition</strong></td><td>Banks slow to digitize, Maya only competitor</td><td>✅ Low at launch</td></tr>
+<tr><td><strong>Team</strong></td><td>Globe Telecom (80M subscribers, infra)</td><td>🔥 Unfair advantage</td></tr>
+<tr><td><strong>Timing</strong></td><td>Smartphone 60%+, COVID accelerated digital</td><td>🔥 Perfect</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px">Result: <strong>94M+ users</strong>. Unicorn. All 7 factors aligned.</p></div>
+</div></div></div>
+
+<!-- S10 Q&A 2 BMC Presentations -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Okay! BMC Presentation time! This is GRADED. Each group has 3 minutes to present their Business Model Canvas from last session's activity. Present: What's the problem? Who's your customer? What's your value proposition? How do you make money? Then the class gives feedback using the 7 viability questions. Is the problem real? Is the market big enough? Is the solution 10x better? I'll time you. First group, let's go!">
+<div class="qa-pause"><h3>🎤 BMC Presentations (Graded)</h3><p style="font-size:30px;font-weight:600">3 minutes per group. Present your Business Model Canvas.</p>
+<div style="margin-top:16px;text-align:left;max-width:800px">
+<p style="font-size:24px;margin-bottom:8px">Cover:</p>
+<ul style="gap:8px;padding-left:24px"><li style="font-size:22px">What's the problem?</li><li style="font-size:22px">Who's your customer?</li><li style="font-size:22px">What's your value proposition?</li><li style="font-size:22px">How do you make money?</li></ul>
+<p style="font-size:24px;margin-top:16px;color:var(--accent2)">Class feedback using 7 viability questions</p>
+</div><p class="tiny" style="margin-top:12px">⏱️ 3 min/group. Best proposal wins class vote!</p></div>
+</div></div></div>
+
+<!-- S11 Winner-Take-All Exceptions -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now, are network effects ALWAYS winner-take-all? Not always. There are exceptions. Multi-homing: users can be on BOTH platforms simultaneously. You probably use both Grab AND Angkas. Both Shopee AND Lazada. That weakens winner-take-all. Local networks: sometimes density matters more than total size. A food delivery app only needs restaurants in YOUR city. Differentiation: platforms can co-exist by serving different segments. Grab for cars, Angkas for motorcycles. Regulation: government can force competition through regulation. In PH, DITO was created specifically to break Globe/Smart duopoly. So network effects are powerful but not absolute.">
+<h2>When Network Effects Aren't Absolute</h2><div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="box"><h4 style="color:var(--accent2)">Weakening Factors</h4>
+<ul style="gap:14px"><li style="font-size:26px"><strong>Multi-homing:</strong> users on BOTH platforms (Grab + Angkas)</li><li style="font-size:26px"><strong>Local density:</strong> only need coverage in YOUR area</li><li style="font-size:26px"><strong>Differentiation:</strong> serve different segments (cars vs motorcycles)</li><li style="font-size:26px"><strong>Regulation:</strong> government forces competition (DITO vs Globe/Smart)</li></ul></div>
+<div class="box"><h4 style="color:var(--accent3)">Opportunity for You</h4>
+<ul style="gap:14px"><li style="font-size:26px">LOCAL platforms can beat global ones in specific markets</li><li style="font-size:26px">GenSan-specific app > national app for local problems</li><li style="font-size:26px">Deep local knowledge is your unfair advantage</li><li style="font-size:26px">Start narrow (one city), expand later</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S12 Monetization Timing -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="When to monetize? A common startup mistake is trying to make money TOO early or TOO late. Too early: charging before you have enough users kills growth. Nobody pays for a platform with 10 users. Too late: you burn through cash and die before finding revenue. The sweet spot: get to critical mass FIRST (enough users that the platform is valuable), THEN introduce monetization. Facebook was free for years before advertising. GCash was free transfers initially, then gradually introduced fees. Grab gave massive discounts first, then raised prices once dominant. For your final project: you should know your revenue model even if you wouldn't charge on day one.">
+<h2>When to Monetize</h2><div class="divider"></div>
+<div class="grid-3" style="margin-top:16px">
+<div class="box" style="text-align:center;border-color:var(--accent);padding:24px"><h4 style="color:var(--accent);font-size:26px">❌ Too Early</h4><p style="font-size:22px;margin-top:8px">Charging before critical mass. Kills growth.</p><p class="tiny" style="margin-top:8px">10 users won't pay for an empty platform</p></div>
+<div class="box" style="text-align:center;border-color:var(--accent3);padding:24px"><h4 style="color:var(--accent3);font-size:26px">✅ Sweet Spot</h4><p style="font-size:22px;margin-top:8px">Reach critical mass FIRST, then introduce revenue.</p><p class="tiny" style="margin-top:8px">Users see value → willing to pay</p></div>
+<div class="box" style="text-align:center;border-color:var(--accent2);padding:24px"><h4 style="color:var(--accent2);font-size:26px">❌ Too Late</h4><p style="font-size:22px;margin-top:8px">Burn cash, die before finding revenue model.</p><p class="tiny" style="margin-top:8px">"We'll figure it out" → bankruptcy</p></div>
+</div>
+<div class="highlight-box" style="margin-top:20px;text-align:center"><p style="font-size:26px">For final project: know your revenue model even if you wouldn't charge day one.</p></div>
+</div></div></div>
+
+<!-- S13 Unit Economics -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Unit economics. The most important business math you'll learn. Two numbers: CAC and LTV. CAC is Customer Acquisition Cost: how much does it cost to GET one customer? If you spend 50 pesos on ads and get one customer, your CAC is 50 pesos. LTV is Lifetime Value: how much does one customer SPEND over their entire relationship with you? If average customer orders 3 times per month at 200 pesos and stays 12 months, and your margin is 20%, LTV is 3 x 200 x 12 x 0.20 = 1,440 pesos. THE GOLDEN RULE: LTV must be at least 3x greater than CAC. If it costs 50 pesos to get a customer who generates 1,440 pesos? That's 28.8x. EXCELLENT business. If LTV is less than CAC? You LOSE money on every customer. The more you grow, the faster you die.">
+<h2>Unit Economics: CAC & LTV</h2><div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="box" style="text-align:center;padding:28px"><h4 style="color:var(--accent)">CAC</h4><p style="font-size:24px;color:var(--muted)">Customer Acquisition Cost</p><p style="font-size:28px;margin-top:12px">How much to GET one customer?</p><p style="font-size:22px;color:var(--muted);margin-top:8px">Example: ₱50 in ads → 1 customer = ₱50 CAC</p></div>
+<div class="box" style="text-align:center;padding:28px"><h4 style="color:var(--accent3)">LTV</h4><p style="font-size:24px;color:var(--muted)">Lifetime Value</p><p style="font-size:28px;margin-top:12px">How much does one customer SPEND total?</p><p style="font-size:22px;color:var(--muted);margin-top:8px">Example: 3 orders/mo × ₱200 × 12 mo × 20% = ₱1,440</p></div>
+</div>
+<div class="highlight-box" style="margin-top:20px;text-align:center"><p style="font-size:36px;font-weight:700">Golden Rule: <strong>LTV ≥ 3× CAC</strong></p><p style="font-size:24px;margin-top:8px;color:var(--muted)">If LTV < CAC → you lose money on every customer. More growth = faster death.</p></div>
+</div></div></div>
+
+<!-- S14 Q&A 3 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick exercise! For your BMC idea from last session, estimate: What would your CAC be? How would you acquire customers? Social media ads? Flyers? Referral program? And what would your LTV be? How much would one customer pay over time? You don't need exact numbers, just reasonable estimates. Does LTV beat CAC by at least 3x? If not, your business model has a problem. Discuss in your groups. 3 minutes.">
+<div class="qa-pause"><h3>⏸️ Unit Economics Check</h3><p style="font-size:30px;font-weight:600">For YOUR BMC idea, estimate:</p>
+<div class="grid-2" style="margin-top:16px;width:100%;max-width:900px">
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:22px"><strong>CAC:</strong> How would you acquire customers? How much per customer?</p></div>
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:22px"><strong>LTV:</strong> How much would one customer pay over their lifetime?</p></div>
+</div><p style="font-size:26px;color:var(--accent);margin-top:16px">Does LTV ≥ 3× CAC?</p><p class="tiny" style="margin-top:8px">💬 Group discussion (3 min)</p></div>
+</div></div></div>
+
+<!-- S15 Final Project Requirements -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Final project reminder. Week 20 is your final presentation and exam. Your project must include: real community or business problem with evidence of research. At least 2 emerging technologies applied. Design Thinking process demonstrated. Business Model Canvas with all 9 blocks. Visual prototype or demo. Feasibility analysis for Philippine context. Ethics consideration. 10-minute oral defense with Q&A. Start working NOW. Don't wait until Week 19. Teams can be 3-4 members. The panel will ask tough questions. They want to see that you THOUGHT deeply, not just built something random.">
+<h2>Final Project: Full Requirements</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Problem:</strong> Real community/business problem with research evidence</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Technology:</strong> At least 2 emerging technologies applied</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Design Thinking:</strong> 5 stages demonstrated</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Business Model:</strong> Canvas with all 9 blocks filled</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Prototype:</strong> Visual mockup or working demo</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Feasibility:</strong> Philippine context, realistic constraints</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Ethics:</strong> Privacy, fairness, sustainability considered</div></div>
+<div class="box" style="display:flex;align-items:center;gap:14px;padding:18px"><span style="font-size:24px">☑️</span><div style="font-size:26px"><strong>Presentation:</strong> 10-min oral defense + Q&A</div></div>
+</div>
+</div></div></div>
+
+<!-- S16 Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways. Platforms connect groups, don't produce. Network effects create virtuous cycles and winner-take-all dynamics. Chicken and egg problem solved by subsidizing one side. Viability needs all 7 factors aligned. Pitch deck: 7 slides telling a clear story. Unit economics: LTV must be at least 3x CAC. Local platforms can beat global ones with deep local knowledge. Start narrow, dominate, then expand. And your final project deadline is approaching fast. Start NOW.">
+<h2>Key Takeaways</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:8px">
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">1.</span><p class="small">Platforms <strong>connect groups</strong>, don't produce things.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">2.</span><p class="small">Network effects → virtuous cycle → <strong>winner-take-all</strong></p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">3.</span><p class="small">Chicken & egg: <strong>subsidize one side</strong> to bootstrap</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">4.</span><p class="small">Viability = 7 factors aligned (problem, market, solution...)</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">5.</span><p class="small">Pitch deck: 7 slides, clear story</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">6.</span><p class="small">Unit economics: <strong>LTV ≥ 3× CAC</strong> or you die</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">7.</span><p class="small">Local knowledge = unfair advantage. Start narrow.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">8.</span><p class="small">Final project: start NOW. Week 20 coming fast.</p></div>
+</div>
+</div></div></div>
+
+<!-- S17 Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Quiz! 15 items on platforms, network effects, and business viability.">
+<div class="eyebrow">Session 30</div><h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1><p class="subtitle">15 Items • Multiple Choice</p>
+</div></div></div>
+
+<!-- Quiz 15 items -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1."><h3>Q1. A platform business creates value by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Manufacturing products</p></div><div class="quiz-choice"><p class="small">B. Connecting two or more user groups</p></div><div class="quiz-choice"><p class="small">C. Selling physical goods only</p></div><div class="quiz-choice"><p class="small">D. Hiring many employees</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2."><h3>Q2. Network effects mean ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Platform gets slower with users</p></div><div class="quiz-choice"><p class="small">B. Platform becomes MORE valuable as more users join</p></div><div class="quiz-choice"><p class="small">C. Users leave when others join</p></div><div class="quiz-choice"><p class="small">D. Networks need physical cables</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3."><h3>Q3. The "chicken & egg problem" in platforms is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. A cooking metaphor</p></div><div class="quiz-choice"><p class="small">B. Needing users to attract users (neither side comes first)</p></div><div class="quiz-choice"><p class="small">C. A hardware issue</p></div><div class="quiz-choice"><p class="small">D. A funding problem only</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4."><h3>Q4. Grab solved cold-start by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Building 1000 cars</p></div><div class="quiz-choice"><p class="small">B. Subsidizing drivers with guaranteed minimum earnings</p></div><div class="quiz-choice"><p class="small">C. Waiting for users to come naturally</p></div><div class="quiz-choice"><p class="small">D. Advertising on TV only</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5."><h3>Q5. Winner-take-all means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Everyone can compete equally forever</p></div><div class="quiz-choice"><p class="small">B. Once one platform dominates via network effects, competitors struggle</p></div><div class="quiz-choice"><p class="small">C. Only government-owned platforms survive</p></div><div class="quiz-choice"><p class="small">D. All platforms make equal profit</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6."><h3>Q6. The golden rule of unit economics is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Spend as much as possible on marketing</p></div><div class="quiz-choice"><p class="small">B. LTV must be at least 3× greater than CAC</p></div><div class="quiz-choice"><p class="small">C. Never spend on customer acquisition</p></div><div class="quiz-choice"><p class="small">D. Revenue doesn't matter</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7."><h3>Q7. CAC stands for ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Customer Appreciation Certificate</p></div><div class="quiz-choice"><p class="small">B. Customer Acquisition Cost</p></div><div class="quiz-choice"><p class="small">C. Computer Assisted Calculation</p></div><div class="quiz-choice"><p class="small">D. Corporate Asset Control</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8."><h3>Q8. A pitch deck's first slide should cover ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Team biographies</p></div><div class="quiz-choice"><p class="small">B. The PROBLEM (make audience feel the pain)</p></div><div class="quiz-choice"><p class="small">C. Technical architecture</p></div><div class="quiz-choice"><p class="small">D. Financial projections</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9."><h3>Q9. Multi-homing weakens network effects because ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Users can't use phones</p></div><div class="quiz-choice"><p class="small">B. Users can be on BOTH platforms simultaneously (Grab + Angkas)</p></div><div class="quiz-choice"><p class="small">C. Government bans platforms</p></div><div class="quiz-choice"><p class="small">D. Internet is too slow</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10."><h3>Q10. GCash's viability came from ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Only serving rich customers</p></div><div class="quiz-choice"><p class="small">B. All 7 viability factors aligned (problem, market, solution, revenue, team, timing, low competition)</p></div><div class="quiz-choice"><p class="small">C. Having no competitors</p></div><div class="quiz-choice"><p class="small">D. Government mandate to use it</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11."><h3>Q11. When to monetize a platform: ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Charge maximum from day one</p></div><div class="quiz-choice"><p class="small">B. Reach critical mass first, then introduce revenue</p></div><div class="quiz-choice"><p class="small">C. Never charge anyone</p></div><div class="quiz-choice"><p class="small">D. Only charge after 10 years</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12."><h3>Q12. A local platform can beat global ones by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Having more funding</p></div><div class="quiz-choice"><p class="small">B. Deep local knowledge and serving specific local needs</p></div><div class="quiz-choice"><p class="small">C. Copying the global platform exactly</p></div><div class="quiz-choice"><p class="small">D. Ignoring local context</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13."><h3>Q13. Shopee's revenue model is primarily ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Subscription from buyers</p></div><div class="quiz-choice"><p class="small">B. Commission on transactions (2-5%) + advertising from sellers</p></div><div class="quiz-choice"><p class="small">C. Selling its own products only</p></div><div class="quiz-choice"><p class="small">D. Government subsidy</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14."><h3>Q14. The final project requires ____ emerging technologies.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Zero (just a business plan)</p></div><div class="quiz-choice"><p class="small">B. At least 2</p></div><div class="quiz-choice"><p class="small">C. Exactly 10</p></div><div class="quiz-choice"><p class="small">D. Only blockchain</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15."><h3>Q15. If LTV is LESS than CAC, it means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Great business health</p></div><div class="quiz-choice"><p class="small">B. You LOSE money on every customer (more growth = faster death)</p></div><div class="quiz-choice"><p class="small">C. You should advertise more</p></div><div class="quiz-choice"><p class="small">D. Investors will love you</p></div></div></div></div></div>
+
+<!-- End -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's Session 30! Next week we move to Smart Applications and Industry 4.0, where ALL the technologies we studied come together. Then Week 20 is your final project presentation and exam. Start building your prototypes NOW. Form your final teams. Good luck! Ingat!">
+<div class="eyebrow">End of Session 30</div><h1 style="margin-top:20px">Thank You! 🎓</h1><p class="subtitle" style="margin-top:12px">Next: Smart Applications & Industry 4.0 (Week 19)</p><div class="divider" style="margin:24px auto;width:200px"></div><p class="small">📝 Start building final project prototypes NOW!</p><p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav><div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide')),viewports=Array.from(document.querySelectorAll('.slide-viewport')),navDots=document.getElementById('navDots'),progressBar=document.getElementById('progressBar'),slideCounter=document.getElementById('slideCounter');
+let currentSlide=0,scriptWindow=null,answerWindow=null;
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Slide ${i+1}`);b.addEventListener('click',()=>goToSlide(i));navDots.appendChild(b);});
+function scaleSlides(){viewports.forEach(vp=>{const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${s})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=viewports.indexOf(e.target);if(i>=0){currentSlide=i;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>obs.observe(vp));
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+function updateUI(){const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;syncScript();}
+document.addEventListener('keydown',e=>{
+if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}
+if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}
+else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}
+else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
+else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
+else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+});
+let tY=0;document.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;});document.addEventListener('touchend',e=>{const d=tY-e.changedTouches[0].clientY;if(Math.abs(d)>50){d>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+function openTeacherScript(){if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');syncScript();}
+function syncScript(){if(!scriptWindow||scriptWindow.closed)return;const sl=slides[currentSlide];const sc=sl.getAttribute('data-script')||'(No script)';const t=sl.querySelector('h1,h2,h3');const tt=t?t.textContent:'Slide '+(currentSlide+1);scriptWindow.document.open();scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body><div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div><div class="slide-title">${tt}</div><div class="script-text">${sc}</div><div class="tip">💡 Auto-updates as you navigate.</div></body></html>`);scriptWindow.document.close();}
+function openAnswerKey(){if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');answerWindow.document.open();answerWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}.header h2{font-size:20px;font-weight:700}.header p{font-size:13px;opacity:0.8;margin-top:4px}.item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #2a2a3a}.item:last-child{border-bottom:none}.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}.answer{color:#2a9d8f;font-weight:700;font-size:18px}.rationale{color:#8a8a9a;font-size:14px;margin-top:4px}.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}</style></head><body><div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 30 Quiz • Teacher Only</p></div><div class="item"><span class="num">1.</span><div><span class="answer">B</span> – Connecting two or more user groups.<div class="rationale">Platforms facilitate, not produce.</div></div></div><div class="item"><span class="num">2.</span><div><span class="answer">B</span> – Platform becomes MORE valuable as more users join.<div class="rationale">Virtuous cycle: users → value → more users.</div></div></div><div class="item"><span class="num">3.</span><div><span class="answer">B</span> – Needing users to attract users (neither side first).<div class="rationale">Need supply to attract demand, and vice versa.</div></div></div><div class="item"><span class="num">4.</span><div><span class="answer">B</span> – Subsidizing drivers with guaranteed minimum earnings.<div class="rationale">Ensured drivers came even before riders existed.</div></div></div><div class="item"><span class="num">5.</span><div><span class="answer">B</span> – Once one dominates via network effects, competitors struggle.<div class="rationale">Switching costs too high when your network is there.</div></div></div><div class="item"><span class="num">6.</span><div><span class="answer">B</span> – LTV ≥ 3× CAC.<div class="rationale">Sustainable: customer value far exceeds acquisition cost.</div></div></div><div class="item"><span class="num">7.</span><div><span class="answer">B</span> – Customer Acquisition Cost.<div class="rationale">How much you spend to get one paying customer.</div></div></div><div class="item"><span class="num">8.</span><div><span class="answer">B</span> – The PROBLEM (make audience feel the pain).<div class="rationale">Hook first: why should anyone care?</div></div></div><div class="item"><span class="num">9.</span><div><span class="answer">B</span> – Users can be on BOTH platforms (Grab + Angkas).<div class="rationale">No exclusive loyalty → both platforms can coexist.</div></div></div><div class="item"><span class="num">10.</span><div><span class="answer">B</span> – All 7 viability factors aligned.<div class="rationale">Problem + market + solution + revenue + team + timing + low competition.</div></div></div><div class="item"><span class="num">11.</span><div><span class="answer">B</span> – Reach critical mass first, then introduce revenue.<div class="rationale">Sweet spot: users see value, willing to pay.</div></div></div><div class="item"><span class="num">12.</span><div><span class="answer">B</span> – Deep local knowledge and serving specific local needs.<div class="rationale">Understanding local context > having more funding.</div></div></div><div class="item"><span class="num">13.</span><div><span class="answer">B</span> – Commission (2-5%) + advertising from sellers.<div class="rationale">Marketplace model: take cut of transactions + sell ad space.</div></div></div><div class="item"><span class="num">14.</span><div><span class="answer">B</span> – At least 2.<div class="rationale">Must apply multiple course technologies to demonstrate integration.</div></div></div><div class="item"><span class="num">15.</span><div><span class="answer">B</span> – You LOSE money on every customer (more growth = faster death).<div class="rationale">Unsustainable: each new customer makes you poorer.</div></div></div><div class="warn">⚠️ TEACHER ONLY – Do not display to students</div></body></html>`);answerWindow.document.close();}
+updateUI();
+})();
+</script>
+</body>
+</html>

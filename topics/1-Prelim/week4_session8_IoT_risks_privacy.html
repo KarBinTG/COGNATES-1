@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chassis -->
+<style>
+/* =====================================================
+   PRESENTATION CHASSIS — style-invariant base styles
+   Fixed 1920×1080 canvas scaled to fit any viewport.
+   Customize colors, fonts, and chrome via :root tokens.
+   ===================================================== */
+
+/* ---------- Universal reset ---------- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ---------- Theme tokens (override in your deck's CSS) ---------- */
+:root {
+    color-scheme: light;
+
+    --background:      #ffffff;
+    --foreground:      #111111;
+    --card:            #f5f5f5;
+    --card-foreground: var(--foreground);
+    --accent:          #c94a3d;
+    --accent-foreground: #ffffff;
+
+    --muted-foreground: color-mix(in srgb, var(--foreground) 55%, transparent);
+    --border:           color-mix(in srgb, var(--foreground) 12%, transparent);
+
+    --font-display: Georgia, serif;
+    --font-body: -apple-system, system-ui, sans-serif;
+    --font-mono: ui-monospace, monospace;
+
+    /* Reveal animation */
+    --reveal-duration: 0.8s;
+    --reveal-ease:     cubic-bezier(0.16, 1, 0.3, 1);
+    --reveal-distance: 28px;
+
+    /* Chrome (nav dots, keyboard hint) */
+    --nav-dot-size: 9px;
+    --nav-dot-radius: 50%;
+    --nav-dot-color: var(--foreground);
+    --nav-dot-active-color: var(--accent);
+    --nav-dot-opacity: 0.4;
+}
+
+/* ---------- Viewport lock + scroll snap ---------- */
+html, body { height: 100%; overflow-x: hidden; }
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+/* ---------- Type scale ----------
+   Fixed px sizes on a 1920×1080 canvas. The canvas is scaled to fit
+   any viewport via transform, so these sizes are absolute within the
+   design surface — no responsive units needed. */
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 36px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1 { font-size: 120px; line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-size: 64px; line-height: 1.1; letter-spacing: -0.01em; }
+h3 { font-size: 44px; line-height: 1.2; }
+.eyebrow {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+ul, ol { padding-left: 48px; display: flex; flex-direction: column; gap: 24px; }
+li::marker { color: var(--accent); }
+
+/* ---------- Slide structure ----------
+   .slide is the authored 1920×1080 artboard.
+   The chassis wraps it in viewport + scale layers at runtime. */
+.slide-viewport {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: block;
+    position: relative;
+    background: var(--background);
+    isolation: isolate;
+    z-index: 1;
+}
+
+.slide-scale {
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
+    transform-origin: center center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+}
+
+.slide {
+    width: 1920px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 60px;
+    position: relative;
+    background: transparent;
+}
+
+
+/* ---------- Image defaults ---------- */
+img, .image-container {
+    max-width: 100%;
+    max-height: 540px;
+    object-fit: contain;
+}
+
+/* ---------- Reveal primitives ----------
+   Driven by chassis.js via the Web Animations API, not CSS transitions.
+   Put .reveal* or .step on ANY element — author CSS on the same element
+   (opacity, transform, transition, filter) never conflicts, because
+   WAAPI animations live in the animation cascade origin and win over
+   normal author declarations. The .dN stagger classes below still apply
+   to theme-authored CSS animations via animation-delay.
+
+   Variants: .reveal (fade + up), .reveal-left, .reveal-right,
+   .reveal-scale, .reveal-blur. .step stays hidden until the user
+   advances forward. Don't combine .step with .reveal* on the same
+   element. */
+
+/* FOUC guard: hide reveals until chassis.js marks the document ready. */
+:root:not(.reveals-ready) .reveal,
+:root:not(.reveals-ready) .reveal-left,
+:root:not(.reveals-ready) .reveal-right,
+:root:not(.reveals-ready) .reveal-scale,
+:root:not(.reveals-ready) .reveal-blur,
+:root:not(.reveals-ready) .step {
+    opacity: 0;
+}
+:root:not(.reveals-ready) .reveal-blur { filter: blur(10px); }
+
+/* ---------- Stagger delays (.d1 … .d8) ---------- */
+.slide.visible .d1 { transition-delay: 0.10s; animation-delay: 0.10s; }
+.slide.visible .d2 { transition-delay: 0.25s; animation-delay: 0.25s; }
+.slide.visible .d3 { transition-delay: 0.40s; animation-delay: 0.40s; }
+.slide.visible .d4 { transition-delay: 0.55s; animation-delay: 0.55s; }
+.slide.visible .d5 { transition-delay: 0.70s; animation-delay: 0.70s; }
+.slide.visible .d6 { transition-delay: 0.85s; animation-delay: 0.85s; }
+.slide.visible .d7 { transition-delay: 1.00s; animation-delay: 1.00s; }
+.slide.visible .d8 { transition-delay: 1.15s; animation-delay: 1.15s; }
+
+/* ---------- Nav dots ----------
+   Default: right-center (vertical stack on right edge).
+   Override with <body data-nav="bottom | top-right | hidden">. */
+.nav-dots {
+    position: fixed;
+    right: clamp(0.6rem, 1.5vw, 1.4rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1vh, 0.8rem);
+    z-index: 50;
+}
+
+body[data-nav="bottom"] .nav-dots {
+    right: auto;
+    top: auto;
+    bottom: clamp(1rem, 2.5vh, 2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+}
+
+body[data-nav="top-right"] .nav-dots {
+    right: clamp(1rem, 2.5vw, 2rem);
+    top: clamp(1rem, 2.5vh, 2rem);
+    transform: none;
+    flex-direction: row;
+}
+
+body[data-nav="hidden"] .nav-dots { display: none; }
+
+body[data-nav="bottom"] .keyboard-hint {
+    left: clamp(1rem, 2vw, 1.5rem);
+    transform: none;
+}
+
+.nav-dots button {
+    width: var(--nav-dot-size);
+    height: var(--nav-dot-size);
+    border-radius: var(--nav-dot-radius);
+    border: 1.5px solid var(--nav-dot-color);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    opacity: var(--nav-dot-opacity);
+}
+.nav-dots button:hover { opacity: 0.85; transform: scale(1.15); }
+.nav-dots button:focus-visible {
+    outline: 2px solid var(--nav-dot-active-color);
+    outline-offset: 3px;
+    opacity: 1;
+}
+.nav-dots button.active {
+    background: var(--nav-dot-active-color);
+    border-color: var(--nav-dot-active-color);
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* ---------- Keyboard hint ---------- */
+.keyboard-hint {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.keyboard-hint kbd {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9em;
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--background);
+    margin: 0 0.15em;
+}
+
+/* ---------- Credit line ---------- */
+.chassis-credit {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: clamp(1rem, 2vw, 1.5rem);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    letter-spacing: 0.02em;
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.chassis-credit .chassis-credit-emoji {
+    font-style: normal;
+    margin: 0 0.15em;
+}
+
+body[data-nav="bottom"] .chassis-credit {
+    left: auto;
+    right: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ---------- Custom cursor ---------- */
+.chassis-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: var(--accent);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    will-change: transform;
+}
+.chassis-cursor.visible { opacity: 1; }
+body.artifact-editor-editing .chassis-cursor { display: none; }
+
+@media (hover: none) {
+    .chassis-cursor { display: none; }
+}
+
+body.chassis-cursor-active:not(.artifact-editor-editing),
+body.chassis-cursor-active:not(.artifact-editor-editing) * { cursor: none; }
+
+/* ---------- Opt-outs ---------- */
+body[data-no-chrome] .nav-dots,
+body[data-no-chrome] .keyboard-hint,
+body[data-no-chrome] .chassis-credit,
+body[data-no-chrome] .chassis-cursor,
+body[data-no-chrome] .artifact-editor-toggle { display: none; }
+
+:fullscreen .keyboard-hint,
+:fullscreen .chassis-credit,
+:fullscreen .artifact-editor-toggle { display: none; }
+
+@media (hover: none) {
+    .keyboard-hint,
+    .chassis-credit { display: none; }
+}
+
+@media (max-width: 900px), (max-height: 560px) {
+    .nav-dots,
+    .keyboard-hint,
+    .chassis-credit,
+    .chassis-cursor { display: none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+/* ---------- Print (PDF export) ---------- */
+@media print {
+    .nav-dots, .keyboard-hint, .chassis-credit, .chassis-cursor { display: none !important; }
+    html, body { height: auto; overflow: visible; }
+    html { scroll-snap-type: none; }
+    .slide-viewport {
+        page-break-after: always;
+        break-after: page;
+        height: 100vh;
+    }
+    .slide-scale {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    .slide {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+</style>
+<script>
+/* =====================================================
+   PRESENTATION CHASSIS — slide controller
+   Auto-initializes on DOMContentLoaded.
+   Exposes window.slides for programmatic control.
+   ===================================================== */
+(function () {
+    'use strict';
+
+    const REVEAL_SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur';
+    const STEP_SELECTOR = '.step';
+    const ALL_REVEAL_SELECTOR = REVEAL_SELECTOR + ', ' + STEP_SELECTOR;
+    const VIEWPORT_CLASS = 'slide-viewport';
+    const SCALE_CLASS = 'slide-scale';
+
+    function _detectLang() {
+        const param = new URLSearchParams(location.search).get('lang');
+        return (param || navigator.language || 'en').slice(0, 2).toLowerCase();
+    }
+
+    class SlidePresentation {
+        constructor() {
+            this.slides = Array.from(document.querySelectorAll('.slide'));
+            if (this.slides.length === 0) return;
+
+            // Ensure every slide has an id so hashes + anchor links work.
+            // Author-defined ids are preserved; the rest get slide-N (1-indexed).
+            this.slides.forEach((slide, idx) => {
+                if (!slide.id) slide.id = `slide-${idx + 1}`;
+            });
+            this.viewports = this._setupViewports();
+            this.scales = this.viewports.map((viewport) => viewport.querySelector(`.${SCALE_CLASS}`));
+
+            // Hide every reveal element BEFORE lifting the CSS FOUC guard.
+            // After this, .reveals-ready is on <html>, so CSS no longer hides
+            // reveals — inline styles keep them hidden until JS animates them.
+            this._setupReveals();
+
+            this.navDotsContainer = this._ensureNavDots();
+            this.keyboardHint = this._ensureKeyboardHint();
+            this.credit = this._ensureCredit();
+
+            this._setupCanvasScale();
+            this._setupIntersectionObserver();
+            this._setupKeyboardNav();
+            this._setupWheelNav();
+            this._setupTouchNav();
+            this._setupViewportSync();
+            this._buildNavDots();
+            this._setupHashNav();
+            this._setupCursor();
+            this._setupPrintSettling();
+
+            // If URL has a matching hash, start there; otherwise start at slide 0.
+            const initial = this._slideIndexFromHash(location.hash);
+            this.currentSlide = initial >= 0 ? initial : 0;
+            if (this.currentSlide !== 0) {
+                this._scrollToSlide(this.currentSlide, 'auto');
+            }
+            // Reveal initial slide immediately (observer may miss it on load).
+            const first = this.slides[this.currentSlide];
+            first.classList.add('visible');
+            this._playSlideReveals(first);
+            this._updateNavDots();
+        }
+
+        /* ---------- Viewport scaffolding ----------
+           Authors write .slide as the 1920×1080 artboard. The chassis wraps
+           that authored section in viewport and scale layers. */
+        _setupViewports() {
+            return this.slides.map((slide) => {
+                const existingScale = slide.parentElement?.classList.contains(SCALE_CLASS)
+                    ? slide.parentElement
+                    : null;
+                const existingViewport = existingScale?.parentElement?.classList.contains(VIEWPORT_CLASS)
+                    ? existingScale.parentElement
+                    : null;
+                if (existingViewport) {
+                    this._syncViewportBackground(slide, existingViewport);
+                    return existingViewport;
+                }
+
+                const viewport = document.createElement('div');
+                viewport.className = VIEWPORT_CLASS;
+                const scale = document.createElement('div');
+                scale.className = SCALE_CLASS;
+
+                slide.parentNode.insertBefore(viewport, slide);
+                viewport.appendChild(scale);
+                scale.appendChild(slide);
+                this._syncViewportBackground(slide, viewport);
+
+                return viewport;
+            });
+        }
+
+        _syncViewportBackground(slide, viewport) {
+            const style = getComputedStyle(slide);
+            const hasBackgroundImage = style.backgroundImage && style.backgroundImage !== 'none';
+            const hasBackgroundColor = !['rgba(0, 0, 0, 0)', 'transparent'].includes(style.backgroundColor);
+            if (hasBackgroundImage || hasBackgroundColor) {
+                viewport.style.background = style.background;
+            } else {
+                viewport.style.background = '';
+            }
+            slide.style.background = 'transparent';
+        }
+
+        /* ---------- DOM scaffolding (auto-inserted if missing) ---------- */
+        _ensureNavDots() {
+            let el = document.getElementById('navDots');
+            if (!el) {
+                el = document.createElement('nav');
+                el.id = 'navDots';
+                el.className = 'nav-dots';
+                el.setAttribute('aria-label', 'Slide navigation');
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureKeyboardHint() {
+            let el = document.querySelector('.keyboard-hint');
+            if (!el) {
+                const i18n = {
+                    en: { navigate: 'navigate', restart: 'restart', fullscreen: 'fullscreen' },
+                    es: { navigate: 'navegar',   restart: 'inicio',   fullscreen: 'fullscreen' },
+                    fr: { navigate: 'naviguer',  restart: 'début',    fullscreen: 'fullscreen' },
+                    de: { navigate: 'blättern',  restart: 'anfang',   fullscreen: 'vollbild' },
+                    pt: { navigate: 'navegar',   restart: 'início',   fullscreen: 'fullscreen' },
+                    ja: { navigate: '移動',      restart: '先頭',      fullscreen: '全画面' },
+                    ko: { navigate: '이동',      restart: '처음',      fullscreen: '전체화면' },
+                    zh: { navigate: '翻页',      restart: '重置',      fullscreen: '全屏' },
+                    it: { navigate: 'navigare',  restart: 'inizio',   fullscreen: 'fullscreen' },
+                    nl: { navigate: 'bladeren',  restart: 'begin',    fullscreen: 'vollscherm' },
+                };
+                const t = i18n[_detectLang()] || i18n.en;
+                el = document.createElement('div');
+                el.className = 'keyboard-hint';
+                el.innerHTML = `<kbd>←</kbd> <kbd>→</kbd> ${t.navigate} &middot; <kbd>R</kbd> ${t.restart} &middot; <kbd>F</kbd> ${t.fullscreen}`;
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureCredit() {
+            let el = document.querySelector('.chassis-credit');
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'chassis-credit';
+                el.setAttribute('aria-hidden', 'true');
+                el.innerHTML = 'KarBin the Great';
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        /* ---------- Reveal engine ----------
+           Reveals are driven by the Web Animations API instead of CSS
+           transitions. This lets authors put .reveal* / .step on any
+           element: animation values live in the animation cascade origin
+           and win over normal author declarations, so no wrapper element
+           is required to isolate the chassis from author CSS.
+
+           State per slide:
+           - "hidden":  inline opacity/transform/filter from the 'from'
+                        keyframe of the variant. Set on init and on
+                        forward re-entry.
+           - "played":  animation is running or has run; the class
+                        `reveals-played` on the slide makes playback
+                        idempotent so observer re-fires (resize,
+                        fullscreen) don't restart the animation.
+           - "settled": animation canceled, inline styles cleared. Used
+                        for backward entries (we skip the animation and
+                        show the final state instantly) and for print. */
+
+        _setupReveals() {
+            // Lift the CSS FOUC guard first so getComputedStyle reads each
+            // element's natural opacity, not the guard's blanket opacity: 0.
+            // No paint occurs mid-task — inline hidden styles are applied
+            // before the browser yields, so there is no visible flash.
+            document.documentElement.classList.add('reveals-ready');
+            this.slides.forEach((slide) => {
+                slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                    el._targetOpacity = parseFloat(getComputedStyle(el).opacity);
+                    this._applyHiddenStyle(el);
+                });
+            });
+        }
+
+        _setupPrintSettling() {
+            // Browsers snapshot the document for print/PDF export. WAAPI
+            // animations don't necessarily complete in that snapshot, so
+            // settle every slide to its final state first. After printing,
+            // reset — but only for slides that haven't already been viewed,
+            // so the audience experience picks up where it left off.
+            window.addEventListener('beforeprint', () => {
+                this.slides.forEach((slide) => this._settleSlide(slide));
+            });
+        }
+
+        _readTokens() {
+            const cs = getComputedStyle(document.documentElement);
+            const rawDuration = parseFloat(cs.getPropertyValue('--reveal-duration'));
+            const duration = Number.isFinite(rawDuration) ? rawDuration * 1000 : 800;
+            const ease = cs.getPropertyValue('--reveal-ease').trim() || 'cubic-bezier(0.16, 1, 0.3, 1)';
+            const distance = cs.getPropertyValue('--reveal-distance').trim() || '28px';
+            const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            return {
+                duration: reducedMotion ? 1 : duration,
+                ease,
+                distance,
+            };
+        }
+
+        _getRevealDelay(el) {
+            // Use getAttribute('class') rather than el.className: on SVG
+            // elements, `.className` is an SVGAnimatedString (not a string)
+            // and calling .match on it throws. getAttribute is uniform
+            // across HTML and SVG.
+            const classes = el.getAttribute('class') || '';
+            const m = classes.match(/\bd([1-8])\b/);
+            if (!m) return 0;
+            // Matches CSS .dN: d1 = 100ms, d2 = 250ms, +150ms per step.
+            return 100 + (parseInt(m[1], 10) - 1) * 150;
+        }
+
+        _getRevealKeyframes(el, distance) {
+            const to = el._targetOpacity ?? 1;
+            if (el.classList.contains('reveal-left')) {
+                return [
+                    { opacity: 0, transform: `translateX(calc(-1 * ${distance}))` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-right')) {
+                return [
+                    { opacity: 0, transform: `translateX(${distance})` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-scale')) {
+                return [
+                    { opacity: 0, transform: 'scale(0.88)' },
+                    { opacity: to, transform: 'scale(1)' },
+                ];
+            }
+            if (el.classList.contains('reveal-blur')) {
+                return [
+                    { opacity: 0, filter: 'blur(10px)' },
+                    { opacity: to, filter: 'blur(0)' },
+                ];
+            }
+            // Default: .reveal or .step (slide up + fade)
+            return [
+                { opacity: 0, transform: `translateY(${distance})` },
+                { opacity: to, transform: 'translateY(0)' },
+            ];
+        }
+
+        _applyHiddenStyle(el) {
+            const { distance } = this._readTokens();
+            const from = this._getRevealKeyframes(el, distance)[0];
+            if ('opacity' in from) el.style.opacity = from.opacity;
+            if ('transform' in from) el.style.transform = from.transform;
+            if ('filter' in from) el.style.filter = from.filter;
+        }
+
+        _clearHiddenStyle(el) {
+            el.style.opacity = '';
+            el.style.transform = '';
+            el.style.filter = '';
+        }
+
+        _cancelReveal(el) {
+            if (el._revealAnim) {
+                el._revealAnim.cancel();
+                el._revealAnim = null;
+            }
+        }
+
+        _playReveal(el, delayOverride) {
+            this._cancelReveal(el);
+            const { duration, ease, distance } = this._readTokens();
+            const delay = typeof delayOverride === 'number' ? delayOverride : this._getRevealDelay(el);
+            const keyframes = this._getRevealKeyframes(el, distance);
+            // fill: 'backwards' applies the 'from' keyframe during the
+            // stagger delay so the element stays hidden until its turn,
+            // without pinning the 'to' keyframe after the animation ends.
+            // This lets co-existing author CSS (e.g. a `.pulse` CSS
+            // animation on the same element) take over naturally once the
+            // entrance completes — otherwise our fill would mask anything
+            // the author wanted to happen post-reveal.
+            const anim = el.animate(keyframes, {
+                duration,
+                delay,
+                easing: ease,
+                fill: 'backwards',
+            });
+            el._revealAnim = anim;
+            // Safe to clear inline 'from' styles now — the animation's
+            // backwards-fill holds the element at the 'from' keyframe for
+            // the duration of any stagger delay.
+            this._clearHiddenStyle(el);
+        }
+
+        _playSlideReveals(slide) {
+            if (slide.classList.contains('reveals-played')) return;
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => this._playReveal(el));
+            // .step elements stay hidden until the user advances.
+        }
+
+        _resetSlideReveals(slide) {
+            // Forward re-entry: cancel in-flight animations, re-hide
+            // everything, and reset step state so the slide replays cleanly
+            // when the observer next adds .visible.
+            slide.classList.remove('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step.step-shown').forEach((el) => el.classList.remove('step-shown'));
+        }
+
+        _settleSlide(slide) {
+            // Print / PDF export: jump to the final state with everything
+            // shown, so every step appears in the exported document.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => el.classList.add('step-shown'));
+        }
+
+        _rewindSlide(slide) {
+            // Backward re-entry: show reveals instantly (no replay — the
+            // viewer already saw the intro) but hide every step, so the
+            // slide is positioned at the start of its stepped content and
+            // can be stepped through again.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => {
+                el.classList.remove('step-shown');
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+        }
+
+        /* ---------- Navigation ----------
+           goTo scrolls to the target. Both forward-replay and backward-
+           rewind need to mutate the target BEFORE scrolling — while it's
+           still offscreen — so the viewer never sees the old state flash
+           into view. Resetting after the slide is in view causes a visible
+           "show then hide" blink; the IntersectionObserver fires too late
+           (80% threshold) to catch it. */
+        goTo(index) {
+            const clamped = Math.max(0, Math.min(this.slides.length - 1, index));
+            if (clamped === this.currentSlide) return;
+
+            const target = this.slides[clamped];
+            const goingForward = clamped > this.currentSlide;
+
+            if (target.classList.contains('visible')) {
+                if (goingForward) {
+                    // Forward replay: full reset so the observer can play reveals fresh.
+                    target.classList.remove('visible');
+                    this._resetSlideReveals(target);
+                } else {
+                    // Backward rewind: hide any shown steps so the slide
+                    // scrolls back in at the start of its stepped content.
+                    this._rewindSlide(target);
+                }
+            }
+
+            this._scrollToSlide(clamped, 'smooth');
+        }
+
+        _scrollToSlide(index, behavior) {
+            this.viewports[index]?.scrollIntoView({ behavior, block: 'start' });
+        }
+
+        _slideIndexFromHash(hash) {
+            if (!hash) return -1;
+            return this.slides.findIndex((s) => '#' + s.id === hash);
+        }
+
+        _syncHash() {
+            const slide = this.slides[this.currentSlide];
+            if (!slide || !slide.id) return;
+            const newHash = '#' + slide.id;
+            if (location.hash !== newHash) {
+                // replaceState — keeps the URL in sync without polluting history,
+                // so the browser back button exits the deck instead of stepping through slides.
+                try {
+                    history.replaceState(null, '', newHash);
+                } catch {
+                    // Sandboxed iframes (opaque origin, about:srcdoc) reject URL
+                    // mutation with a SecurityError. Hash sync is a nicety — an
+                    // unguarded throw here kills the observer callback before it
+                    // marks the slide visible and plays its reveals.
+                }
+            }
+        }
+
+        _setupHashNav() {
+            // React to external hash changes (anchor link clicks, back/forward if user uses pushState manually)
+            window.addEventListener('hashchange', () => {
+                const idx = this._slideIndexFromHash(location.hash);
+                if (idx >= 0 && idx !== this.currentSlide) this.goTo(idx);
+            });
+        }
+
+        /* ---------- Custom cursor ----------
+           Accent disc that follows the pointer, hidden after idle. */
+        _setupCursor() {
+            if (!matchMedia('(hover: hover)').matches) return;
+
+            const cursor = document.createElement('div');
+            cursor.className = 'chassis-cursor';
+            cursor.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(cursor);
+            document.body.classList.add('chassis-cursor-active');
+
+            const half = 16;  // matches width/height / 2 in CSS
+            const IDLE_MS = 2500;
+            let idleTimer = null;
+
+            const show = () => {
+                cursor.classList.add('visible');
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    cursor.classList.remove('visible');
+                }, IDLE_MS);
+            };
+            const hide = () => {
+                clearTimeout(idleTimer);
+                cursor.classList.remove('visible');
+            };
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate3d(${e.clientX - half}px, ${e.clientY - half}px, 0)`;
+                show();
+            });
+            document.addEventListener('mouseleave', hide);
+            document.addEventListener('mouseenter', show);
+        }
+
+        /* ---------- Fullscreen ---------- */
+        toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen?.().catch(() => {});
+            } else {
+                document.exitFullscreen?.();
+            }
+        }
+
+        next() { this.goTo(this.currentSlide + 1); }
+        prev() { this.goTo(this.currentSlide - 1); }
+        first() { this.goTo(0); }
+        last() { this.goTo(this.slides.length - 1); }
+
+        /* ---------- Step-aware advance / retreat ----------
+           advance() reveals the next .step on the current slide (if any),
+           otherwise advances to the next slide. retreat() hides the last
+           revealed step, otherwise goes back to the previous slide. */
+        advance() {
+            const current = this.slides[this.currentSlide];
+            const nextStep = current?.querySelector('.step:not(.step-shown)');
+            if (nextStep) {
+                nextStep.classList.add('step-shown');
+                // No stagger on click-reveal — the user's gesture is the trigger.
+                this._playReveal(nextStep, 0);
+                return;
+            }
+            this.next();
+        }
+        retreat() {
+            const current = this.slides[this.currentSlide];
+            const shown = current?.querySelectorAll('.step.step-shown');
+            if (shown && shown.length > 0) {
+                const last = shown[shown.length - 1];
+                last.classList.remove('step-shown');
+                this._cancelReveal(last);
+                this._applyHiddenStyle(last);
+                return;
+            }
+            this.prev();
+        }
+
+        /* ---------- Intersection observer ----------
+           Fire late (>= 80% in view) so reveals play on a settled slide.
+           This is the single source of truth for active-slide state.
+
+           Forward:  add .visible, play reveals. (goTo() has already reset
+                     the target to pre-reveal state if this is a re-visit,
+                     so the animation is fresh either way.)
+           Backward: add .visible, rewind to the start of the stepped
+                     content — reveals are shown instantly (no replay) and
+                     every step is hidden again so the viewer can step
+                     through it fresh. */
+        _setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const idx = this.viewports.indexOf(entry.target);
+                    if (idx < 0) return;
+                    const slide = this.slides[idx];
+
+                    if (idx === this.currentSlide) {
+                        // Same-slide re-fire (initial load, resize, fullscreen).
+                        if (!slide.classList.contains('visible')) {
+                            slide.classList.add('visible');
+                        }
+                        // Idempotent: only plays if not already marked played.
+                        this._playSlideReveals(slide);
+                        return;
+                    }
+
+                    const goingForward = idx > this.currentSlide;
+                    this.currentSlide = idx;
+                    this._updateNavDots();
+                    this._syncHash();
+
+                    slide.classList.add('visible');
+                    if (goingForward) {
+                        this._playSlideReveals(slide);
+                    } else {
+                        this._rewindSlide(slide);
+                    }
+                });
+            }, { threshold: 0.8 });
+
+            this.viewports.forEach((viewport) => observer.observe(viewport));
+        }
+
+        /* ---------- Keyboard ---------- */
+        _setupKeyboardNav() {
+            document.addEventListener('keydown', (e) => {
+                // Skip when user is editing text
+                if (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+
+                switch (e.key) {
+                    // Step-aware: consume steps first, then advance slides
+                    case 'ArrowDown':
+                    case 'ArrowRight':
+                    case ' ':
+                        e.preventDefault(); this.advance(); break;
+                    case 'ArrowUp':
+                    case 'ArrowLeft':
+                        e.preventDefault(); this.retreat(); break;
+                    // Slide-level: always skip past steps
+                    case 'PageDown':
+                        e.preventDefault(); this.next(); break;
+                    case 'PageUp':
+                        e.preventDefault(); this.prev(); break;
+                    case 'Home':
+                        e.preventDefault(); this.first(); break;
+                    case 'End':
+                        e.preventDefault(); this.last(); break;
+                    case 'f':
+                    case 'F':
+                        e.preventDefault(); this.toggleFullscreen(); break;
+                    case 'r':
+                    case 'R':
+                        e.preventDefault(); this.first(); break;
+                }
+            });
+        }
+
+        /* ---------- Wheel / trackpad ----------
+           ALWAYS preventDefault — letting any native wheel scroll through
+           races against scrollIntoView + mandatory snap, and blocks macOS
+           two-finger horizontal swipes from triggering browser back/forward.
+           Whichever axis has the larger magnitude wins, so vertical scroll
+           and horizontal trackpad swipes both drive advance/retreat. Lock
+           briefly after a gesture so trackpad inertia (continuous small
+           deltas) can't spam next(). */
+        _setupWheelNav() {
+            let locked = false;
+            window.addEventListener('wheel', (e) => {
+                if (e.ctrlKey) return;                // preserve browser pinch-zoom (ctrl+wheel)
+                e.preventDefault();                   // block native scroll + horizontal back-swipe
+                if (locked) return;
+                const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                if (Math.abs(delta) < 20) return;     // ignore tiny flicks
+                locked = true;
+                if (delta > 0) this.advance(); else this.retreat();
+                setTimeout(() => { locked = false; }, 500);
+            }, { passive: false });
+        }
+
+        /* ---------- Touch / swipe ----------
+           Horizontal swipes advance / retreat slides; left = next, right =
+           prev (matches stories / carousel conventions). Dominantly
+           vertical swipes fall through to native scroll-snap so the
+           existing top/bottom behavior keeps working. A time budget
+           rejects slow pans that were really aborted scrolls. */
+        _setupTouchNav() {
+            const MIN_DISTANCE = 50;     // px — below this is a tap or jitter
+            const MAX_TIME = 600;        // ms — slower than this is a pan, not a swipe
+            const DOMINANCE = 1.2;       // horizontal must beat vertical by this factor
+
+            let startX = 0, startY = 0, startTime = 0;
+            let tracking = false;
+
+            window.addEventListener('touchstart', (e) => {
+                if (document.body.classList.contains('artifact-editor-editing')) { tracking = false; return; }
+                if (e.touches.length !== 1) { tracking = false; return; }
+                const t = e.touches[0];
+                startX = t.clientX;
+                startY = t.clientY;
+                startTime = performance.now();
+                tracking = true;
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                if (!tracking) return;
+                tracking = false;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - startX;
+                const dy = t.clientY - startY;
+                const ax = Math.abs(dx), ay = Math.abs(dy);
+                if (ax < MIN_DISTANCE) return;
+                if (ax < ay * DOMINANCE) return;
+                if (performance.now() - startTime > MAX_TIME) return;
+                if (dx < 0) this.advance(); else this.retreat();
+            }, { passive: true });
+
+            window.addEventListener('touchcancel', () => { tracking = false; }, { passive: true });
+        }
+
+        /* ---------- Canvas scaling ----------
+           Each scaler holds a fixed 1920×1080 slide. Compute the
+           scale factor that fits it inside the viewport and apply via
+           CSS custom property. Runs on init, resize, and fullscreen. */
+        _setupCanvasScale() {
+            const CANVAS_W = 1920;
+            const CANVAS_H = 1080;
+            const scales = this.scales;
+
+            const update = () => {
+                const scale = Math.min(
+                    window.innerWidth / CANVAS_W,
+                    window.innerHeight / CANVAS_H
+                );
+                scales.forEach((el) => {
+                    el?.style.setProperty('--slide-scale', scale);
+                });
+            };
+
+            update();
+            window.addEventListener('resize', update);
+            document.addEventListener('fullscreenchange', () => {
+                requestAnimationFrame(update);
+            });
+        }
+
+        /* ---------- Viewport sync ----------
+           Resize / fullscreenchange → realign current slide. Each slide is
+           100vh, so a viewport height change leaves the existing scroll
+           position out of alignment with the slide top; scroll-snap doesn't
+           re-snap on its own. */
+        _setupViewportSync() {
+            const realign = () => {
+                requestAnimationFrame(() => {
+                    this._scrollToSlide(this.currentSlide, 'auto');
+                });
+            };
+            window.addEventListener('resize', realign);
+            document.addEventListener('fullscreenchange', realign);
+        }
+
+        /* ---------- Nav dots ---------- */
+        _buildNavDots() {
+            // Clear first — prevents duplicates when DOM is re-serialized/re-opened
+            this.navDotsContainer.innerHTML = '';
+            this.slides.forEach((slide, idx) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+                if (idx === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => this.goTo(idx));
+                this.navDotsContainer.appendChild(dot);
+            });
+        }
+
+        _updateNavDots() {
+            const dots = this.navDotsContainer.querySelectorAll('button');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === this.currentSlide);
+            });
+        }
+    }
+
+    /* ---------- Auto-init ---------- */
+    function init() {
+        // Each slide canvas is its own editable host for the inline editor.
+        document.querySelectorAll('.slide').forEach(function (el) {
+            el.classList.add('artifact-editable');
+        });
+        window.slides = new SlidePresentation();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chassis -->
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Week 4 Session 8 – IoT Risks, Privacy & Case Analysis</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap"/>
+<style>
+:root{--background:#fafafa;--foreground:#1a1a1a;--accent:#c0392b;--accent-foreground:#fff;--gold:#d4a017;--card:#1a1a1a;--card-foreground:#fff;--muted-foreground:rgba(26,26,26,0.55);--border:rgba(26,26,26,0.08);--font-display:'Archivo Black',sans-serif;--font-body:'Space Grotesk',sans-serif;--nav-dot-active-color:var(--accent)}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-0.03em}p,li,td,th,span,a{font-family:var(--font-body)}
+.slide{padding:80px;display:flex;flex-direction:column;justify-content:center;font-family:var(--font-body);background:var(--background);position:relative;overflow:hidden}
+.slide-number{position:absolute;top:40px;left:80px;font-family:var(--font-display);font-size:20px;color:var(--muted-foreground)}
+.eyebrow{font-size:26px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px}
+.slide h1{font-size:140px;line-height:1.0}.slide h2{font-size:72px;line-height:1.1}.slide h3{font-size:52px;line-height:1.2}
+.slide p{font-size:40px;line-height:1.5;color:var(--muted-foreground);max-width:850px}
+.slide ul,.slide ol{font-size:40px;line-height:1.6;max-width:900px;padding-left:48px}.slide li{margin-bottom:20px}.slide li::marker{color:var(--accent)}
+.hero-slide{background:linear-gradient(135deg,#1a1a1a 0%,#2c1810 100%);justify-content:space-between}.hero-slide h1{color:#fff;font-size:140px}.hero-slide p{color:rgba(255,255,255,0.75)}.hero-slide .eyebrow{color:var(--gold)}.hero-slide .meta-line{font-size:26px;color:rgba(255,255,255,0.5)}
+.dark-slide{background:var(--card);color:var(--card-foreground)}.dark-slide h2,.dark-slide h3{color:var(--card-foreground)}.dark-slide p{color:rgba(255,255,255,0.7)}.dark-slide .eyebrow{color:var(--gold)}.dark-slide .slide-number{color:rgba(255,255,255,0.3)}
+.accent-slide{background:var(--accent);color:white}.accent-slide h2,.accent-slide h3{color:white}.accent-slide p{color:rgba(255,255,255,0.85)}.accent-slide .eyebrow{color:var(--gold)}.accent-slide .slide-number{color:rgba(255,255,255,0.4)}
+.slide table{width:100%;max-width:1400px;border-collapse:collapse;font-size:32px;margin-top:30px}.slide th{background:var(--accent);color:white;padding:20px 28px;text-align:left;font-weight:600;font-size:26px;text-transform:uppercase;letter-spacing:0.05em}.slide td{padding:20px 28px;border-bottom:1px solid var(--border);vertical-align:top}.slide tr:nth-child(even) td{background:rgba(0,0,0,0.02)}
+.def-box{background:rgba(192,57,43,0.06);border-left:8px solid var(--accent);padding:40px 48px;border-radius:0 24px 24px 0;max-width:1200px;margin-top:30px}.def-box p{color:var(--foreground);font-size:40px;max-width:100%}.def-box strong{color:var(--accent)}
+.key-box{background:rgba(212,160,23,0.08);border-left:8px solid var(--gold);padding:40px 48px;border-radius:0 24px 24px 0;max-width:1200px;margin-top:30px}.key-box p{color:var(--foreground);font-size:36px;max-width:100%}
+.warn-box{background:rgba(231,76,60,0.06);border-left:8px solid #e74c3c;padding:40px 48px;border-radius:0 24px 24px 0;max-width:1200px;margin-top:30px}.warn-box p{color:var(--foreground);font-size:36px;max-width:100%}.warn-box strong{color:#e74c3c}
+.qa-slide{background:linear-gradient(135deg,#fdf6e3 0%,#fef9ef 100%);text-align:center;align-items:center}.qa-slide h2{color:#8b6914;font-size:80px}.qa-slide p{color:#5c4a1a;text-align:center;max-width:800px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:30px;max-width:1500px}.two-col-content{font-size:34px;line-height:1.6}.two-col-content h3{font-size:40px;margin-bottom:16px}.two-col-content ul{font-size:32px;padding-left:30px}.two-col-content li{margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:40px;max-width:1200px}.stat-card{text-align:center;padding:28px;background:rgba(0,0,0,0.03);border-radius:20px}.stat-card .number{font-family:var(--font-display);font-size:72px;color:var(--accent);line-height:1}.stat-card .label{font-size:26px;color:var(--muted-foreground);margin-top:12px}
+@media(max-width:1200px){.slide{padding:60px}.slide h1{font-size:100px}.slide h2{font-size:56px}.slide h3{font-size:42px}.slide p{font-size:34px}.slide ul,.slide ol{font-size:34px}.slide table{font-size:28px}.slide th{font-size:22px;padding:14px 18px}.slide td{padding:14px 18px}.two-col{grid-template-columns:1fr;gap:30px}.stat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.slide{padding:40px 32px}.slide-number{top:20px;left:32px;font-size:16px}.eyebrow{font-size:18px;margin-bottom:12px}.slide h1{font-size:64px}.slide h2{font-size:42px}.slide h3{font-size:34px}.slide p{font-size:28px;max-width:100%}.slide ul,.slide ol{font-size:28px;padding-left:28px;max-width:100%}.slide table{font-size:22px}.slide th{font-size:18px;padding:12px 14px}.slide td{padding:12px 14px}.def-box,.key-box,.warn-box{padding:24px 28px}.def-box p{font-size:28px}.key-box p,.warn-box p{font-size:26px}.two-col{grid-template-columns:1fr;gap:20px}.two-col-content{font-size:26px}.two-col-content ul{font-size:26px}.stat-grid{grid-template-columns:1fr;gap:20px}.stat-card .number{font-size:48px}.stat-card .label{font-size:20px}.hero-slide h1{font-size:56px}.hero-slide .meta-line{font-size:18px}.qa-slide h2{font-size:48px}}
+</style>
+</head>
+<body>
+
+<section class="slide hero-slide"><span class="eyebrow reveal d1">COGNATES 6 · Week 4 · Session 8</span><h1 class="reveal d2">IoT Risks<br>&amp; Privacy</h1><p class="reveal d3">Security threats, privacy, Philippine data law, and balanced evaluation</p><span class="meta-line reveal d4">Instructor: Carvin Paul G. Tampos · Cronasia Foundation College, Inc.</span></section>
+
+<section class="slide"><span class="slide-number">02</span><span class="eyebrow reveal d1">Objectives</span><h3 class="reveal d2">Session 8 Goals</h3><ol class="reveal d3" style="font-size:36px"><li class="step">Identify IoT security threats</li><li class="step">Explain privacy concerns with connected devices</li><li class="step">Apply RA 10173 (Data Privacy Act) to IoT</li><li class="step">Evaluate IoT with 7-question framework</li><li class="step">Analyze case studies: benefits vs risks</li></ol></section>
+
+<section class="slide qa-slide"><span class="slide-number">03</span><h2 class="reveal d1">⏸ Scenario</h2><p class="reveal d2">School installs facial recognition CCTV for attendance. Good idea or bad?</p><p class="reveal d3" style="font-size:26px;color:#8b6914">(Hold your answer. By end of session, you'll have a framework to evaluate properly.)</p></section>
+
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">04</span><span class="eyebrow reveal d1">Part 1</span><h2 class="reveal d2" style="font-size:80px">IoT Security<br>Threats</h2></section>
+
+<section class="slide dark-slide" style="align-items:center;text-align:center"><span class="slide-number">05</span><span class="eyebrow reveal d1">Reality</span><div class="stat-grid reveal d2" style="margin:20px auto 0"><div class="stat-card" style="background:rgba(255,255,255,0.05)"><div class="number" style="color:var(--gold)">600K</div><div class="label" style="color:rgba(255,255,255,0.6)">devices hijacked (Mirai 2016)</div></div><div class="stat-card" style="background:rgba(255,255,255,0.05)"><div class="number" style="color:var(--gold)">57%</div><div class="label" style="color:rgba(255,255,255,0.6)">IoT devices vulnerable</div></div><div class="stat-card" style="background:rgba(255,255,255,0.05)"><div class="number" style="color:var(--gold)">98%</div><div class="label" style="color:rgba(255,255,255,0.6)">IoT traffic unencrypted</div></div></div></section>
+
+<section class="slide"><span class="slide-number">06</span><span class="eyebrow reveal d1">Top 5 Threats</span><h3 class="reveal d2">IoT Security Threats</h3><table class="reveal d3"><thead><tr><th>Threat</th><th>How</th><th>Real Example</th></tr></thead><tbody><tr><td><strong>Weak passwords</strong></td><td>Default never changed</td><td>Mirai: admin/admin</td></tr><tr><td><strong>Unpatched</strong></td><td>No firmware updates</td><td>Old cameras with known bugs</td></tr><tr><td><strong>Data intercept</strong></td><td>Unencrypted traffic</td><td>Reading smart home data</td></tr><tr><td><strong>DDoS</strong></td><td>Hijacked devices attack</td><td>Mirai took down Twitter</td></tr><tr><td><strong>Tampering</strong></td><td>Physical modification</td><td>Altering sensor readings</td></tr></tbody></table></section>
+
+<section class="slide"><span class="slide-number">07</span><span class="eyebrow reveal d1">Case</span><h3 class="reveal d2">Mirai Botnet (2016)</h3><ol class="reveal d3" style="font-size:34px"><li class="step"><strong>What:</strong> Malware infected 600K+ IoT devices</li><li class="step"><strong>How:</strong> Scanned for default passwords (admin/admin)</li><li class="step"><strong>Attack:</strong> Used devices to DDoS major websites</li><li class="step"><strong>Impact:</strong> Twitter, Netflix, Reddit all DOWN</li><li class="step"><strong>Lesson:</strong> Weak IoT security = global internet risk</li></ol></section>
+
+<section class="slide"><span class="slide-number">08</span><span class="eyebrow reveal d1">Why Vulnerable</span><h3 class="reveal d2">Why IoT Is Easy to Hack</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Cheap manufacturing:</strong> security costs money</li><li class="step"><strong>No updates:</strong> can't receive patches</li><li class="step"><strong>Default passwords:</strong> users never change</li><li class="step"><strong>Limited computing:</strong> can't run complex security</li><li class="step"><strong>Long lifespan:</strong> deployed years without updates</li><li class="step"><strong>Users don't think:</strong> "it's just a lightbulb"</li></ul></section>
+
+<section class="slide qa-slide"><span class="slide-number">09</span><h2 class="reveal d1">⏸ Think</h2><p class="reveal d2">Why is an insecure smart camera dangerous even if you "have nothing to hide"?</p><p class="reveal d3" style="font-size:26px;color:#5c4a1a">(Can be hijacked to attack OTHERS, spy, join botnet that takes down websites.)</p></section>
+
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">10</span><span class="eyebrow reveal d1">Part 2</span><h2 class="reveal d2" style="font-size:80px">Privacy<br>Concerns</h2></section>
+
+<section class="slide"><span class="slide-number">11</span><span class="eyebrow reveal d1">5 Questions</span><h3 class="reveal d2">Privacy Questions IoT Raises</h3><table class="reveal d3"><thead><tr><th>Question</th><th>Why It Matters</th></tr></thead><tbody><tr><td><strong>Who OWNS data?</strong></td><td>Users may not own their behavioral data</td></tr><tr><td><strong>Who ACCESSES?</strong></td><td>Third parties, advertisers, govt?</td></tr><tr><td><strong>How LONG stored?</strong></td><td>Indefinite = indefinite surveillance</td></tr><tr><td><strong>Can you OPT OUT?</strong></td><td>Many devices require data sharing</td></tr><tr><td><strong>What if BREACH?</strong></td><td>Habits, health, location exposed</td></tr></tbody></table></section>
+
+<section class="slide"><span class="slide-number">12</span><span class="eyebrow reveal d1">What Devices Know</span><h3 class="reveal d2">Data Your Devices Collect</h3><table class="reveal d3"><thead><tr><th>Device</th><th>Collects</th><th>Risk</th></tr></thead><tbody><tr><td>Smart speaker</td><td>Voice recordings</td><td>Conversations stored on servers</td></tr><tr><td>Fitness tracker</td><td>Heart, location, sleep</td><td>Health data to insurers?</td></tr><tr><td>Smart TV</td><td>What you watch</td><td>Habits sold to advertisers</td></tr><tr><td>Smart home hub</td><td>When home/away</td><td>Burglars know your schedule</td></tr></tbody></table></section>
+
+<section class="slide dark-slide" style="align-items:center;text-align:center"><span class="slide-number">13</span><span class="eyebrow reveal d1">Dilemma</span><h2 class="reveal d2" style="max-width:1000px">IoT gives <span style="color:var(--gold)">convenience</span>.<br>Takes your <span style="color:var(--gold)">data</span>.<br>Is the trade worth it?</h2></section>
+
+<section class="slide"><span class="slide-number">14</span><span class="eyebrow reveal d1">Case 1</span><h3 class="reveal d2">Wearables at Work</h3><div class="two-col reveal d3"><div class="two-col-content"><h3 style="color:#27ae60">Benefits</h3><ul><li>Health awareness</li><li>Wellness challenges</li><li>Reduced healthcare costs</li><li>Early health warnings</li></ul></div><div class="two-col-content"><h3 style="color:var(--accent)">Risks</h3><ul><li>Employer monitors health</li><li>Data for hiring/firing</li><li>Pressure to share personal info</li><li>Location tracking off-hours</li></ul></div></div></section>
+
+<section class="slide"><span class="slide-number">15</span><span class="eyebrow reveal d1">Case 2</span><h3 class="reveal d2">Smart CCTV in Schools</h3><div class="two-col reveal d3"><div class="two-col-content"><h3 style="color:#27ae60">Benefits</h3><ul><li>Auto attendance</li><li>Better security</li><li>Evidence for incidents</li><li>Entry alerts</li></ul></div><div class="two-col-content"><h3 style="color:var(--accent)">Risks</h3><ul><li>Surveillance of minors</li><li>Biometric breach = permanent</li><li>Chilling effect on behavior</li><li>Higher error darker skin</li></ul></div></div><div class="warn-box reveal d4"><p><strong>Key:</strong> Does saving 5 min attendance justify biometric risk for children?</p></div></section>
+
+<section class="slide qa-slide"><span class="slide-number">16</span><h2 class="reveal d1">⏸ Your Opinion</h2><p class="reveal d2">Should schools use facial recognition for attendance?</p><p class="reveal d3" style="font-size:26px;color:#5c4a1a">Show of hands. Then 2-3 explain position.</p></section>
+
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">17</span><span class="eyebrow reveal d1">Part 3</span><h2 class="reveal d2" style="font-size:72px">Philippine<br>Data Privacy</h2></section>
+
+<section class="slide"><span class="slide-number">18</span><span class="eyebrow reveal d1">The Law</span><h3 class="reveal d2">RA 10173: Data Privacy Act</h3><div class="def-box reveal d3"><p><strong>Data Privacy Act</strong> protects personal information in all systems, government and private. Applies to ALL data processing including IoT collection.</p></div></section>
+
+<section class="slide"><span class="slide-number">19</span><span class="eyebrow reveal d1">Requirements</span><h3 class="reveal d2">What RA 10173 Requires</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Consent:</strong> inform and get permission</li><li class="step"><strong>Purpose limitation:</strong> use only for stated reason</li><li class="step"><strong>Proportionality:</strong> collect only what's needed</li><li class="step"><strong>Transparency:</strong> tell people what and why</li><li class="step"><strong>DPO:</strong> appoint Data Protection Officer</li><li class="step"><strong>Breach notification:</strong> report within 72 hours</li></ul></section>
+
+<section class="slide"><span class="slide-number">20</span><span class="eyebrow reveal d1">Your Rights</span><h3 class="reveal d2">Individual Rights</h3><table class="reveal d3"><thead><tr><th>Right</th><th>Meaning</th></tr></thead><tbody><tr><td><strong>Be informed</strong></td><td>Know what's collected and why</td></tr><tr><td><strong>Access</strong></td><td>See your data orgs hold</td></tr><tr><td><strong>Correct</strong></td><td>Fix inaccurate data</td></tr><tr><td><strong>Erase</strong></td><td>Request deletion</td></tr><tr><td><strong>Object</strong></td><td>Stop processing</td></tr><tr><td><strong>Damages</strong></td><td>Seek compensation for violations</td></tr></tbody></table></section>
+
+<section class="slide"><span class="slide-number">21</span><span class="eyebrow reveal d1">Penalties</span><h3 class="reveal d2">Consequences</h3><div class="stat-grid reveal d3" style="grid-template-columns:repeat(2,1fr);max-width:800px"><div class="stat-card"><div class="number" style="font-size:56px">₱5M</div><div class="label">Maximum fine</div></div><div class="stat-card"><div class="number" style="font-size:56px">6 yrs</div><div class="label">Maximum imprisonment</div></div></div><p class="reveal d4" style="margin-top:20px">Enforced by National Privacy Commission. Real cases filed.</p></section>
+
+<section class="slide"><span class="slide-number">22</span><span class="eyebrow reveal d1">IoT + Law</span><h3 class="reveal d2">RA 10173 Applied to IoT</h3><table class="reveal d3"><thead><tr><th>IoT Scenario</th><th>Requirement</th></tr></thead><tbody><tr><td>CCTV in office</td><td>Post notice, state purpose, limit retention</td></tr><tr><td>Employee wearable</td><td>Get consent, can't force</td></tr><tr><td>Customer tracking</td><td>Inform, allow opt-out</td></tr><tr><td>Student data in LMS</td><td>Protect, limit access, delete when done</td></tr></tbody></table></section>
+
+<section class="slide qa-slide"><span class="slide-number">23</span><h2 class="reveal d1">⏸ Legal Check</h2><p class="reveal d2">Mall tracks WiFi to count visitors. Doesn't tell anyone. Legal under RA 10173?</p><p class="reveal d3" style="font-size:26px;color:#5c4a1a">(NO. Violates: right to be informed, consent, transparency.)</p></section>
+
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">24</span><span class="eyebrow reveal d1">Part 4</span><h2 class="reveal d2" style="font-size:72px">Evaluating<br>IoT Solutions</h2></section>
+
+<section class="slide"><span class="slide-number">25</span><span class="eyebrow reveal d1">Framework</span><h3 class="reveal d2">7-Question Evaluation</h3><ol class="reveal d3" style="font-size:32px"><li class="step"><strong>Problem real?</strong> Significant?</li><li class="step"><strong>Who benefits?</strong> Users, company, both?</li><li class="step"><strong>Data collected?</strong> Minimum necessary?</li><li class="step"><strong>Security?</strong> Encryption, updates, access?</li><li class="step"><strong>What could go wrong?</strong> Worst case?</li><li class="step"><strong>Proportionate?</strong> Benefit justifies risk?</li><li class="step"><strong>User control?</strong> Opt-out, deletion, transparency?</li></ol></section>
+
+<section class="slide"><span class="slide-number">26</span><span class="eyebrow reveal d1">Good Case</span><h3 class="reveal d2">Flood Sensors for Barangay</h3><table class="reveal d3"><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td>Problem?</td><td>Flooding causes deaths. No early warning.</td></tr><tr><td>Benefits?</td><td>Residents safety. LGU disaster prep.</td></tr><tr><td>Data?</td><td>Water level only. No personal data.</td></tr><tr><td>Security?</td><td>Low risk (no personal data)</td></tr><tr><td>Proportionate?</td><td>YES. Life-saving, minimal privacy risk.</td></tr></tbody></table><div class="key-box reveal d4"><p><strong>Verdict:</strong> DEPLOY. Low risk, high public benefit.</p></div></section>
+
+<section class="slide"><span class="slide-number">27</span><span class="eyebrow reveal d1">Bad Case</span><h3 class="reveal d2">Facial Recognition Attendance</h3><table class="reveal d3"><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td>Problem?</td><td>Attendance takes 5 min. Moderate.</td></tr><tr><td>Data?</td><td>Biometric data of MINORS. Sensitive.</td></tr><tr><td>Worst case?</td><td>Breach exposes children permanently</td></tr><tr><td>Proportionate?</td><td>QUESTIONABLE. 5 min vs lifetime risk?</td></tr><tr><td>Alternatives?</td><td>QR code, RFID card (no biometric risk)</td></tr></tbody></table><div class="warn-box reveal d4"><p><strong>Verdict:</strong> DISPROPORTIONATE. Simpler alternatives exist with far less risk.</p></div></section>
+
+<section class="slide qa-slide"><span class="slide-number">28</span><h2 class="reveal d1">⏸ Your Turn</h2><p class="reveal d2" style="font-size:28px">Company puts GPS trackers in all employee phones for "route optimization."</p><p class="reveal d3" style="font-size:24px;color:#5c4a1a">Apply 7 questions. Proportionate? Alternatives?</p></section>
+
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">29</span><span class="eyebrow reveal d1">Part 5</span><h2 class="reveal d2" style="font-size:72px">Best Practices</h2></section>
+
+<section class="slide"><span class="slide-number">30</span><span class="eyebrow reveal d1">Personal</span><h3 class="reveal d2">IoT Security Tips</h3><ol class="reveal d3" style="font-size:34px"><li class="step"><strong>Change default passwords</strong> immediately</li><li class="step"><strong>Update firmware</strong> when available</li><li class="step"><strong>Separate WiFi</strong> for IoT devices</li><li class="step"><strong>Disable unused features</strong> (mic, camera)</li><li class="step"><strong>Research before buying:</strong> updates available?</li><li class="step"><strong>Review privacy settings</strong></li></ol></section>
+
+<section class="slide"><span class="slide-number">31</span><span class="eyebrow reveal d1">Organizations</span><h3 class="reveal d2">Org Security Checklist</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Inventory</strong> all IoT devices on network</li><li class="step"><strong>Segment</strong> IoT from main systems</li><li class="step"><strong>Encrypt</strong> data in transit</li><li class="step"><strong>Access control</strong> who manages devices</li><li class="step"><strong>Regular audits</strong> for vulnerabilities</li><li class="step"><strong>Incident plan</strong> for breaches</li><li class="step"><strong>Vendor assessment</strong> security track record</li></ul></section>
+
+<section class="slide dark-slide" style="align-items:center;text-align:center"><span class="slide-number">32</span><span class="eyebrow reveal d1">Rule</span><h2 class="reveal d2" style="max-width:1000px">Good innovation must be:<br><span style="color:var(--gold)">Useful + Safe + Socially Acceptable</span></h2><p class="reveal d3" style="color:rgba(255,255,255,0.6)">Fails any one? Redesign.</p></section>
+
+<section class="slide"><span class="slide-number">33</span><span class="eyebrow reveal d1">BSIS Role</span><h3 class="reveal d2">Your Responsibility</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Design systems that protect users</strong> (privacy by design)</li><li class="step"><strong>Collect only what's needed</strong> (minimization)</li><li class="step"><strong>Build security IN</strong>, not afterthought</li><li class="step"><strong>Advocate for users</strong> when leadership pushes invasive</li><li class="step"><strong>Stay updated</strong> on law and security</li><li class="step"><strong>"Can" ≠ "should"</strong></li></ul></section>
+
+<section class="slide"><span class="slide-number">34</span><span class="eyebrow reveal d1">Summary</span><h3 class="reveal d2">Key Takeaways</h3><ul class="reveal d3"><li class="step">IoT vulnerable: weak passwords, no updates, unencrypted</li><li class="step">Privacy: who owns, accesses, stores data</li><li class="step">RA 10173 protects Filipinos (including IoT data)</li><li class="step">7-question framework evaluates any IoT solution</li><li class="step">Proportionality: does benefit justify risk?</li><li class="step">Good innovation = useful + safe + acceptable</li></ul></section>
+
+<section class="slide dark-slide"><span class="slide-number">35</span><span class="eyebrow reveal d1">Exam</span><h3 class="reveal d2" style="color:var(--gold)">Week 5: Prelim Examination</h3><div class="key-box reveal d3" style="border-left-color:var(--gold);background:rgba(212,160,23,0.1)"><p style="color:rgba(255,255,255,0.9)"><strong>Coverage:</strong> Sessions 1-8 (Weeks 1-4). 50 items. MC + T/F + Short answer.</p><p style="color:rgba(255,255,255,0.7);margin-top:10px">Review: definitions, frameworks, examples, classification, RA 10173.</p></div></section>
+
+<section class="slide"><span class="slide-number">36</span><span class="eyebrow reveal d1">Review Tips</span><h3 class="reveal d2">How to Prepare</h3><ol class="reveal d3" style="font-size:34px"><li class="step">Key definitions: innovation, IS, DX, AI, ML, DL, IoT</li><li class="step">Frameworks: 5 IS components, DIKW, 8 stages, 4 types, 4 layers</li><li class="step">Examples: GCash, Grab, Netflix, Mirai</li><li class="step">Classification exercises</li><li class="step">RA 10173 basics: rights, requirements, penalties</li></ol></section>
+
+<section class="slide hero-slide" style="align-items:center;text-align:center;justify-content:center"><span class="slide-number">37</span><span class="eyebrow reveal d1">End of Prelim Sessions</span><h1 class="reveal d2" style="font-size:90px">Good luck<br>on your exam!</h1><p class="reveal d3" style="color:rgba(255,255,255,0.6)">You learned a lot. Show it next week.</p></section>
+
+<script>
+(function(){
+var scripts={
+1:'<h2>SLIDE 1: Title (1 min)</h2><p>"<span class="b">Last session before your Prelim Exam! Session 8. IoT Risks and Privacy.</span>"</p><p>"Last time we learned what IoT is and how it works. <span class="b">Today: the DARK SIDE. Security threats, privacy problems, Philippine law, and how to evaluate if an IoT solution is actually worth deploying.</span>"</p><p>"<span class="b">Pay attention because this content is 100% on the prelim exam.</span>"</p>',
+2:'<h2>SLIDE 2: Objectives (2 min)</h2><p>"Five goals today. <span class="b">Security threats, privacy concerns, RA 10173, the 7-question evaluation framework, and case analysis.</span>"</p><p>"<span class="b">By the end, you\'ll have a professional tool for evaluating ANY technology project. Dili lang IoT, applicable to everything.</span>"</p>',
+3:'<h2>SLIDE 3: Opening Scenario (3 min)</h2><p>"Scenario: <span class="b">inyong school nag-install ug facial recognition CCTV for attendance.</span> Quick gut reaction: good idea or bad idea?"</p><p class="i">[Let 3-4 students answer quickly, don\'t resolve]</p><p>"<span class="b">Hold that thought. Most of you said good because of convenience. Pero by the end of today, you\'ll think about it differently. I\'ll give you a FRAMEWORK to evaluate properly.</span>"</p>',
+4:'<h2>SLIDE 4: Transition (30 sec)</h2><p>"Part 1: <span class="b">Security threats. Kay daghan kaayo ug IoT devices nga vulnerable. And I mean DAGHAN.</span>"</p>',
+5:'<h2>SLIDE 5: Stats (3 min)</h2><p>"Look at these numbers and let them sink in. <span class="b">600,000 devices hijacked in ONE attack. That\'s one malware, one day. 57% of IoT devices are vulnerable to medium or high severity attacks. And here\'s the scariest: 98% of IoT traffic is UNENCRYPTED.</span>"</p><p>"<span class="b">Meaning: 98% of data from smart devices travels NAKED across the network. Anyone in the same network can read it. Pag imagine: ang conversation sa inyong smart speaker, ang reading sa inyong fitness tracker, ang video sa inyong camera. Potentially readable by hackers.</span>"</p>',
+6:'<h2>SLIDE 6: 5 Threats (5 min)</h2><p>"Top 5 threats. <span class="b">Number 1: Weak passwords.</span> Most IoT devices ship with default credentials. admin/admin. root/root. <span class="b">Ug ang users? Dili mag-change. Ever.</span>"</p><p>"<span class="b">Number 2: Unpatched firmware.</span> Many manufacturers NEVER release updates. Your smart camera bought 2020? <span class="b">Same firmware, same bugs, forever.</span>"</p><p>"<span class="b">Number 3: Data interception.</span> Unencrypted data = anyone on the network can read it. <span class="b">Imagine someone reading your smart home data while sitting in a nearby coffee shop using the same WiFi.</span>"</p><p>"<span class="b">Number 4: DDoS.</span> Hijacked devices used as an army to overwhelm target websites. <span class="b">Your innocent camera becomes a weapon.</span>"</p><p>"<span class="b">Number 5: Physical tampering.</span> Someone physically modifies the device. <span class="b">Changes sensor readings. Makes it report wrong data.</span>"</p>',
+7:'<h2>SLIDE 7: Mirai (4 min)</h2><p class="i">[Step through timeline, build tension]</p><p>"Let me tell you the story of Mirai. <span class="b">2016. A college student created malware that scanned the entire internet for IoT devices with default passwords.</span>"</p><p>"<span class="b">Found 600,000. Cameras, routers, DVRs. All with admin/admin or similar. Took control of ALL of them.</span>"</p><p>"<span class="b">Then used all 600,000 devices simultaneously to attack major websites. Twitter went down. Netflix went down. Reddit, Spotify, Reddit. The ENTIRE east coast of the US lost access to major internet services for hours.</span>"</p><p>"<span class="b">All because of WEAK PASSWORDS on CAMERAS and ROUTERS. One vulnerability, global impact. Let that sink in.</span>"</p>',
+8:'<h2>SLIDE 8: Why Vulnerable (3 min)</h2><p class="i">[Step through each, relatable examples]</p><p>"Why are these devices so easy to hack? <span class="b">First: cheap manufacturing. Adding proper security costs money. Manufacturers cut corners to keep price low.</span>"</p><p>"<span class="b">Second: no update mechanism. Many devices literally CANNOT receive patches. No USB port, no update feature. Stuck forever.</span>"</p><p>"<span class="b">Third: users don\'t change defaults. Kinsa ninyo nag-change sa password sa inyong WiFi router? Honest.</span> (look around) <span class="b">Exactly. Most don\'t.</span>"</p><p>"<span class="b">Fourth: limited computing power. These are tiny devices. Can\'t run antivirus. Can\'t run firewalls. Too small.</span>"</p><p>"<span class="b">And fifth: users don\'t think about it. \'It\'s just a lightbulb, why does it need security?\' Because that lightbulb is connected to your NETWORK. And your network connects to everything else.</span>"</p>',
+9:'<h2>SLIDE 9: Quick Check (2 min)</h2><p>"Common question: <span class="b">\'Sir, wala man koy gi-hide. Why should I care kung ma-hack ang camera ko?\'</span>"</p><p>"Here\'s why: <span class="b">it\'s not just about YOU. An insecure camera can be HIJACKED to attack OTHER systems. Used to spy on your home. Used to join a botnet that takes down hospitals, schools, government websites.</span>"</p><p>"<span class="b">Your insecure device is a LIABILITY to the entire internet. Not just to you.</span>"</p>',
+10:'<h2>SLIDE 10: Privacy Transition (30 sec)</h2><p>"Part 2: <span class="b">Privacy. Ang data collection issue. This is where it gets personal.</span>"</p>',
+11:'<h2>SLIDE 11: 5 Questions (4 min)</h2><p>"Five privacy questions that IoT raises. <span class="b">And for most devices, the answers are NOT in your favor.</span>"</p><p>"<span class="b">Who OWNS the data?</span> When your fitness tracker records your heart rate, <span class="b">is that YOUR data or the company\'s? Usually... the company\'s. Check the terms of service.</span>"</p><p>"<span class="b">Who ACCESSES it?</span> Third parties? Advertisers? Government? <span class="b">You often don\'t know.</span>"</p><p>"<span class="b">How LONG stored?</span> Forever, usually. <span class="b">Indefinite storage = indefinite surveillance potential.</span>"</p><p>"<span class="b">Can you OPT OUT?</span> Many devices won\'t work if you disable data sharing. <span class="b">So no real choice.</span>"</p><p>"<span class="b">What if BREACH?</span> Your sleep patterns, heart rate, when you\'re home, what you watch. <span class="b">All exposed. Permanently.</span>"</p>',
+12:'<h2>SLIDE 12: Device Data (3 min)</h2><p>"Look at what your devices actually collect. <span class="b">Smart speaker: records your voice. Not just commands. Sometimes conversations around it.</span>"</p><p>"<span class="b">Fitness tracker: heart rate 24/7, exactly where you go (GPS), your sleep quality. Insurance companies WOULD LOVE this data.</span>"</p><p>"<span class="b">Smart TV: everything you watch, when, how long. Sold to advertisers. Why do you think smart TVs are so cheap? Because YOU are the product.</span>"</p><p>"<span class="b">Ka-realize ninyo? Daghan kaayo ug data ang companies about you. And you agreed to it in the terms of service you never read.</span>"</p>',
+13:'<h2>SLIDE 13: Dilemma (2 min)</h2><p>"This is the fundamental dilemma. <span class="b">IoT gives convenience. Takes your data. Is the trade worth it?</span>"</p><p>"<span class="b">As users, you decide for yourselves. But as future IS professionals, YOU will be designing these systems. And YOU must decide how much data to collect and what to do with it.</span>"</p><p>"<span class="b">That\'s a professional RESPONSIBILITY.</span>"</p>',
+14:'<h2>SLIDE 14: Wearables Case (4 min)</h2><p>"Case 1: Company requires fitness trackers for all employees. <span class="b">\'Wellness program.\' Sounds good right?</span>"</p><p>"<span class="b">Benefits: health awareness, group challenges, reduced costs, early warnings.</span>"</p><p>"<span class="b">But risks: employer now has your HEALTH DATA. Heart rate. Sleep. Location. What if they use it for hiring decisions? \'Oh, this employee has high stress readings, maybe don\'t promote them.\' What about tracking your location AFTER work hours? \'Why was this employee at a competitor\'s office at 7pm?\'</span>"</p><p>"<span class="b">Would YOU wear a tracker if your future employer required it?</span>"</p>',
+15:'<h2>SLIDE 15: School CCTV (5 min)</h2><p>"Case 2: Remember our opening scenario? <span class="b">Facial recognition in school.</span>"</p><p>"<span class="b">Benefits: saves 5 minutes of attendance, security, evidence. Okay, valid.</span>"</p><p>"<span class="b">But risks: surveillance of MINORS. Biometric data (your face) is PERMANENT. If breached, you can\'t change your face like a password. Stored in a database forever. And facial recognition has higher error rates for darker skin tones. Proven by MIT research.</span>"</p><p>"<span class="b">Key question I want you to remember: Does saving 5 minutes of attendance justify collecting biometric data of children permanently?</span>"</p><p>"<span class="b">When simpler alternatives exist? QR code scan. RFID card tap. Both do the same job, zero biometric risk.</span>"</p>',
+16:'<h2>SLIDE 16: Poll (3 min)</h2><p>"<span class="b">Show of hands now: should schools use facial recognition for attendance?</span>"</p><p class="i">[Count hands both sides. Call 2-3 from each side to explain.]</p><p>"<span class="b">Notice: your answers probably changed from the start of class. THAT\'S the value of proper evaluation. Initial gut reaction vs informed analysis.</span>"</p>',
+17:'<h2>SLIDE 17: Law Transition (30 sec)</h2><p>"Fortunately, <span class="b">the Philippines HAS a law. RA 10173.</span>"</p>',
+18:'<h2>SLIDE 18: RA 10173 (3 min)</h2><p>"Republic Act 10173. Data Privacy Act of 2012. <span class="b">This protects YOUR personal information. Government and private sector. Includes ALL data processing, including IoT.</span>"</p><p>"<span class="b">Meaning: if your IoT system collects personal data of Filipinos, this law applies to you. Violation = real consequences.</span>"</p>',
+19:'<h2>SLIDE 19: Requirements (4 min)</h2><p class="i">[Step through each, emphasize practical implications]</p><p>"What does the law require? <span class="b">Consent: must INFORM and GET PERMISSION before collecting.</span> You can\'t just secretly collect."</p><p>"<span class="b">Purpose limitation: use data ONLY for the stated purpose.</span> Collected for wellness? Can\'t use for hiring decisions."</p><p>"<span class="b">Proportionality: collect ONLY what\'s needed.</span> Need attendance? Collect name + time. Don\'t need biometrics for that."</p><p>"<span class="b">Transparency: tell people WHAT you collect and WHY.</span> No hidden tracking."</p><p>"<span class="b">DPO: organizations must appoint a Data Protection Officer.</span> Someone accountable."</p><p>"<span class="b">Breach notification: if breached, report within 72 hours.</span> Can\'t hide it."</p>',
+20:'<h2>SLIDE 20: Rights (3 min)</h2><p>"<span class="b">You have RIGHTS under this law. As Filipino citizens. Know them.</span>"</p><p>"<span class="b">Right to be informed: know what\'s collected. Right to access: see your data. Right to correct: fix errors. Right to erase: demand deletion. Right to object: stop processing. Right to damages: get compensation if violated.</span>"</p><p>"<span class="b">These are YOUR rights. As students AND as future professionals who must RESPECT these rights for others.</span>"</p>',
+21:'<h2>SLIDE 21: Penalties (2 min)</h2><p>"<span class="b">Violations: up to 5 MILLION pesos fine. Up to 6 YEARS imprisonment.</span> Not theoretical. National Privacy Commission enforces this. <span class="b">Real complaints are filed. Real sanctions are issued.</span>"</p>',
+22:'<h2>SLIDE 22: IoT + Law (3 min)</h2><p>"How does RA 10173 apply to specific IoT scenarios? <span class="b">CCTV in office: must post notice, state purpose, limit how long stored.</span> Employee wearable: <span class="b">must get consent, cannot force participation.</span> Customer tracking in store: <span class="b">must inform, allow opt-out.</span> Student data in LMS: <span class="b">must protect, limit access, delete when semester ends.</span>"</p><p>"<span class="b">As future IS professionals, these will be YOUR responsibilities to implement correctly.</span>"</p>',
+23:'<h2>SLIDE 23: Legal Check (2 min)</h2><p>"Mall tracks WiFi without telling anyone. <span class="b">Legal? NO. Violates right to be informed, consent, transparency. Must disclose tracking.</span>"</p><p>"<span class="b">Simple test: would the person be surprised or uncomfortable if they knew? If yes, you probably need to inform and get consent.</span>"</p>',
+24:'<h2>SLIDE 24: Evaluation Transition (30 sec)</h2><p>"Part 4: <span class="b">The 7-question framework. This is the TOOL you\'ll use for the rest of your career. Memorize it.</span>"</p>',
+25:'<h2>SLIDE 25: 7 Questions (5 min)</h2><p class="i">[Step through each, emphasize this is exam material]</p><p>"Seven questions to evaluate ANY IoT solution. Or actually, any technology solution. <span class="b">Write these down.</span>"</p><p>"<span class="b">1. Is the problem REAL and significant?</span> Not invented."</p><p>"<span class="b">2. Who BENEFITS?</span> Users, company, or both? If only company benefits and users bear risk, red flag."</p><p>"<span class="b">3. What DATA is collected?</span> Is it the minimum necessary? Or collecting everything \'just in case\'?"</p><p>"<span class="b">4. Security measures?</span> Encryption? Updates? Access control?"</p><p>"<span class="b">5. What could go WRONG?</span> Worst case scenario?"</p><p>"<span class="b">6. PROPORTIONATE?</span> Does the benefit justify the risk? This is the KEY question."</p><p>"<span class="b">7. User CONTROL?</span> Can they opt out? Request deletion? Know what\'s collected?"</p>',
+26:'<h2>SLIDE 26: Good Case (3 min)</h2><p>"Let\'s apply it to a GOOD case. Flood sensors for a barangay. <span class="b">Problem: flooding kills people. REAL and significant. Benefits: residents AND LGU. Data: water level only. No personal data at all. Security risk: low because no personal info. Proportionate: ABSOLUTELY. Saves lives, zero privacy cost.</span>"</p><p>"<span class="b">Verdict: DEPLOY. This is what good IoT looks like. Clear problem, proportionate solution, minimal risk.</span>"</p>',
+27:'<h2>SLIDE 27: Bad Case (4 min)</h2><p>"Now the BAD case. Facial recognition attendance. <span class="b">Problem: attendance takes 5 minutes. Moderate inconvenience at best. Data: BIOMETRIC data of MINORS. The most sensitive category. Worst case: breach exposes children\'s face data PERMANENTLY. Can\'t change your face. Proportionate? Saving 5 minutes vs LIFETIME biometric risk?</span>"</p><p>"<span class="b">And alternatives exist! QR code. RFID card. Same function, zero biometric risk.</span>"</p><p>"<span class="b">Verdict: DISPROPORTIONATE. Don\'t deploy. Use simpler alternatives.</span>"</p><p>"<span class="b">See how the framework gives you a structured, defensible answer? Not just \'I feel like it\'s bad.\' But WHY and compared to WHAT.</span>"</p>',
+28:'<h2>SLIDE 28: Activity (5 min)</h2><p>"Your turn. <span class="b">Company puts GPS in all employee phones for \'route optimization.\'</span>"</p><p>"Apply the 7 questions. Think for 3 minutes, then discuss."</p><p class="i">[After 3 min, take answers]</p><p>"<span class="b">Key issues: is personal phone or company phone? 24/7 or only work hours? Can they opt out? Alternative: GPS only in company VEHICLES, not personal phones. Proportionate? Probably not for personal phones.</span>"</p>',
+29:'<h2>SLIDE 29: Best Practices (30 sec)</h2><p>"<span class="b">So what do we DO about these risks? Practical advice.</span>"</p>',
+30:'<h2>SLIDE 30: Personal Tips (3 min)</h2><p class="i">[Step through, make it actionable]</p><p>"For you personally, starting TODAY: <span class="b">Change default passwords on your router. Right now it\'s probably admin/admin or something similar. Change it tonight.</span>"</p><p>"<span class="b">Update firmware when available. Separate WiFi for IoT (if router supports guest network, use it for smart devices). Disable features you don\'t use (that microphone on a device you never voice-command). Research before buying: does the manufacturer provide updates?</span>"</p>',
+31:'<h2>SLIDE 31: Org Checklist (3 min)</h2><p>"For organizations (this is your future work): <span class="b">Inventory ALL IoT devices. Many companies don\'t even know what\'s connected. Segment the network. Encrypt. Control access. Audit regularly. Have an incident plan. Assess vendors.</span>"</p>',
+32:'<h2>SLIDE 32: Golden Rule (2 min)</h2><p>"Remember this forever: <span class="b">Good innovation must be USEFUL + SAFE + SOCIALLY ACCEPTABLE. Fails any one? Redesign.</span>"</p><p>"<span class="b">\'Just because we CAN build it doesn\'t mean we SHOULD.\' That applies to surveillance, to data collection, to any system that affects people.</span>"</p>',
+33:'<h2>SLIDE 33: BSIS Role (3 min)</h2><p class="i">[Step through, this is their professional identity]</p><p>"As future IS professionals, <span class="b">you are the GATEKEEPERS. You design systems. You decide what data to collect. You write the security requirements. You choose whether to advocate for users or just do what management says.</span>"</p><p>"<span class="b">Privacy by design means BUILDING protection in from day one, not adding it later. Data minimization means collecting ONLY what\'s needed, not \'everything just in case.\'</span>"</p><p>"<span class="b">\'Can does not mean should.\' Make that your professional compass.</span>"</p>',
+34:'<h2>SLIDE 34: Summary (3 min)</h2><p>"<span class="b">Six takeaways: IoT is vulnerable. Privacy is at risk. RA 10173 protects us. 7-question framework evaluates solutions. Proportionality is the key question. You build ethical systems.</span>"</p>',
+35:'<h2>SLIDE 35: Exam Info (3 min)</h2><p>"<span class="b">Week 5: Prelim Exam! Coverage: Sessions 1 through 8. Everything from innovation to IoT privacy.</span>"</p><p>"<span class="b">50 items: multiple choice, true/false, short answer. Review all definitions, all frameworks, all major examples, RA 10173 basics.</span>"</p><p>"<span class="b">If you attended all sessions and took notes, you\'re 80% ready. The other 20% is reviewing and connecting concepts.</span>"</p>',
+36:'<h2>SLIDE 36: Review Tips (2 min)</h2><p>"<span class="b">How to prepare: review definitions. Know frameworks by HEART (5 IS components, DIKW, 8 innovation stages, 4 innovation types, 4 IoT layers, 7 evaluation questions). Practice classifying examples. Know RA 10173 rights and requirements.</span>"</p><p>"<span class="b">Pro tip: if you can explain each concept to a friend in your own words, you\'re ready.</span>"</p>',
+37:'<h2>SLIDE 37: Closing (1 min)</h2><p>"<span class="b">This was our last content session before the exam. You\'ve learned A LOT in 4 weeks. Innovation, IS, digital transformation, AI, generative AI, IoT, security, privacy, law.</span>"</p><p>"<span class="b">I\'m proud of the work we\'ve done together. Show what you know next week.</span>"</p><p>"<span class="b">Good luck! Study well. Salamat, class! See you at the exam!</span>"</p>'
+};
+var scriptWindow=null;function getScriptHTML(n){return'<div class="active-script">'+(scripts[n]||'<p>No script.</p>')+'</div>'}
+function buildPage(n){return'<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Script W4S8</title><style>*{box-sizing:border-box}body{font-family:Segoe UI,system-ui,sans-serif;margin:0;padding:0;background:#111;color:#e8e5e0;line-height:1.85;font-size:15px}.header{position:sticky;top:0;background:#1a1a1a;border-bottom:2px solid #333;padding:16px 32px;z-index:10;display:flex;justify-content:space-between;align-items:center}.header h1{color:#d4a017;font-size:1.1rem;margin:0}.slide-indicator{background:#c0392b;color:white;padding:6px 16px;border-radius:99px;font-size:13px;font-weight:700}.content{padding:24px 32px 60px}h2{color:#c0392b;font-size:1.2rem;margin-top:28px;margin-bottom:10px}p{margin-bottom:14px;max-width:68ch}.b{color:#90caf9;font-style:italic}.i{color:#ffd54f;font-weight:600}.active-script{animation:fadeIn .3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style></head><body><div class="header"><h1>Script: W4S8 IoT Risks</h1><div class="slide-indicator">Slide '+n+' / 37</div></div><div class="content">'+getScriptHTML(n)+'</div></body></html>'}
+function updateScript(n){if(scriptWindow&&!scriptWindow.closed){scriptWindow.document.open();scriptWindow.document.write(buildPage(n));scriptWindow.document.close()}}
+var lastSlide=0;function poll(){var n=1;try{var h=window.location.hash;if(h&&h.indexOf('slide-')!==-1)n=parseInt(h.replace('#slide-',''))||1}catch(e){}if(n!==lastSlide){lastSlide=n;updateScript(n)}requestAnimationFrame(poll)}
+window.addEventListener('hashchange',function(){var h=window.location.hash;if(h&&h.indexOf('slide-')!==-1)updateScript(parseInt(h.replace('#slide-',''))||1)});
+document.addEventListener('keydown',function(e){if((e.key==='t'||e.key==='T')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){var tag=(e.target||document.activeElement).tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;e.preventDefault();e.stopPropagation();scriptWindow=window.open('','ScriptW4S8','width=720,height=900,scrollbars=yes,resizable=yes');if(scriptWindow){var n=1;try{var h=window.location.hash;if(h&&h.indexOf('slide-')!==-1)n=parseInt(h.replace('#slide-',''))||1}catch(ex){}scriptWindow.document.open();scriptWindow.document.write(buildPage(n));scriptWindow.document.close()}setTimeout(poll,500)}});
+setTimeout(poll,1000);
+})();
+</script>
+</body>
+</html>

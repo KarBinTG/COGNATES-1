@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chassis -->
+<style>
+/* =====================================================
+   PRESENTATION CHASSIS — style-invariant base styles
+   Fixed 1920×1080 canvas scaled to fit any viewport.
+   Customize colors, fonts, and chrome via :root tokens.
+   ===================================================== */
+
+/* ---------- Universal reset ---------- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ---------- Theme tokens (override in your deck's CSS) ---------- */
+:root {
+    color-scheme: light;
+
+    --background:      #ffffff;
+    --foreground:      #111111;
+    --card:            #f5f5f5;
+    --card-foreground: var(--foreground);
+    --accent:          #c94a3d;
+    --accent-foreground: #ffffff;
+
+    --muted-foreground: color-mix(in srgb, var(--foreground) 55%, transparent);
+    --border:           color-mix(in srgb, var(--foreground) 12%, transparent);
+
+    --font-display: Georgia, serif;
+    --font-body: -apple-system, system-ui, sans-serif;
+    --font-mono: ui-monospace, monospace;
+
+    /* Reveal animation */
+    --reveal-duration: 0.8s;
+    --reveal-ease:     cubic-bezier(0.16, 1, 0.3, 1);
+    --reveal-distance: 28px;
+
+    /* Chrome (nav dots, keyboard hint) */
+    --nav-dot-size: 9px;
+    --nav-dot-radius: 50%;
+    --nav-dot-color: var(--foreground);
+    --nav-dot-active-color: var(--accent);
+    --nav-dot-opacity: 0.4;
+}
+
+/* ---------- Viewport lock + scroll snap ---------- */
+html, body { height: 100%; overflow-x: hidden; }
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+/* ---------- Type scale ----------
+   Fixed px sizes on a 1920×1080 canvas. The canvas is scaled to fit
+   any viewport via transform, so these sizes are absolute within the
+   design surface — no responsive units needed. */
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 36px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1 { font-size: 120px; line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-size: 64px; line-height: 1.1; letter-spacing: -0.01em; }
+h3 { font-size: 44px; line-height: 1.2; }
+.eyebrow {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+ul, ol { padding-left: 48px; display: flex; flex-direction: column; gap: 24px; }
+li::marker { color: var(--accent); }
+
+/* ---------- Slide structure ----------
+   .slide is the authored 1920×1080 artboard.
+   The chassis wraps it in viewport + scale layers at runtime. */
+.slide-viewport {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: block;
+    position: relative;
+    background: var(--background);
+    isolation: isolate;
+    z-index: 1;
+}
+
+.slide-scale {
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
+    transform-origin: center center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+}
+
+.slide {
+    width: 1920px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 60px;
+    position: relative;
+    background: transparent;
+}
+
+
+/* ---------- Image defaults ---------- */
+img, .image-container {
+    max-width: 100%;
+    max-height: 540px;
+    object-fit: contain;
+}
+
+/* ---------- Reveal primitives ----------
+   Driven by chassis.js via the Web Animations API, not CSS transitions.
+   Put .reveal* or .step on ANY element — author CSS on the same element
+   (opacity, transform, transition, filter) never conflicts, because
+   WAAPI animations live in the animation cascade origin and win over
+   normal author declarations. The .dN stagger classes below still apply
+   to theme-authored CSS animations via animation-delay.
+
+   Variants: .reveal (fade + up), .reveal-left, .reveal-right,
+   .reveal-scale, .reveal-blur. .step stays hidden until the user
+   advances forward. Don't combine .step with .reveal* on the same
+   element. */
+
+/* FOUC guard: hide reveals until chassis.js marks the document ready. */
+:root:not(.reveals-ready) .reveal,
+:root:not(.reveals-ready) .reveal-left,
+:root:not(.reveals-ready) .reveal-right,
+:root:not(.reveals-ready) .reveal-scale,
+:root:not(.reveals-ready) .reveal-blur,
+:root:not(.reveals-ready) .step {
+    opacity: 0;
+}
+:root:not(.reveals-ready) .reveal-blur { filter: blur(10px); }
+
+/* ---------- Stagger delays (.d1 … .d8) ---------- */
+.slide.visible .d1 { transition-delay: 0.10s; animation-delay: 0.10s; }
+.slide.visible .d2 { transition-delay: 0.25s; animation-delay: 0.25s; }
+.slide.visible .d3 { transition-delay: 0.40s; animation-delay: 0.40s; }
+.slide.visible .d4 { transition-delay: 0.55s; animation-delay: 0.55s; }
+.slide.visible .d5 { transition-delay: 0.70s; animation-delay: 0.70s; }
+.slide.visible .d6 { transition-delay: 0.85s; animation-delay: 0.85s; }
+.slide.visible .d7 { transition-delay: 1.00s; animation-delay: 1.00s; }
+.slide.visible .d8 { transition-delay: 1.15s; animation-delay: 1.15s; }
+
+/* ---------- Nav dots ----------
+   Default: right-center (vertical stack on right edge).
+   Override with <body data-nav="bottom | top-right | hidden">. */
+.nav-dots {
+    position: fixed;
+    right: clamp(0.6rem, 1.5vw, 1.4rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1vh, 0.8rem);
+    z-index: 50;
+}
+
+body[data-nav="bottom"] .nav-dots {
+    right: auto;
+    top: auto;
+    bottom: clamp(1rem, 2.5vh, 2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+}
+
+body[data-nav="top-right"] .nav-dots {
+    right: clamp(1rem, 2.5vw, 2rem);
+    top: clamp(1rem, 2.5vh, 2rem);
+    transform: none;
+    flex-direction: row;
+}
+
+body[data-nav="hidden"] .nav-dots { display: none; }
+
+body[data-nav="bottom"] .keyboard-hint {
+    left: clamp(1rem, 2vw, 1.5rem);
+    transform: none;
+}
+
+.nav-dots button {
+    width: var(--nav-dot-size);
+    height: var(--nav-dot-size);
+    border-radius: var(--nav-dot-radius);
+    border: 1.5px solid var(--nav-dot-color);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    opacity: var(--nav-dot-opacity);
+}
+.nav-dots button:hover { opacity: 0.85; transform: scale(1.15); }
+.nav-dots button:focus-visible {
+    outline: 2px solid var(--nav-dot-active-color);
+    outline-offset: 3px;
+    opacity: 1;
+}
+.nav-dots button.active {
+    background: var(--nav-dot-active-color);
+    border-color: var(--nav-dot-active-color);
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* ---------- Keyboard hint ---------- */
+.keyboard-hint {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.keyboard-hint kbd {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9em;
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--background);
+    margin: 0 0.15em;
+}
+
+/* ---------- Credit line ---------- */
+.chassis-credit {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: clamp(1rem, 2vw, 1.5rem);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    letter-spacing: 0.02em;
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.chassis-credit .chassis-credit-emoji {
+    font-style: normal;
+    margin: 0 0.15em;
+}
+
+body[data-nav="bottom"] .chassis-credit {
+    left: auto;
+    right: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ---------- Custom cursor ---------- */
+.chassis-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: var(--accent);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    will-change: transform;
+}
+.chassis-cursor.visible { opacity: 1; }
+body.artifact-editor-editing .chassis-cursor { display: none; }
+
+@media (hover: none) {
+    .chassis-cursor { display: none; }
+}
+
+body.chassis-cursor-active:not(.artifact-editor-editing),
+body.chassis-cursor-active:not(.artifact-editor-editing) * { cursor: none; }
+
+/* ---------- Opt-outs ---------- */
+body[data-no-chrome] .nav-dots,
+body[data-no-chrome] .keyboard-hint,
+body[data-no-chrome] .chassis-credit,
+body[data-no-chrome] .chassis-cursor,
+body[data-no-chrome] .artifact-editor-toggle { display: none; }
+
+:fullscreen .keyboard-hint,
+:fullscreen .chassis-credit,
+:fullscreen .artifact-editor-toggle { display: none; }
+
+@media (hover: none) {
+    .keyboard-hint,
+    .chassis-credit { display: none; }
+}
+
+@media (max-width: 900px), (max-height: 560px) {
+    .nav-dots,
+    .keyboard-hint,
+    .chassis-credit,
+    .chassis-cursor { display: none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+/* ---------- Print (PDF export) ---------- */
+@media print {
+    .nav-dots, .keyboard-hint, .chassis-credit, .chassis-cursor { display: none !important; }
+    html, body { height: auto; overflow: visible; }
+    html { scroll-snap-type: none; }
+    .slide-viewport {
+        page-break-after: always;
+        break-after: page;
+        height: 100vh;
+    }
+    .slide-scale {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    .slide {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+</style>
+<script>
+/* =====================================================
+   PRESENTATION CHASSIS — slide controller
+   Auto-initializes on DOMContentLoaded.
+   Exposes window.slides for programmatic control.
+   ===================================================== */
+(function () {
+    'use strict';
+
+    const REVEAL_SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur';
+    const STEP_SELECTOR = '.step';
+    const ALL_REVEAL_SELECTOR = REVEAL_SELECTOR + ', ' + STEP_SELECTOR;
+    const VIEWPORT_CLASS = 'slide-viewport';
+    const SCALE_CLASS = 'slide-scale';
+
+    function _detectLang() {
+        const param = new URLSearchParams(location.search).get('lang');
+        return (param || navigator.language || 'en').slice(0, 2).toLowerCase();
+    }
+
+    class SlidePresentation {
+        constructor() {
+            this.slides = Array.from(document.querySelectorAll('.slide'));
+            if (this.slides.length === 0) return;
+
+            // Ensure every slide has an id so hashes + anchor links work.
+            // Author-defined ids are preserved; the rest get slide-N (1-indexed).
+            this.slides.forEach((slide, idx) => {
+                if (!slide.id) slide.id = `slide-${idx + 1}`;
+            });
+            this.viewports = this._setupViewports();
+            this.scales = this.viewports.map((viewport) => viewport.querySelector(`.${SCALE_CLASS}`));
+
+            // Hide every reveal element BEFORE lifting the CSS FOUC guard.
+            // After this, .reveals-ready is on <html>, so CSS no longer hides
+            // reveals — inline styles keep them hidden until JS animates them.
+            this._setupReveals();
+
+            this.navDotsContainer = this._ensureNavDots();
+            this.keyboardHint = this._ensureKeyboardHint();
+            this.credit = this._ensureCredit();
+
+            this._setupCanvasScale();
+            this._setupIntersectionObserver();
+            this._setupKeyboardNav();
+            this._setupWheelNav();
+            this._setupTouchNav();
+            this._setupViewportSync();
+            this._buildNavDots();
+            this._setupHashNav();
+            this._setupCursor();
+            this._setupPrintSettling();
+
+            // If URL has a matching hash, start there; otherwise start at slide 0.
+            const initial = this._slideIndexFromHash(location.hash);
+            this.currentSlide = initial >= 0 ? initial : 0;
+            if (this.currentSlide !== 0) {
+                this._scrollToSlide(this.currentSlide, 'auto');
+            }
+            // Reveal initial slide immediately (observer may miss it on load).
+            const first = this.slides[this.currentSlide];
+            first.classList.add('visible');
+            this._playSlideReveals(first);
+            this._updateNavDots();
+        }
+
+        /* ---------- Viewport scaffolding ----------
+           Authors write .slide as the 1920×1080 artboard. The chassis wraps
+           that authored section in viewport and scale layers. */
+        _setupViewports() {
+            return this.slides.map((slide) => {
+                const existingScale = slide.parentElement?.classList.contains(SCALE_CLASS)
+                    ? slide.parentElement
+                    : null;
+                const existingViewport = existingScale?.parentElement?.classList.contains(VIEWPORT_CLASS)
+                    ? existingScale.parentElement
+                    : null;
+                if (existingViewport) {
+                    this._syncViewportBackground(slide, existingViewport);
+                    return existingViewport;
+                }
+
+                const viewport = document.createElement('div');
+                viewport.className = VIEWPORT_CLASS;
+                const scale = document.createElement('div');
+                scale.className = SCALE_CLASS;
+
+                slide.parentNode.insertBefore(viewport, slide);
+                viewport.appendChild(scale);
+                scale.appendChild(slide);
+                this._syncViewportBackground(slide, viewport);
+
+                return viewport;
+            });
+        }
+
+        _syncViewportBackground(slide, viewport) {
+            const style = getComputedStyle(slide);
+            const hasBackgroundImage = style.backgroundImage && style.backgroundImage !== 'none';
+            const hasBackgroundColor = !['rgba(0, 0, 0, 0)', 'transparent'].includes(style.backgroundColor);
+            if (hasBackgroundImage || hasBackgroundColor) {
+                viewport.style.background = style.background;
+            } else {
+                viewport.style.background = '';
+            }
+            slide.style.background = 'transparent';
+        }
+
+        /* ---------- DOM scaffolding (auto-inserted if missing) ---------- */
+        _ensureNavDots() {
+            let el = document.getElementById('navDots');
+            if (!el) {
+                el = document.createElement('nav');
+                el.id = 'navDots';
+                el.className = 'nav-dots';
+                el.setAttribute('aria-label', 'Slide navigation');
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureKeyboardHint() {
+            let el = document.querySelector('.keyboard-hint');
+            if (!el) {
+                const i18n = {
+                    en: { navigate: 'navigate', restart: 'restart', fullscreen: 'fullscreen' },
+                    es: { navigate: 'navegar',   restart: 'inicio',   fullscreen: 'fullscreen' },
+                    fr: { navigate: 'naviguer',  restart: 'début',    fullscreen: 'fullscreen' },
+                    de: { navigate: 'blättern',  restart: 'anfang',   fullscreen: 'vollbild' },
+                    pt: { navigate: 'navegar',   restart: 'início',   fullscreen: 'fullscreen' },
+                    ja: { navigate: '移動',      restart: '先頭',      fullscreen: '全画面' },
+                    ko: { navigate: '이동',      restart: '처음',      fullscreen: '전체화면' },
+                    zh: { navigate: '翻页',      restart: '重置',      fullscreen: '全屏' },
+                    it: { navigate: 'navigare',  restart: 'inizio',   fullscreen: 'fullscreen' },
+                    nl: { navigate: 'bladeren',  restart: 'begin',    fullscreen: 'vollscherm' },
+                };
+                const t = i18n[_detectLang()] || i18n.en;
+                el = document.createElement('div');
+                el.className = 'keyboard-hint';
+                el.innerHTML = `<kbd>←</kbd> <kbd>→</kbd> ${t.navigate} &middot; <kbd>R</kbd> ${t.restart} &middot; <kbd>F</kbd> ${t.fullscreen}`;
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureCredit() {
+            let el = document.querySelector('.chassis-credit');
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'chassis-credit';
+                el.setAttribute('aria-hidden', 'true');
+                el.innerHTML = 'KarBin the Great';
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        /* ---------- Reveal engine ----------
+           Reveals are driven by the Web Animations API instead of CSS
+           transitions. This lets authors put .reveal* / .step on any
+           element: animation values live in the animation cascade origin
+           and win over normal author declarations, so no wrapper element
+           is required to isolate the chassis from author CSS.
+
+           State per slide:
+           - "hidden":  inline opacity/transform/filter from the 'from'
+                        keyframe of the variant. Set on init and on
+                        forward re-entry.
+           - "played":  animation is running or has run; the class
+                        `reveals-played` on the slide makes playback
+                        idempotent so observer re-fires (resize,
+                        fullscreen) don't restart the animation.
+           - "settled": animation canceled, inline styles cleared. Used
+                        for backward entries (we skip the animation and
+                        show the final state instantly) and for print. */
+
+        _setupReveals() {
+            // Lift the CSS FOUC guard first so getComputedStyle reads each
+            // element's natural opacity, not the guard's blanket opacity: 0.
+            // No paint occurs mid-task — inline hidden styles are applied
+            // before the browser yields, so there is no visible flash.
+            document.documentElement.classList.add('reveals-ready');
+            this.slides.forEach((slide) => {
+                slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                    el._targetOpacity = parseFloat(getComputedStyle(el).opacity);
+                    this._applyHiddenStyle(el);
+                });
+            });
+        }
+
+        _setupPrintSettling() {
+            // Browsers snapshot the document for print/PDF export. WAAPI
+            // animations don't necessarily complete in that snapshot, so
+            // settle every slide to its final state first. After printing,
+            // reset — but only for slides that haven't already been viewed,
+            // so the audience experience picks up where it left off.
+            window.addEventListener('beforeprint', () => {
+                this.slides.forEach((slide) => this._settleSlide(slide));
+            });
+        }
+
+        _readTokens() {
+            const cs = getComputedStyle(document.documentElement);
+            const rawDuration = parseFloat(cs.getPropertyValue('--reveal-duration'));
+            const duration = Number.isFinite(rawDuration) ? rawDuration * 1000 : 800;
+            const ease = cs.getPropertyValue('--reveal-ease').trim() || 'cubic-bezier(0.16, 1, 0.3, 1)';
+            const distance = cs.getPropertyValue('--reveal-distance').trim() || '28px';
+            const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            return {
+                duration: reducedMotion ? 1 : duration,
+                ease,
+                distance,
+            };
+        }
+
+        _getRevealDelay(el) {
+            // Use getAttribute('class') rather than el.className: on SVG
+            // elements, `.className` is an SVGAnimatedString (not a string)
+            // and calling .match on it throws. getAttribute is uniform
+            // across HTML and SVG.
+            const classes = el.getAttribute('class') || '';
+            const m = classes.match(/\bd([1-8])\b/);
+            if (!m) return 0;
+            // Matches CSS .dN: d1 = 100ms, d2 = 250ms, +150ms per step.
+            return 100 + (parseInt(m[1], 10) - 1) * 150;
+        }
+
+        _getRevealKeyframes(el, distance) {
+            const to = el._targetOpacity ?? 1;
+            if (el.classList.contains('reveal-left')) {
+                return [
+                    { opacity: 0, transform: `translateX(calc(-1 * ${distance}))` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-right')) {
+                return [
+                    { opacity: 0, transform: `translateX(${distance})` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-scale')) {
+                return [
+                    { opacity: 0, transform: 'scale(0.88)' },
+                    { opacity: to, transform: 'scale(1)' },
+                ];
+            }
+            if (el.classList.contains('reveal-blur')) {
+                return [
+                    { opacity: 0, filter: 'blur(10px)' },
+                    { opacity: to, filter: 'blur(0)' },
+                ];
+            }
+            // Default: .reveal or .step (slide up + fade)
+            return [
+                { opacity: 0, transform: `translateY(${distance})` },
+                { opacity: to, transform: 'translateY(0)' },
+            ];
+        }
+
+        _applyHiddenStyle(el) {
+            const { distance } = this._readTokens();
+            const from = this._getRevealKeyframes(el, distance)[0];
+            if ('opacity' in from) el.style.opacity = from.opacity;
+            if ('transform' in from) el.style.transform = from.transform;
+            if ('filter' in from) el.style.filter = from.filter;
+        }
+
+        _clearHiddenStyle(el) {
+            el.style.opacity = '';
+            el.style.transform = '';
+            el.style.filter = '';
+        }
+
+        _cancelReveal(el) {
+            if (el._revealAnim) {
+                el._revealAnim.cancel();
+                el._revealAnim = null;
+            }
+        }
+
+        _playReveal(el, delayOverride) {
+            this._cancelReveal(el);
+            const { duration, ease, distance } = this._readTokens();
+            const delay = typeof delayOverride === 'number' ? delayOverride : this._getRevealDelay(el);
+            const keyframes = this._getRevealKeyframes(el, distance);
+            // fill: 'backwards' applies the 'from' keyframe during the
+            // stagger delay so the element stays hidden until its turn,
+            // without pinning the 'to' keyframe after the animation ends.
+            // This lets co-existing author CSS (e.g. a `.pulse` CSS
+            // animation on the same element) take over naturally once the
+            // entrance completes — otherwise our fill would mask anything
+            // the author wanted to happen post-reveal.
+            const anim = el.animate(keyframes, {
+                duration,
+                delay,
+                easing: ease,
+                fill: 'backwards',
+            });
+            el._revealAnim = anim;
+            // Safe to clear inline 'from' styles now — the animation's
+            // backwards-fill holds the element at the 'from' keyframe for
+            // the duration of any stagger delay.
+            this._clearHiddenStyle(el);
+        }
+
+        _playSlideReveals(slide) {
+            if (slide.classList.contains('reveals-played')) return;
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => this._playReveal(el));
+            // .step elements stay hidden until the user advances.
+        }
+
+        _resetSlideReveals(slide) {
+            // Forward re-entry: cancel in-flight animations, re-hide
+            // everything, and reset step state so the slide replays cleanly
+            // when the observer next adds .visible.
+            slide.classList.remove('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step.step-shown').forEach((el) => el.classList.remove('step-shown'));
+        }
+
+        _settleSlide(slide) {
+            // Print / PDF export: jump to the final state with everything
+            // shown, so every step appears in the exported document.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => el.classList.add('step-shown'));
+        }
+
+        _rewindSlide(slide) {
+            // Backward re-entry: show reveals instantly (no replay — the
+            // viewer already saw the intro) but hide every step, so the
+            // slide is positioned at the start of its stepped content and
+            // can be stepped through again.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => {
+                el.classList.remove('step-shown');
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+        }
+
+        /* ---------- Navigation ----------
+           goTo scrolls to the target. Both forward-replay and backward-
+           rewind need to mutate the target BEFORE scrolling — while it's
+           still offscreen — so the viewer never sees the old state flash
+           into view. Resetting after the slide is in view causes a visible
+           "show then hide" blink; the IntersectionObserver fires too late
+           (80% threshold) to catch it. */
+        goTo(index) {
+            const clamped = Math.max(0, Math.min(this.slides.length - 1, index));
+            if (clamped === this.currentSlide) return;
+
+            const target = this.slides[clamped];
+            const goingForward = clamped > this.currentSlide;
+
+            if (target.classList.contains('visible')) {
+                if (goingForward) {
+                    // Forward replay: full reset so the observer can play reveals fresh.
+                    target.classList.remove('visible');
+                    this._resetSlideReveals(target);
+                } else {
+                    // Backward rewind: hide any shown steps so the slide
+                    // scrolls back in at the start of its stepped content.
+                    this._rewindSlide(target);
+                }
+            }
+
+            this._scrollToSlide(clamped, 'smooth');
+        }
+
+        _scrollToSlide(index, behavior) {
+            this.viewports[index]?.scrollIntoView({ behavior, block: 'start' });
+        }
+
+        _slideIndexFromHash(hash) {
+            if (!hash) return -1;
+            return this.slides.findIndex((s) => '#' + s.id === hash);
+        }
+
+        _syncHash() {
+            const slide = this.slides[this.currentSlide];
+            if (!slide || !slide.id) return;
+            const newHash = '#' + slide.id;
+            if (location.hash !== newHash) {
+                // replaceState — keeps the URL in sync without polluting history,
+                // so the browser back button exits the deck instead of stepping through slides.
+                try {
+                    history.replaceState(null, '', newHash);
+                } catch {
+                    // Sandboxed iframes (opaque origin, about:srcdoc) reject URL
+                    // mutation with a SecurityError. Hash sync is a nicety — an
+                    // unguarded throw here kills the observer callback before it
+                    // marks the slide visible and plays its reveals.
+                }
+            }
+        }
+
+        _setupHashNav() {
+            // React to external hash changes (anchor link clicks, back/forward if user uses pushState manually)
+            window.addEventListener('hashchange', () => {
+                const idx = this._slideIndexFromHash(location.hash);
+                if (idx >= 0 && idx !== this.currentSlide) this.goTo(idx);
+            });
+        }
+
+        /* ---------- Custom cursor ----------
+           Accent disc that follows the pointer, hidden after idle. */
+        _setupCursor() {
+            if (!matchMedia('(hover: hover)').matches) return;
+
+            const cursor = document.createElement('div');
+            cursor.className = 'chassis-cursor';
+            cursor.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(cursor);
+            document.body.classList.add('chassis-cursor-active');
+
+            const half = 16;  // matches width/height / 2 in CSS
+            const IDLE_MS = 2500;
+            let idleTimer = null;
+
+            const show = () => {
+                cursor.classList.add('visible');
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    cursor.classList.remove('visible');
+                }, IDLE_MS);
+            };
+            const hide = () => {
+                clearTimeout(idleTimer);
+                cursor.classList.remove('visible');
+            };
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate3d(${e.clientX - half}px, ${e.clientY - half}px, 0)`;
+                show();
+            });
+            document.addEventListener('mouseleave', hide);
+            document.addEventListener('mouseenter', show);
+        }
+
+        /* ---------- Fullscreen ---------- */
+        toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen?.().catch(() => {});
+            } else {
+                document.exitFullscreen?.();
+            }
+        }
+
+        next() { this.goTo(this.currentSlide + 1); }
+        prev() { this.goTo(this.currentSlide - 1); }
+        first() { this.goTo(0); }
+        last() { this.goTo(this.slides.length - 1); }
+
+        /* ---------- Step-aware advance / retreat ----------
+           advance() reveals the next .step on the current slide (if any),
+           otherwise advances to the next slide. retreat() hides the last
+           revealed step, otherwise goes back to the previous slide. */
+        advance() {
+            const current = this.slides[this.currentSlide];
+            const nextStep = current?.querySelector('.step:not(.step-shown)');
+            if (nextStep) {
+                nextStep.classList.add('step-shown');
+                // No stagger on click-reveal — the user's gesture is the trigger.
+                this._playReveal(nextStep, 0);
+                return;
+            }
+            this.next();
+        }
+        retreat() {
+            const current = this.slides[this.currentSlide];
+            const shown = current?.querySelectorAll('.step.step-shown');
+            if (shown && shown.length > 0) {
+                const last = shown[shown.length - 1];
+                last.classList.remove('step-shown');
+                this._cancelReveal(last);
+                this._applyHiddenStyle(last);
+                return;
+            }
+            this.prev();
+        }
+
+        /* ---------- Intersection observer ----------
+           Fire late (>= 80% in view) so reveals play on a settled slide.
+           This is the single source of truth for active-slide state.
+
+           Forward:  add .visible, play reveals. (goTo() has already reset
+                     the target to pre-reveal state if this is a re-visit,
+                     so the animation is fresh either way.)
+           Backward: add .visible, rewind to the start of the stepped
+                     content — reveals are shown instantly (no replay) and
+                     every step is hidden again so the viewer can step
+                     through it fresh. */
+        _setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const idx = this.viewports.indexOf(entry.target);
+                    if (idx < 0) return;
+                    const slide = this.slides[idx];
+
+                    if (idx === this.currentSlide) {
+                        // Same-slide re-fire (initial load, resize, fullscreen).
+                        if (!slide.classList.contains('visible')) {
+                            slide.classList.add('visible');
+                        }
+                        // Idempotent: only plays if not already marked played.
+                        this._playSlideReveals(slide);
+                        return;
+                    }
+
+                    const goingForward = idx > this.currentSlide;
+                    this.currentSlide = idx;
+                    this._updateNavDots();
+                    this._syncHash();
+
+                    slide.classList.add('visible');
+                    if (goingForward) {
+                        this._playSlideReveals(slide);
+                    } else {
+                        this._rewindSlide(slide);
+                    }
+                });
+            }, { threshold: 0.8 });
+
+            this.viewports.forEach((viewport) => observer.observe(viewport));
+        }
+
+        /* ---------- Keyboard ---------- */
+        _setupKeyboardNav() {
+            document.addEventListener('keydown', (e) => {
+                // Skip when user is editing text
+                if (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+
+                switch (e.key) {
+                    // Step-aware: consume steps first, then advance slides
+                    case 'ArrowDown':
+                    case 'ArrowRight':
+                    case ' ':
+                        e.preventDefault(); this.advance(); break;
+                    case 'ArrowUp':
+                    case 'ArrowLeft':
+                        e.preventDefault(); this.retreat(); break;
+                    // Slide-level: always skip past steps
+                    case 'PageDown':
+                        e.preventDefault(); this.next(); break;
+                    case 'PageUp':
+                        e.preventDefault(); this.prev(); break;
+                    case 'Home':
+                        e.preventDefault(); this.first(); break;
+                    case 'End':
+                        e.preventDefault(); this.last(); break;
+                    case 'f':
+                    case 'F':
+                        e.preventDefault(); this.toggleFullscreen(); break;
+                    case 'r':
+                    case 'R':
+                        e.preventDefault(); this.first(); break;
+                }
+            });
+        }
+
+        /* ---------- Wheel / trackpad ----------
+           ALWAYS preventDefault — letting any native wheel scroll through
+           races against scrollIntoView + mandatory snap, and blocks macOS
+           two-finger horizontal swipes from triggering browser back/forward.
+           Whichever axis has the larger magnitude wins, so vertical scroll
+           and horizontal trackpad swipes both drive advance/retreat. Lock
+           briefly after a gesture so trackpad inertia (continuous small
+           deltas) can't spam next(). */
+        _setupWheelNav() {
+            let locked = false;
+            window.addEventListener('wheel', (e) => {
+                if (e.ctrlKey) return;                // preserve browser pinch-zoom (ctrl+wheel)
+                e.preventDefault();                   // block native scroll + horizontal back-swipe
+                if (locked) return;
+                const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                if (Math.abs(delta) < 20) return;     // ignore tiny flicks
+                locked = true;
+                if (delta > 0) this.advance(); else this.retreat();
+                setTimeout(() => { locked = false; }, 500);
+            }, { passive: false });
+        }
+
+        /* ---------- Touch / swipe ----------
+           Horizontal swipes advance / retreat slides; left = next, right =
+           prev (matches stories / carousel conventions). Dominantly
+           vertical swipes fall through to native scroll-snap so the
+           existing top/bottom behavior keeps working. A time budget
+           rejects slow pans that were really aborted scrolls. */
+        _setupTouchNav() {
+            const MIN_DISTANCE = 50;     // px — below this is a tap or jitter
+            const MAX_TIME = 600;        // ms — slower than this is a pan, not a swipe
+            const DOMINANCE = 1.2;       // horizontal must beat vertical by this factor
+
+            let startX = 0, startY = 0, startTime = 0;
+            let tracking = false;
+
+            window.addEventListener('touchstart', (e) => {
+                if (document.body.classList.contains('artifact-editor-editing')) { tracking = false; return; }
+                if (e.touches.length !== 1) { tracking = false; return; }
+                const t = e.touches[0];
+                startX = t.clientX;
+                startY = t.clientY;
+                startTime = performance.now();
+                tracking = true;
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                if (!tracking) return;
+                tracking = false;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - startX;
+                const dy = t.clientY - startY;
+                const ax = Math.abs(dx), ay = Math.abs(dy);
+                if (ax < MIN_DISTANCE) return;
+                if (ax < ay * DOMINANCE) return;
+                if (performance.now() - startTime > MAX_TIME) return;
+                if (dx < 0) this.advance(); else this.retreat();
+            }, { passive: true });
+
+            window.addEventListener('touchcancel', () => { tracking = false; }, { passive: true });
+        }
+
+        /* ---------- Canvas scaling ----------
+           Each scaler holds a fixed 1920×1080 slide. Compute the
+           scale factor that fits it inside the viewport and apply via
+           CSS custom property. Runs on init, resize, and fullscreen. */
+        _setupCanvasScale() {
+            const CANVAS_W = 1920;
+            const CANVAS_H = 1080;
+            const scales = this.scales;
+
+            const update = () => {
+                const scale = Math.min(
+                    window.innerWidth / CANVAS_W,
+                    window.innerHeight / CANVAS_H
+                );
+                scales.forEach((el) => {
+                    el?.style.setProperty('--slide-scale', scale);
+                });
+            };
+
+            update();
+            window.addEventListener('resize', update);
+            document.addEventListener('fullscreenchange', () => {
+                requestAnimationFrame(update);
+            });
+        }
+
+        /* ---------- Viewport sync ----------
+           Resize / fullscreenchange → realign current slide. Each slide is
+           100vh, so a viewport height change leaves the existing scroll
+           position out of alignment with the slide top; scroll-snap doesn't
+           re-snap on its own. */
+        _setupViewportSync() {
+            const realign = () => {
+                requestAnimationFrame(() => {
+                    this._scrollToSlide(this.currentSlide, 'auto');
+                });
+            };
+            window.addEventListener('resize', realign);
+            document.addEventListener('fullscreenchange', realign);
+        }
+
+        /* ---------- Nav dots ---------- */
+        _buildNavDots() {
+            // Clear first — prevents duplicates when DOM is re-serialized/re-opened
+            this.navDotsContainer.innerHTML = '';
+            this.slides.forEach((slide, idx) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+                if (idx === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => this.goTo(idx));
+                this.navDotsContainer.appendChild(dot);
+            });
+        }
+
+        _updateNavDots() {
+            const dots = this.navDotsContainer.querySelectorAll('button');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === this.currentSlide);
+            });
+        }
+    }
+
+    /* ---------- Auto-init ---------- */
+    function init() {
+        // Each slide canvas is its own editable host for the inline editor.
+        document.querySelectorAll('.slide').forEach(function (el) {
+            el.classList.add('artifact-editable');
+        });
+        window.slides = new SlidePresentation();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chassis -->
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Week 3 Session 6 – Generative AI & Responsible Use</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap"/>
+<style>
+:root{--background:#fafafa;--foreground:#1a1a1a;--accent:#c0392b;--accent-foreground:#fff;--gold:#d4a017;--card:#1a1a1a;--card-foreground:#fff;--muted-foreground:rgba(26,26,26,0.55);--border:rgba(26,26,26,0.08);--font-display:'Archivo Black',sans-serif;--font-body:'Space Grotesk',sans-serif;--nav-dot-active-color:var(--accent)}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-0.03em}p,li,td,th,span,a{font-family:var(--font-body)}
+.slide{padding:80px;display:flex;flex-direction:column;justify-content:center;font-family:var(--font-body);background:var(--background);position:relative;overflow:hidden}.slide-number{position:absolute;top:40px;left:80px;font-family:var(--font-display);font-size:20px;color:var(--muted-foreground)}.eyebrow{font-size:26px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px}.slide h1{font-size:140px;line-height:1.0}.slide h2{font-size:72px;line-height:1.1}.slide h3{font-size:52px;line-height:1.2}.slide p{font-size:40px;line-height:1.5;color:var(--muted-foreground);max-width:850px}.slide ul,.slide ol{font-size:40px;line-height:1.6;max-width:900px;padding-left:48px}.slide li{margin-bottom:20px}.slide li::marker{color:var(--accent)}
+.hero-slide{background:linear-gradient(135deg,#1a1a1a 0%,#2c1810 100%);justify-content:space-between}.hero-slide h1{color:#fff;font-size:140px}.hero-slide p{color:rgba(255,255,255,0.75)}.hero-slide .eyebrow{color:var(--gold)}.hero-slide .meta-line{font-size:26px;color:rgba(255,255,255,0.5)}
+.dark-slide{background:var(--card);color:var(--card-foreground)}.dark-slide h2,.dark-slide h3{color:var(--card-foreground)}.dark-slide p{color:rgba(255,255,255,0.7)}.dark-slide .eyebrow{color:var(--gold)}.dark-slide .slide-number{color:rgba(255,255,255,0.3)}
+.accent-slide{background:var(--accent);color:white}.accent-slide h2,.accent-slide h3{color:white}.accent-slide p{color:rgba(255,255,255,0.85)}.accent-slide .eyebrow{color:var(--gold)}.accent-slide .slide-number{color:rgba(255,255,255,0.4)}
+.slide table{width:100%;max-width:1400px;border-collapse:collapse;font-size:32px;margin-top:30px}.slide th{background:var(--accent);color:white;padding:20px 28px;text-align:left;font-weight:600;font-size:26px;text-transform:uppercase;letter-spacing:0.05em}.slide td{padding:20px 28px;border-bottom:1px solid var(--border);vertical-align:top}.slide tr:nth-child(even) td{background:rgba(0,0,0,0.02)}
+.def-box{background:rgba(192,57,43,0.06);border-left:8px solid var(--accent);padding:40px 48px;border-radius:0 24px 24px 0;max-width:1200px;margin-top:30px}.def-box p{color:var(--foreground);font-size:40px;max-width:100%}.def-box strong{color:var(--accent)}
+.key-box{background:rgba(212,160,23,0.08);border-left:8px solid var(--gold);padding:40px 48px;border-radius:0 24px 24px 0;max-width:1200px;margin-top:30px}.key-box p{color:var(--foreground);font-size:36px;max-width:100%}
+.warn-box{background:rgba(231,76,60,0.06);border-left:8px solid #e74c3c;padding:40px 48px;border-radius:0 24px 24px 0;max-width:1200px;margin-top:30px}.warn-box p{color:var(--foreground);font-size:36px;max-width:100%}.warn-box strong{color:#e74c3c}
+.qa-slide{background:linear-gradient(135deg,#fdf6e3 0%,#fef9ef 100%);text-align:center;align-items:center}.qa-slide h2{color:#8b6914;font-size:80px}.qa-slide p{color:#5c4a1a;text-align:center;max-width:800px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:30px;max-width:1500px}.two-col-content{font-size:34px;line-height:1.6}.two-col-content h3{font-size:40px;margin-bottom:16px}.two-col-content ul{font-size:32px;padding-left:30px}.two-col-content li{margin-bottom:10px}
+@media(max-width:1200px){.slide{padding:60px}.slide h1{font-size:100px}.slide h2{font-size:56px}.slide h3{font-size:42px}.slide p{font-size:34px}.slide ul,.slide ol{font-size:34px}.slide table{font-size:28px}.slide th{font-size:22px;padding:14px 18px}.slide td{padding:14px 18px}.two-col{grid-template-columns:1fr;gap:30px}}
+@media(max-width:768px){.slide{padding:40px 32px}.slide-number{top:20px;left:32px;font-size:16px}.eyebrow{font-size:18px;margin-bottom:12px}.slide h1{font-size:64px}.slide h2{font-size:42px}.slide h3{font-size:34px}.slide p{font-size:28px;max-width:100%}.slide ul,.slide ol{font-size:28px;padding-left:28px;max-width:100%}.slide table{font-size:22px}.slide th{font-size:18px;padding:12px 14px}.slide td{padding:12px 14px}.def-box,.key-box,.warn-box{padding:24px 28px}.def-box p{font-size:28px}.key-box p,.warn-box p{font-size:26px}.two-col{grid-template-columns:1fr;gap:20px}.two-col-content{font-size:26px}.two-col-content ul{font-size:26px}.hero-slide h1{font-size:56px}.hero-slide .meta-line{font-size:18px}.qa-slide h2{font-size:48px}}
+</style>
+</head>
+<body>
+<section class="slide hero-slide"><span class="eyebrow reveal d1">COGNATES 6 · Week 3 · Session 6</span><h1 class="reveal d2">Generative<br>AI</h1><p class="reveal d3">Opportunities, hallucinations, and responsible use</p><span class="meta-line reveal d4">Instructor: Carvin Paul G. Tampos · Cronasia Foundation College, Inc.</span></section>
+<section class="slide"><span class="slide-number">02</span><span class="eyebrow reveal d1">Objectives</span><h3 class="reveal d2">Session 6 Goals</h3><ol class="reveal d3" style="font-size:36px"><li class="step">What generative AI produces</li><li class="step">Good uses: drafting, brainstorming</li><li class="step">Limits: hallucinations, bias, privacy</li><li class="step">Responsible use principles</li><li class="step">Prompt engineering (CRAFT)</li></ol></section>
+<section class="slide qa-slide"><span class="slide-number">03</span><h2 class="reveal d1">⏸ Honest</h2><p class="reveal d2">How many used ChatGPT for schoolwork?</p><p class="reveal d3" style="font-size:28px;color:#8b6914">(No judgment. Here to learn RIGHT use.)</p></section>
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">04</span><span class="eyebrow reveal d1">Part 1</span><h2 class="reveal d2" style="font-size:80px">What Is<br>Generative AI?</h2></section>
+<section class="slide"><span class="slide-number">05</span><span class="eyebrow reveal d1">Definition</span><h3 class="reveal d2">Generative AI</h3><div class="def-box reveal d3"><p><strong>GenAI</strong> = systems creating NEW content (text, images, code, audio) from prompts, based on patterns in training data.</p></div></section>
+<section class="slide"><span class="slide-number">06</span><span class="eyebrow reveal d1">Compare</span><h3 class="reveal d2">Traditional vs Generative</h3><table class="reveal d3"><thead><tr><th>Traditional AI</th><th>Generative AI</th></tr></thead><tbody><tr><td>Classifies, predicts</td><td>Creates, generates</td></tr><tr><td>"Is this spam?"</td><td>"Write me an email"</td></tr><tr><td>Output: labels, numbers</td><td>Output: text, images, code</td></tr></tbody></table></section>
+<section class="slide"><span class="slide-number">07</span><span class="eyebrow reveal d1">Tools</span><h3 class="reveal d2">GenAI Tools (2025)</h3><table class="reveal d3"><thead><tr><th>Tool</th><th>Type</th><th>Does</th></tr></thead><tbody><tr><td><strong>ChatGPT</strong></td><td>Text</td><td>Writing, analysis, code</td></tr><tr><td><strong>Gemini</strong></td><td>Multimodal</td><td>Text, images, search</td></tr><tr><td><strong>Claude</strong></td><td>Text</td><td>Long docs, analysis</td></tr><tr><td><strong>Midjourney</strong></td><td>Image</td><td>Generate from text</td></tr><tr><td><strong>Copilot</strong></td><td>Code</td><td>Code completion</td></tr></tbody></table></section>
+<section class="slide"><span class="slide-number">08</span><span class="eyebrow reveal d1">How</span><h3 class="reveal d2">How ChatGPT Works (Simplified)</h3><ol class="reveal d3" style="font-size:34px"><li class="step"><strong>Trained</strong> on billions of texts</li><li class="step"><strong>Learned</strong> word relationships</li><li class="step"><strong>Gets</strong> your prompt</li><li class="step"><strong>Predicts</strong> most likely next word...</li><li class="step"><strong>Outputs</strong> fluent text</li></ol><div class="key-box reveal d4"><p><strong>Key:</strong> Predicting probable text, NOT understanding. Sounds smart because trained on smart text.</p></div></section>
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">09</span><span class="eyebrow reveal d1">Part 2</span><h2 class="reveal d2" style="font-size:72px">Good Uses</h2></section>
+<section class="slide"><span class="slide-number">10</span><span class="eyebrow reveal d1">Students</span><h3 class="reveal d2">Productive School Uses</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Brainstorm</strong> – ideas (not copy)</li><li class="step"><strong>Explain</strong> – simpler descriptions</li><li class="step"><strong>Summarize</strong> – condense (verify!)</li><li class="step"><strong>Grammar</strong> – check writing</li><li class="step"><strong>Study aid</strong> – practice Qs</li><li class="step"><strong>Outline</strong> – structure (content=yours)</li><li class="step"><strong>Debug</strong> – find code errors</li></ul></section>
+<section class="slide"><span class="slide-number">11</span><span class="eyebrow reveal d1">Work</span><h3 class="reveal d2">GenAI in Workplace</h3><table class="reveal d3"><thead><tr><th>Task</th><th>AI Helps</th><th>Human Needed</th></tr></thead><tbody><tr><td>Email drafts</td><td>First draft fast</td><td>Tone, accuracy</td></tr><tr><td>Reports</td><td>Structure, outline</td><td>Verify, insights</td></tr><tr><td>Code</td><td>Boilerplate, bugs</td><td>Architecture, test</td></tr></tbody></table></section>
+<section class="slide qa-slide"><span class="slide-number">12</span><h2 class="reveal d1">⏸ Which Good?</h2><p class="reveal d2" style="font-size:32px">A. Copy AI essay as yours<br>B. Ask AI to explain concept<br>C. Submit AI code blindly<br>D. AI takes your quiz</p><p class="reveal d3" style="font-size:28px;color:#8b6914">(B. Learning support, not bypass.)</p></section>
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">13</span><span class="eyebrow reveal d1">Part 3</span><h2 class="reveal d2" style="font-size:72px">Dangers</h2></section>
+<section class="slide"><span class="slide-number">14</span><span class="eyebrow reveal d1">6 Limits</span><h3 class="reveal d2">GenAI Limitations</h3><table class="reveal d3"><thead><tr><th>Limitation</th><th>Risk</th></tr></thead><tbody><tr><td><strong>Hallucination</strong></td><td>Invents false info</td></tr><tr><td><strong>Bias</strong></td><td>Reflects training prejudices</td></tr><tr><td><strong>Outdated</strong></td><td>Wrong on recent events</td></tr><tr><td><strong>No understanding</strong></td><td>Pattern, not comprehension</td></tr><tr><td><strong>Privacy</strong></td><td>Inputs may be stored</td></tr><tr><td><strong>Plagiarism</strong></td><td>Submitting as "original"</td></tr></tbody></table></section>
+<section class="slide dark-slide" style="align-items:center;text-align:center"><span class="slide-number">15</span><span class="eyebrow reveal d1">Biggest Danger</span><h2 class="reveal d2" style="font-size:88px;color:var(--gold)">Hallucinations</h2><p class="reveal d3" style="color:rgba(255,255,255,0.75)">AI invents info that sounds real but is false.</p></section>
+<section class="slide"><span class="slide-number">16</span><span class="eyebrow reveal d1">Real Cases</span><h3 class="reveal d2">Hallucination Examples</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Fake citations:</strong> papers that don't exist</li><li class="step"><strong>Fake legal cases:</strong> lawyer fined (2023)</li><li class="step"><strong>Fake stats:</strong> "WHO says 43%..." (no source)</li><li class="step"><strong>Confident errors:</strong> wrong but fluent</li></ul><div class="warn-box reveal d4"><p><strong>Fluent ≠ Factual.</strong> Perfect grammar ≠ correct info.</p></div></section>
+<section class="slide"><span class="slide-number">17</span><span class="eyebrow reveal d1">Why</span><h3 class="reveal d2">Why AI Hallucinates</h3><ol class="reveal d3" style="font-size:34px"><li class="step">Predicts PROBABLE, not TRUTHFUL</li><li class="step">Can't verify against reality</li><li class="step">Trained to sound confident</li><li class="step">Fills gaps with plausible text</li><li class="step">Can't say "I don't know" naturally</li></ol></section>
+<section class="slide qa-slide"><span class="slide-number">18</span><h2 class="reveal d1">⏸ Spot It</h2><p class="reveal d2" style="font-size:28px">"Dr. Santos, PH Journal of IS, Vol 12, 67% of SMEs adopted cloud."</p><p class="reveal d3" style="font-size:24px;color:#5c4a1a">Sounds real. But: journal exist? Author real? Always verify.</p></section>
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">19</span><span class="eyebrow reveal d1">Part 4</span><h2 class="reveal d2" style="font-size:72px">Responsible<br>Use</h2></section>
+<section class="slide"><span class="slide-number">20</span><span class="eyebrow reveal d1">6 Rules</span><h3 class="reveal d2">Responsible Use</h3><ol class="reveal d3" style="font-size:34px"><li class="step"><strong>Tool, not substitute</strong></li><li class="step"><strong>Always verify</strong></li><li class="step"><strong>Disclose use</strong></li><li class="step"><strong>Never submit as original</strong></li><li class="step"><strong>Protect privacy</strong></li><li class="step"><strong>Think critically</strong></li></ol></section>
+<section class="slide"><span class="slide-number">21</span><span class="eyebrow reveal d1">Scenarios</span><h3 class="reveal d2">OK vs NOT OK</h3><div class="two-col reveal d3"><div class="two-col-content"><h3 style="color:#27ae60">✓ OK</h3><ul><li>Explain concept</li><li>Brainstorm outlines</li><li>Grammar check</li><li>Practice questions</li><li>Debug code</li></ul></div><div class="two-col-content"><h3 style="color:var(--accent)">✗ NOT OK</h3><ul><li>Submit AI essay</li><li>Copy exam answers</li><li>Fake citations</li><li>Input others' data</li><li>AI does assignment</li></ul></div></div></section>
+<section class="slide dark-slide" style="align-items:center;text-align:center"><span class="slide-number">22</span><h2 class="reveal d2" style="max-width:900px">AI as <span style="color:var(--gold)">learning support</span> = YES<br>AI as <span style="color:#e74c3c">brain substitute</span> = NO</h2></section>
+<section class="slide accent-slide" style="align-items:center;text-align:center"><span class="slide-number">23</span><span class="eyebrow reveal d1">Part 5</span><h2 class="reveal d2" style="font-size:72px">Prompt<br>Engineering</h2></section>
+<section class="slide"><span class="slide-number">24</span><span class="eyebrow reveal d1">What</span><h3 class="reveal d2">Prompt Engineering</h3><div class="def-box reveal d3"><p><strong>Prompt engineering</strong> = crafting clear instructions for better AI outputs. Better prompts = better results.</p></div></section>
+<section class="slide"><span class="slide-number">25</span><span class="eyebrow reveal d1">Compare</span><h3 class="reveal d2">Weak vs Strong</h3><table class="reveal d3"><thead><tr><th>Weak</th><th>Strong</th></tr></thead><tbody><tr><td>"Tell me about AI"</td><td>"Explain ML to a college freshman using a Filipino example, 3 paragraphs"</td></tr><tr><td>"Write essay"</td><td>"Outline 500-word reflection on GCash, 3 points"</td></tr></tbody></table></section>
+<section class="slide"><span class="slide-number">26</span><span class="eyebrow reveal d1">CRAFT</span><h3 class="reveal d2">CRAFT Framework</h3><table class="reveal d3"><thead><tr><th>Letter</th><th>Element</th><th>Example</th></tr></thead><tbody><tr><td><strong>C</strong></td><td>Context</td><td>"I'm a BSIS student"</td></tr><tr><td><strong>R</strong></td><td>Role</td><td>"Act as tutor"</td></tr><tr><td><strong>A</strong></td><td>Action</td><td>"Explain..."</td></tr><tr><td><strong>F</strong></td><td>Format</td><td>"Comparison table"</td></tr><tr><td><strong>T</strong></td><td>Tone</td><td>"Simple language"</td></tr></tbody></table></section>
+<section class="slide"><span class="slide-number">27</span><span class="eyebrow reveal d1">Example</span><h3 class="reveal d2">CRAFT in Action</h3><div class="key-box reveal d3"><p>"I'm a BSIS student (C) for prelim. Act as tutor (R). Explain digitization vs DX (A) using PH school example, comparison table (F), simple conversational (T)."</p></div></section>
+<section class="slide qa-slide"><span class="slide-number">28</span><h2 class="reveal d1">⏸ Fix Prompt</h2><p class="reveal d2">Weak: "Tell me about IoT"</p><p class="reveal d3" style="font-size:26px;color:#8b6914">Rewrite with CRAFT. 2 min. Volunteers share.</p></section>
+<section class="slide"><span class="slide-number">29</span><span class="eyebrow reveal d1">Tips</span><h3 class="reveal d2">Better Prompting</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Be specific</strong></li><li class="step"><strong>Give examples</strong></li><li class="step"><strong>Set constraints</strong></li><li class="step"><strong>Iterate</strong></li><li class="step"><strong>Ask sources, then verify</strong></li><li class="step"><strong>Break complex tasks</strong></li></ul></section>
+<section class="slide"><span class="slide-number">30</span><span class="eyebrow reveal d1">Verify</span><h3 class="reveal d2">How to Check AI Output</h3><ol class="reveal d3" style="font-size:34px"><li class="step"><strong>Google citations</strong></li><li class="step"><strong>Cross-reference 2+ sources</strong></li><li class="step"><strong>Check dates</strong></li><li class="step"><strong>Logic test</strong></li><li class="step"><strong>Ask instructor if unsure</strong></li></ol></section>
+<section class="slide qa-slide"><span class="slide-number">31</span><h2 class="reveal d1">⏸ Demo</h2><p class="reveal d2">Let's catch AI hallucinating live.</p></section>
+<section class="slide"><span class="slide-number">32</span><span class="eyebrow reveal d1">Privacy</span><h3 class="reveal d2">AI & Data Privacy</h3><ul class="reveal d3" style="font-size:34px"><li class="step"><strong>Don't input:</strong> personal info, IDs</li><li class="step"><strong>Don't paste:</strong> confidential docs</li><li class="step"><strong>Assume:</strong> stored</li><li class="step"><strong>RA 10173</strong> applies to AI data</li></ul></section>
+<section class="slide"><span class="slide-number">33</span><span class="eyebrow reveal d1">Career</span><h3 class="reveal d2">GenAI in Your Future</h3><table class="reveal d3"><thead><tr><th>Role</th><th>GenAI Use</th></tr></thead><tbody><tr><td>Analyst</td><td>Draft requirements, analyze</td></tr><tr><td>Developer</td><td>Code gen, debug, docs</td></tr><tr><td>PM</td><td>Reports, summaries</td></tr><tr><td>Consultant</td><td>Research, proposals</td></tr></tbody></table></section>
+<section class="slide"><span class="slide-number">34</span><span class="eyebrow reveal d1">Summary</span><h3 class="reveal d2">Key Takeaways</h3><ul class="reveal d3"><li class="step">GenAI creates new content</li><li class="step">Good: brainstorm, explain, debug (verify!)</li><li class="step">Hallucinations are REAL</li><li class="step">6 rules of responsible use</li><li class="step">CRAFT framework for prompts</li><li class="step">Career tool, not threat</li></ul></section>
+<section class="slide dark-slide"><span class="slide-number">35</span><span class="eyebrow reveal d1">Assignment</span><h3 class="reveal d2" style="color:var(--gold)">AI Activity</h3><div class="key-box reveal d3" style="border-left-color:var(--gold);background:rgba(212,160,23,0.1)"><p style="color:rgba(255,255,255,0.9)">Use GenAI for research. Document: prompts, responses, correct/wrong, reflection. 1-2 pages.</p></div></section>
+<section class="slide hero-slide" style="align-items:center;text-align:center;justify-content:center"><span class="slide-number">36</span><span class="eyebrow reveal d1">End</span><h1 class="reveal d2" style="font-size:100px">Use AI<br>wisely.</h1><p class="reveal d3" style="color:rgba(255,255,255,0.6)">Your judgment makes the difference.</p></section>
+
+<script>
+(function(){
+var scripts={
+1:'<h2>SLIDE 1: Opening (3 min)</h2><p>"Session 6. <span class="b">Generative AI.</span> This is probably the most directly relevant session to your daily life right now. Because I know you\'re all using ChatGPT. Some of you for homework. <span class="b">And today we\'re going to talk about how to use it PROPERLY.</span>"</p><p>"<span class="b">I\'m not here to ban AI. That\'s pointless. AI is not going away. The question isn\'t WHETHER you use it. The question is: are you using it in a way that makes you SMARTER, or in a way that keeps you STUPID?</span>"</p><p>"<span class="b">By the end of today, you\'ll know the difference. And you\'ll have a framework for using AI that actually builds your competence instead of replacing it.</span>"</p>',
+2:'<h2>SLIDE 2: Objectives (2 min)</h2><p>"Five goals: <span class="b">understand what generative AI actually produces and how, identify legitimate uses for school and work, recognize the real dangers (hallucinations, bias, privacy), learn responsible use principles, and practice prompt engineering using the CRAFT framework.</span>"</p><p>"<span class="b">This session is very practical. You\'ll leave with skills you can use tonight.</span>"</p>',
+3:'<h2>SLIDE 3: Honest Question (3 min)</h2><p>"Honest question. <span class="b">How many of you have used ChatGPT or Gemini for schoolwork this semester?</span> Any subject. Raise your hand."</p><p class="i">[Look around. Don\'t shame anyone. Most hands should be up.]</p><p>"Okay. A lot. <span class="b">And I\'m not going to pretend that\'s shocking. Every student in every school worldwide is using these tools.</span> The issue is HOW."</p><p>"<span class="b">Some of you are using it to understand concepts better. That\'s great. Some are using it to generate entire papers and submitting them as your own. That\'s plagiarism. Same tool, very different uses.</span>"</p><p>"<span class="b">Today we draw the line clearly so there\'s no ambiguity.</span>"</p>',
+4:'<h2>SLIDE 4: Transition (30 sec)</h2><p>"<span class="b">First: what IS generative AI technically? How is it different from the AI we discussed last session?</span>"</p>',
+5:'<h2>SLIDE 5: Definition (4 min)</h2><p>"Generative AI creates NEW content. <span class="b">Text, images, code, audio, video. Things that didn\'t exist before you prompted it.</span>"</p><p>"Last session we talked about AI that classifies and predicts. \'Is this spam? What\'s the fraud risk?\' That\'s traditional AI: analyzing existing data. <span class="b">Generative AI is different. It PRODUCES something new. \'Write me an email. Generate an image. Create a function.\'</span>"</p><p>"<span class="b">How? It learned patterns from BILLIONS of text documents during training. When you give it a prompt, it predicts the most statistically likely sequence of words that would follow. That\'s literally all it does: predict the next word, then the next, then the next.</span>"</p><p>"<span class="b">But because it learned from so much high-quality text, the output LOOKS intelligent, coherent, and knowledgeable. Even though there\'s no actual understanding happening inside.</span>"</p>',
+6:'<h2>SLIDE 6: Traditional vs Generative (3 min)</h2><p>"Clear distinction. Traditional AI: <span class="b">\'Is this email spam?\' Answer: yes or no. That\'s classification.</span> Generative AI: <span class="b">\'Write me a professional email declining a meeting.\' Answer: full email text that didn\'t exist before.</span>"</p><p>"<span class="b">One analyzes what exists. The other creates what didn\'t. Both are AI. Different functions entirely.</span>"</p>',
+7:'<h2>SLIDE 7: Tools Landscape (3 min)</h2><p>"Current tools you should know: <span class="b">ChatGPT for text (most popular). Google Gemini for multimodal (text + images + search). Claude for long documents and analysis. Midjourney and DALL-E for image generation. GitHub Copilot for code completion.</span>"</p><p>"<span class="b">You probably use ChatGPT and Gemini already. But the others are relevant for your future career too. Especially Copilot if you do any programming.</span>"</p>',
+8:'<h2>SLIDE 8: How It Works (5 min)</h2><p class="i">[Step through each point carefully]</p><p>"Let me demystify how ChatGPT actually works. <span class="b">Step 1: during training, it read billions of text documents from the internet. Books, articles, code, forums, everything.</span>"</p><p>"<span class="b">Step 2: it learned statistical relationships between words. Which words tend to follow which other words in what contexts.</span>"</p><p>"<span class="b">Step 3: you type a prompt. A question or instruction.</span>"</p><p>"<span class="b">Step 4: based on your prompt, it predicts the most LIKELY next word. Then uses that word plus your prompt to predict the NEXT word. And again. And again. Building the response one word at a time.</span>"</p><p>"<span class="b">Step 5: the result is fluent, coherent text that reads like a knowledgeable human wrote it.</span>"</p><p>"<span class="b">KEY INSIGHT that most people miss: it is PREDICTING PROBABLE text, not TRUTHFUL text. It doesn\'t check facts. It doesn\'t \'know\' things. It produces what statistically looks right. That\'s why it sounds smart but can be completely wrong.</span>"</p>',
+9:'<h2>SLIDE 9: Good Uses Transition (30 sec)</h2><p>"<span class="b">Now that we understand the mechanism, let\'s talk about legitimate uses. Because AI IS powerful if used correctly.</span>"</p>',
+10:'<h2>SLIDE 10: Student Uses (5 min)</h2><p class="i">[Step through each with a brief concrete example]</p><p>"Brainstorming: <span class="b">\'Give me 10 possible thesis topics related to IoT in Philippine agriculture.\' Then YOU evaluate, filter, and choose. AI generates options, you make decisions.</span>"</p><p>"Explaining: <span class="b">\'Explain the DIKW hierarchy to me like I\'m 15 years old using a basketball analogy.\' Getting a concept explained in a way your textbook didn\'t manage.</span>"</p><p>"Summarizing: <span class="b">paste a long article and ask for 5 key points. Saves time. But you MUST verify those points against the original.</span>"</p><p>"Grammar: <span class="b">paste YOUR written paragraph and ask \'check this for grammar errors.\' AI as editor, not as author.</span>"</p><p>"Study aid: <span class="b">\'Generate 10 multiple choice questions about digital transformation for my prelim review.\' Practice material on demand.</span>"</p><p>"Outlining: <span class="b">\'Help me structure a 500-word reflection paper about innovation in Philippine banking.\' AI gives structure, YOU fill in content from YOUR understanding.</span>"</p><p>"Debugging: <span class="b">paste YOUR code and ask \'why does this give an error on line 7?\' AI finds the bug, you learn from the fix.</span>"</p><p>"<span class="b">Notice the pattern: in ALL of these, AI ASSISTS your work. It doesn\'t REPLACE your thinking. You still decide, verify, write, and learn.</span>"</p>',
+11:'<h2>SLIDE 11: Workplace Uses (3 min)</h2><p>"In your future career, GenAI will be a daily tool. <span class="b">Email drafts: AI writes first draft fast, you review for tone and accuracy. Reports: AI structures and outlines, you verify data and add insights. Code: AI writes boilerplate and finds bugs, you design architecture and test.</span>"</p><p>"<span class="b">In every case: AI does the grunt work, human does the judgment work. That\'s the professional division of labor.</span>"</p>',
+12:'<h2>SLIDE 12: Good Use Check (2 min)</h2><p>"Quick check. Which is a GOOD use? <span class="b">A: copy entire AI essay. B: ask AI to explain a concept. C: submit AI code without understanding. D: have AI take quiz.</span>"</p><p>"<span class="b">B. Because B uses AI to LEARN. The others use AI to BYPASS learning. That\'s the line. Support vs substitute.</span>"</p>',
+13:'<h2>SLIDE 13: Dangers Transition (1 min)</h2><p>"Now the scary part. <span class="b">Because AI has real dangers that can get you into real trouble.</span> Academic trouble. Professional trouble. Legal trouble. Pay attention."</p>',
+14:'<h2>SLIDE 14: 6 Limitations (4 min)</h2><p>"Six major problems with generative AI. <span class="b">Number 1: Hallucination.</span> This is the biggest danger for students. AI confidently invents information that doesn\'t exist. We\'ll spend several slides on this."</p><p>"<span class="b">Number 2: Bias.</span> Training data contains societal biases. AI reproduces them at scale."</p><p>"<span class="b">Number 3: Outdated knowledge.</span> Training has a cutoff date. AI may be wrong about recent events."</p><p>"<span class="b">Number 4: No real understanding.</span> It manipulates patterns. Doesn\'t \'know\' what it\'s saying."</p><p>"<span class="b">Number 5: Privacy risk.</span> What you type may be stored and used for future training. Don\'t input sensitive data."</p><p>"<span class="b">Number 6: Plagiarism trap.</span> Submitting AI output as your own work IS academic dishonesty regardless of how you feel about it."</p>',
+15:'<h2>SLIDE 15: Hallucinations (3 min)</h2><p>"<span class="b">Hallucination is the #1 danger for students.</span> Let me be very clear about what this means: AI generates information that sounds completely real, reads completely naturally, cites sources that look legitimate, provides statistics that seem credible... <span class="b">but is COMPLETELY FABRICATED.</span>"</p><p>"<span class="b">It doesn\'t \'lie.\' It doesn\'t \'know\' it\'s wrong. It simply predicts what sounds right and has no mechanism to check against reality. So when it doesn\'t have real information, it FILLS THE GAP with plausible-sounding fiction.</span>"</p>',
+16:'<h2>SLIDE 16: Real Cases (5 min)</h2><p class="i">[Go through each slowly for impact]</p><p>"Real case 1: <span class="b">AI generates citations with real-sounding titles, author names, journal names, even DOI numbers. Students include them in papers. Professor checks. Paper doesn\'t exist. Author doesn\'t exist. Journal doesn\'t exist. EVERYTHING fabricated.</span> Happens constantly."</p><p>"Real case 2: <span class="b">A US lawyer in 2023 submitted a legal brief to court. Used ChatGPT to research case precedents. AI provided 6 court cases as references. All 6 were COMPLETELY MADE UP. Judge found out. Lawyer was sanctioned, fined, nearly disbarred. Career-ending embarrassment.</span>"</p><p>"Real case 3: <span class="b">AI states \'according to WHO, 43% of developing nations...\' with confident precision. But there is no WHO report with that statistic. AI invented it because it statistically \'fits\' what a citation should look like.</span>"</p><p>"<span class="b">The warning is clear: NEVER trust AI output without independent verification. NEVER include citations you haven\'t personally confirmed exist.</span>"</p>',
+17:'<h2>SLIDE 17: Why It Hallucinates (3 min)</h2><p>"Understanding WHY helps you stay safe. <span class="b">First: AI predicts PROBABLE text, not truthful text. Probability and truth are different things.</span>"</p><p>"<span class="b">Second: it has no connection to external reality. It can\'t \'look things up.\' It only knows what was in training data.</span>"</p><p>"<span class="b">Third: it\'s trained to be helpful and complete. So when it doesn\'t know something, instead of saying \'I don\'t know,\' it generates what a helpful answer WOULD look like. The format is correct. The content is invented.</span>"</p><p>"<span class="b">Fourth: it fills gaps. If you ask about a topic where training data is sparse, it fills gaps with plausible-sounding text. The less known about a topic, the more likely hallucination.</span>"</p>',
+18:'<h2>SLIDE 18: Spot the Hallucination (3 min)</h2><p>"Look at this citation on screen. <span class="b">\'Dr. Maria Santos, Philippine Journal of Information Systems, Volume 12, Issue 3, 67% of Filipino SMEs adopted cloud computing.\' Sounds completely legitimate. Professional. Specific. Detailed.</span>"</p><p>"<span class="b">But: does that journal exist? Is there a Dr. Maria Santos who published in it? Is that statistic verifiable anywhere? If you can\'t independently confirm ALL of these, assume it\'s hallucinated.</span>"</p><p>"<span class="b">This is EXACTLY what AI hallucinations look like. Professional. Detailed. Completely fake. The more specific it sounds, the more you should verify.</span>"</p>',
+19:'<h2>SLIDE 19: Responsible Use Transition (30 sec)</h2><p>"<span class="b">So how do we use AI WITHOUT getting burned? Six rules. Simple but non-negotiable.</span>"</p>',
+20:'<h2>SLIDE 20: 6 Rules (5 min)</h2><p class="i">[Step through each rule with emphasis]</p><p>"Rule 1: <span class="b">AI is a TOOL, not a substitute.</span> It supports YOUR thinking. It doesn\'t replace it. If you can\'t do the work WITHOUT AI, you haven\'t learned anything."</p><p>"Rule 2: <span class="b">ALWAYS verify.</span> Every fact, every citation, every statistic that AI gives you: check it independently. 5 minutes of checking saves you from submitting garbage."</p><p>"Rule 3: <span class="b">Disclose when AI helped.</span> Be transparent. \'I used ChatGPT to help brainstorm this outline, then wrote the content myself.\' That\'s honest and acceptable."</p><p>"Rule 4: <span class="b">Never submit AI-generated text as your original writing.</span> Even if you edited it slightly. The core ideas and language must be YOURS."</p><p>"Rule 5: <span class="b">Protect privacy.</span> Don\'t type personal data, classmate information, confidential documents, or sensitive details into AI tools. Assume everything is stored."</p><p>"Rule 6: <span class="b">Think critically.</span> Question everything AI tells you. Don\'t accept answers blindly just because they sound confident. Confidence is not competence."</p>',
+21:'<h2>SLIDE 21: Scenarios (4 min)</h2><p>"Left column: acceptable uses. <span class="b">Asking AI to explain a concept you don\'t understand. Brainstorming outline ideas. Checking your grammar. Generating practice quiz questions. Debugging your own code.</span> All of these USE AI while keeping YOU as the thinker."</p><p>"Right column: unacceptable. <span class="b">Submitting AI-written essays. Copying AI answers on exams. Including unverified AI citations. Inputting classmate personal data. Having AI complete entire assignments.</span> All of these REPLACE you with AI."</p><p>"<span class="b">The line is clear: are YOU still thinking? Or has AI done the thinking FOR you?</span>"</p>',
+22:'<h2>SLIDE 22: Class Policy (2 min)</h2><p>"Let me state our class policy explicitly. <span class="b">AI as learning support: YES. AI as substitute for your brain: NO.</span>"</p><p>"<span class="b">Our existing plagiarism policy applies to AI-generated submissions. Plagiarism = zero. Cheating = failing grade. This includes AI-generated work submitted as your own.</span>"</p><p>"I\'m not going to police every assignment with AI detectors. I\'m trusting your integrity. <span class="b">But if I suspect AI-generated work, I will ask you to explain your reasoning in person. If you can\'t explain what you submitted, that tells me everything.</span>"</p>',
+23:'<h2>SLIDE 23: Prompt Engineering Transition (1 min)</h2><p>"<span class="b">Now the FUN and useful part. If you\'re going to use AI (and you should, responsibly), use it WELL. Prompt engineering is the skill that separates bad AI results from excellent ones.</span>"</p>',
+24:'<h2>SLIDE 24: Definition (2 min)</h2><p>"Prompt engineering: <span class="b">the skill of writing clear, specific, contextual instructions that get better output from AI.</span> It\'s not about magic words. It\'s about being clear about what you need."</p><p>"<span class="b">Vague prompt = vague answer. Specific prompt = useful answer. The quality of input determines quality of output. Sound familiar? GIGO from last session. Same principle.</span>"</p>',
+25:'<h2>SLIDE 25: Weak vs Strong (4 min)</h2><p>"Compare these. Weak: <span class="b">\'Tell me about AI.\' What will you get? A generic 500-word essay about AI that could have come from Wikipedia. Not useful.</span>"</p><p>"Strong: <span class="b">\'Explain machine learning to a college freshman in the Philippines, using a GCash fraud detection example, in exactly 3 paragraphs.\' Now the AI knows: audience (freshman), context (Philippines), topic (ML), example (GCash), format (3 paragraphs). MUCH better output.</span>"</p><p>"<span class="b">The difference is specificity. You tell AI exactly WHO you are, WHAT you need, HOW you want it, and IN WHAT FORMAT. The clearer you are, the better the result.</span>"</p>',
+26:'<h2>SLIDE 26: CRAFT Framework (4 min)</h2><p>"I\'ll teach you a framework to remember: CRAFT. <span class="b">C for Context: who are you, what situation? R for Role: what should AI act as? A for Action: what specifically do you want done? F for Format: how should the output look? T for Tone: what language level or style?</span>"</p><p>"Example: <span class="b">\'I\'m a BSIS student studying for my prelim exam (Context). Act as my tutor (Role). Explain the difference between digitization and digital transformation (Action) using a Philippine school example, in a comparison table (Format), using simple conversational language (Tone).\'</span>"</p><p>"<span class="b">That prompt will get you a dramatically better answer than just \'what\'s digital transformation?\' Try it tonight and see the difference.</span>"</p>',
+27:'<h2>SLIDE 27: CRAFT Example (2 min)</h2><p>"Full example on screen. <span class="b">Read through it. See how every element adds specificity?</span> Context tells AI your level. Role tells it how to behave. Action is the specific task. Format shapes the output. Tone matches your needs."</p><p>"<span class="b">Use CRAFT every time you prompt AI. Within a week, it\'ll become automatic. Your AI outputs will improve dramatically.</span>"</p>',
+28:'<h2>SLIDE 28: Activity (5 min)</h2><p>"Your turn. <span class="b">Weak prompt on screen: \'Tell me about IoT.\' Rewrite it using CRAFT. Make it specific to YOUR needs as a BSIS student.</span>"</p><p class="i">[Give 2 minutes. Then call 2-3 volunteers to share their improved prompts.]</p><p>"Good example would be: <span class="b">\'I\'m a BSIS student preparing for a quiz on IoT (C). Act as my reviewer (R). Explain the 4 layers of IoT architecture (A) with Philippine examples, in a numbered list with brief explanations (F), using casual conversational language like a classmate explaining (T).\'</span>"</p>',
+29:'<h2>SLIDE 29: More Tips (3 min)</h2><p class="i">[Step through practical tips]</p><p>"Additional prompt tips beyond CRAFT: <span class="b">Be specific. Vague in = vague out, always. Give examples of what you want. \'Like this: [paste format sample].\' Set constraints: \'in 3 bullet points\' or \'under 200 words.\' Iterate: if the first answer isn\'t great, refine your prompt based on what was missing. Ask for sources, then VERIFY them independently. Break complex questions into multiple simpler prompts.</span>"</p>',
+30:'<h2>SLIDE 30: Verification (3 min)</h2><p>"Always verify AI output. Here\'s how: <span class="b">Step 1: Google any citations. Does the paper/author/journal actually exist? Step 2: cross-reference facts with 2+ independent reliable sources. Step 3: check dates. Is the info current or possibly outdated? Step 4: logic test. Does it make logical sense in context? Step 5: when in doubt, ask your instructor.</span>"</p><p>"<span class="b">5 minutes of verification saves you from submitting nonsense. Make it a habit. Every single time.</span>"</p>',
+31:'<h2>SLIDE 31: Live Demo (5-8 min)</h2><p class="i">[If tools available, demonstrate live. If not, describe what would happen.]</p><p>"Let\'s try to catch AI hallucinating. <span class="b">I\'ll ask it about a specific Philippine research topic and see if it invents citations.</span>"</p><p class="i">[Ask about a niche PH topic. AI likely generates plausible but unverifiable claims. Point this out.]</p><p>"<span class="b">See? It sounds perfect. Professional. Specific. But can we verify ANY of that? Let\'s check... And it doesn\'t exist. That\'s hallucination in action.</span>"</p>',
+32:'<h2>SLIDE 32: Privacy (3 min)</h2><p>"Privacy is often overlooked. <span class="b">Don\'t input: personal information (names, IDs, addresses). Don\'t paste: confidential documents, unreleased research, company data. Assume: everything you type may be stored and potentially used to train future models.</span>"</p><p>"<span class="b">And remember: RA 10173, our Data Privacy Act, applies to AI-processed data too. If you\'re handling someone else\'s personal information, putting it into AI tools may violate the law.</span>"</p>',
+33:'<h2>SLIDE 33: Career Future (3 min)</h2><p>"In your career, GenAI will be a daily tool across ALL IS roles. <span class="b">Systems Analysts will use it to draft requirements and analyze user feedback at scale. Developers will use it for code generation, debugging, and documentation. Project Managers will use it for status reports, risk summaries, and communication drafts. BI Analysts will use it for data narratives and report automation. Consultants will use it for research summaries and proposal outlines.</span>"</p><p>"<span class="b">Learning to use GenAI effectively NOW makes you more valuable in the job market. It\'s a power multiplier for productive professionals.</span>"</p>',
+34:'<h2>SLIDE 34: Summary (2 min)</h2><p>"Six takeaways: <span class="b">GenAI creates new content from prompts. Good uses: brainstorm, explain, outline, debug (always with verification). Hallucinations are real and dangerous: AI invents convincing false information. 6 rules of responsible use: tool, verify, disclose, never submit as own, privacy, think. CRAFT framework for better prompts. Your career will use GenAI as a power tool, not fear it.</span>"</p>',
+35:'<h2>SLIDE 35: Assignment (2 min)</h2><p>"AI Activity assignment: <span class="b">use a generative AI tool for research on an IS topic. Document your prompts, the AI responses, what you verified as correct, what was wrong or unverifiable, and your reflection on the experience. 1-2 pages.</span>"</p><p>"<span class="b">This assignment demonstrates RESPONSIBLE use. It\'s not about whether AI gave good answers. It\'s about whether YOU can evaluate and verify those answers critically. That\'s the skill I\'m assessing.</span>"</p>',
+36:'<h2>SLIDE 36: Closing (1 min)</h2><p>"<span class="b">Use AI wisely. It\'s one of the most powerful tools you\'ll ever have access to. But like any powerful tool, it can build or destroy depending on how you wield it. Your judgment, your verification, your critical thinking: that\'s what makes the difference between a professional using AI and a student copying AI.</span>"</p><p>"<span class="b">Be the professional. Salamat, class. See you next week for IoT!</span>"</p>'
+};
+var scriptWindow=null;function getScriptHTML(n){return'<div class="active-script">'+(scripts[n]||'<p>No script.</p>')+'</div>'}
+function buildPage(n){return'<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Detailed Script W3S6</title><style>*{box-sizing:border-box}body{font-family:Segoe UI,system-ui,sans-serif;margin:0;padding:0;background:#111;color:#e8e5e0;line-height:1.9;font-size:15px}.header{position:sticky;top:0;background:#1a1a1a;border-bottom:2px solid #333;padding:16px 32px;z-index:10;display:flex;justify-content:space-between;align-items:center}.header h1{color:#d4a017;font-size:1.1rem;margin:0}.slide-indicator{background:#c0392b;color:white;padding:6px 16px;border-radius:99px;font-size:13px;font-weight:700}.content{padding:24px 32px 60px}h2{color:#c0392b;font-size:1.25rem;margin-top:28px;margin-bottom:12px}p{margin-bottom:14px;max-width:70ch}.b{color:#90caf9;font-style:italic}.i{color:#ffd54f;font-weight:600}.active-script{animation:fadeIn .3s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style></head><body><div class="header"><h1>Detailed Script: W3S6</h1><div class="slide-indicator">Slide '+n+' / 36</div></div><div class="content">'+getScriptHTML(n)+'</div></body></html>'}
+function updateScript(n){if(scriptWindow&&!scriptWindow.closed){scriptWindow.document.open();scriptWindow.document.write(buildPage(n));scriptWindow.document.close()}}
+var lastSlide=0;function poll(){var n=1;try{var h=window.location.hash;if(h&&h.indexOf('slide-')!==-1)n=parseInt(h.replace('#slide-',''))||1}catch(e){}if(n!==lastSlide){lastSlide=n;updateScript(n)}requestAnimationFrame(poll)}
+window.addEventListener('hashchange',function(){var h=window.location.hash;if(h&&h.indexOf('slide-')!==-1)updateScript(parseInt(h.replace('#slide-',''))||1)});
+document.addEventListener('keydown',function(e){if((e.key==='t'||e.key==='T')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){var tag=(e.target||document.activeElement).tagName;if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;e.preventDefault();e.stopPropagation();scriptWindow=window.open('','DetailedW3S6','width=760,height=920,scrollbars=yes,resizable=yes');if(scriptWindow){var n=1;try{var h=window.location.hash;if(h&&h.indexOf('slide-')!==-1)n=parseInt(h.replace('#slide-',''))||1}catch(ex){}scriptWindow.document.open();scriptWindow.document.write(buildPage(n));scriptWindow.document.close()}setTimeout(poll,500)}});
+setTimeout(poll,1000);
+})();
+</script>
+</body>
+</html>

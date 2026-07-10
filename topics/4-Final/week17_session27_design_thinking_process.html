@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 27: Design Thinking Process</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.slide-scale{width:1920px;height:1080px;position:relative;transform-origin:center center}
+.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:32px;position:relative;overflow:hidden}
+h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}
+h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}
+h3{font-size:48px;font-weight:700;line-height:1.2}
+h4{font-size:36px;font-weight:600;line-height:1.3}
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.subtitle{font-size:32px;color:var(--muted);font-weight:400}
+p{font-size:36px;line-height:1.6}
+.small{font-size:28px}
+.tiny{font-size:22px;color:var(--muted)}
+strong{color:var(--accent)}em{color:var(--accent2)}
+ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:18px}
+li{font-size:32px;line-height:1.5}li::marker{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:28px}
+th{background:var(--accent);color:#fff;padding:14px 18px;text-align:left;font-weight:600;font-size:24px}
+td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:26px}
+tr:nth-child(even) td{background:var(--card)}tr:hover td{background:var(--card2)}
+.box{background:var(--card);border-radius:16px;padding:32px;border:1px solid var(--border)}
+.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:28px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.flex-col{display:flex;flex-direction:column;gap:14px}
+.stat-big{font-size:72px;font-weight:900;color:var(--accent);line-height:1}
+.stat-label{font-size:22px;color:var(--muted);margin-top:6px}
+.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}
+.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:10px 0}
+.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.qa-pause h3{color:var(--accent3)}
+.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 24px;transition:background .2s}
+.quiz-choice:hover{background:var(--card2)}
+.stage-card{background:var(--card);border-radius:16px;padding:24px;border:1px solid var(--border);text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.stage-num{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:100}
+.nav-dots button{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}
+.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}
+.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}
+@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:50px}h3{font-size:38px}p{font-size:30px}li{font-size:28px}td,th{font-size:22px}.grid-2,.grid-5{grid-template-columns:1fr}}
+@media(max-width:768px){body{font-size:28px}h1{font-size:48px}h2{font-size:38px}h3{font-size:30px}p{font-size:24px}li{font-size:22px}.slide{padding:28px 20px;gap:16px}.grid-2,.grid-3,.grid-5{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- S1: Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Good morning class! Maayong buntag! Excited ko for today's session kay this is one of the MOST practical topics sa entire course. Design Thinking. This is the methodology used by Apple, Google, Airbnb, IBM, ug basically every top tech company in the world. It's a structured way to solve problems na human-centered. Meaning, you START with people, not technology. After today, you'll have a framework that you can use for your final project AND your entire career. Sige, let's dive in!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 17</div>
+<h1 style="margin-top:20px">Design Thinking<br><span style="color:var(--accent)">Process</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 27 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">Human-Centered</span><span class="tag" style="background:var(--accent2);color:#111">Iterative</span><span class="tag" style="background:var(--accent3)">5 Stages</span><span class="tag">Stanford d.school</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- S2: Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Atong objectives. Lima. First, define Design Thinking and its origin. Second, explain the 5 stages. Third, differentiate Design Thinking from traditional problem-solving. Fourth, apply empathy mapping to understand user needs. Fifth, practice ideation techniques like brainstorming, SCAMPER, and How Might We questions. By the end, you'll actually DO design thinking, not just learn ABOUT it. We'll have hands-on activities. So wake up, magkinahanglan ta sa creativity ninyo today!">
+<div class="eyebrow">Session Objectives</div>
+<h2>Learning Objectives</h2>
+<div class="divider"></div>
+<ol style="gap:24px;margin-top:12px">
+<li><strong>Define</strong> Design Thinking and its origin</li>
+<li><strong>Explain</strong> the 5 stages of the Design Thinking process</li>
+<li><strong>Differentiate</strong> Design Thinking from traditional problem-solving</li>
+<li><strong>Apply</strong> empathy mapping to understand user needs</li>
+<li><strong>Practice</strong> ideation techniques (brainstorming, SCAMPER, How Might We)</li>
+</ol>
+</div></div></div>
+
+<!-- S3: What is Design Thinking -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="So what IS Design Thinking? It's a human-centered, iterative problem-solving approach. Three keywords: HUMAN-CENTERED meaning you start with people, not technology. ITERATIVE meaning you repeat, improve, go back. And PROBLEM-SOLVING meaning it's practical, not just theory. The focus: understand user needs, challenge assumptions, redefine problems, and create innovative solutions through prototyping and testing. Where did it come from? Stanford d.school and IDEO consulting firm. Companies that use it: Apple, Google, Airbnb, IBM, Samsung, Netflix. Basically everyone who builds great products.">
+<h2>What Is Design Thinking?</h2>
+<div class="divider"></div>
+<div class="highlight-box"><p style="font-size:34px"><strong>Design Thinking:</strong> A human-centered, iterative problem-solving approach that focuses on understanding user needs, challenging assumptions, redefining problems, and creating innovative solutions through prototyping and testing.</p></div>
+<div class="grid-2" style="margin-top:24px">
+<div class="box"><h4>Origin</h4><ul style="gap:12px"><li style="font-size:26px"><strong>Stanford d.school</strong> (Hasso Plattner Institute)</li><li style="font-size:26px"><strong>IDEO</strong> consulting firm (Tim Brown)</li><li style="font-size:26px">Formalized in 1990s-2000s</li></ul></div>
+<div class="box"><h4>Who Uses It</h4><ul style="gap:12px"><li style="font-size:26px">Apple, Google, Airbnb</li><li style="font-size:26px">IBM, Samsung, Netflix</li><li style="font-size:26px">GCash, Grab Philippines</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S4: 3 Keywords -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let me break down the three key characteristics. HUMAN-CENTERED: we don't start with 'what technology is cool?' We start with 'what do PEOPLE actually need?' Big difference. ITERATIVE: there's no straight line from problem to solution. You'll go forward, go back, try again, fail, learn, repeat. That's normal and expected. CREATIVE CONFIDENCE: you don't need to be an 'artist' to be creative. Everyone can innovate. Design Thinking gives you a STRUCTURE for creativity so you're not just randomly brainstorming. It's disciplined creativity.">
+<h2>Three Key Characteristics</h2>
+<div class="divider"></div>
+<div class="grid-3" style="margin-top:20px">
+<div class="box" style="text-align:center;padding:36px"><div style="font-size:56px;margin-bottom:12px">👤</div><h4 style="color:var(--accent)">Human-Centered</h4><p class="small" style="margin-top:8px">Start with people and their real needs, not technology</p></div>
+<div class="box" style="text-align:center;padding:36px"><div style="font-size:56px;margin-bottom:12px">🔄</div><h4 style="color:var(--accent2)">Iterative</h4><p class="small" style="margin-top:8px">Go forward, go back, try, fail, learn, repeat. Non-linear.</p></div>
+<div class="box" style="text-align:center;padding:36px"><div style="font-size:56px;margin-bottom:12px">💡</div><h4 style="color:var(--accent3)">Creative Confidence</h4><p class="small" style="margin-top:8px">Structure for creativity. Everyone can innovate with the right process.</p></div>
+</div>
+</div></div></div>
+
+<!-- S5: The 5 Stages -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The heart of Design Thinking: FIVE stages. Memorize these ha. Stage 1: EMPATHIZE. Understand users deeply. Stage 2: DEFINE. Frame the right problem. Stage 3: IDEATE. Generate many solutions. Stage 4: PROTOTYPE. Build quick testable models. Stage 5: TEST. Get user feedback. IMPORTANT: this is NOT linear! You can go BACK to any stage. If testing reveals you're solving the wrong problem, go back to Empathize. If your prototype doesn't work, go back to Ideate. Iteration is the key. Don't treat it like a waterfall.">
+<h2>The 5 Stages of Design Thinking</h2>
+<div class="divider"></div>
+<div class="grid-5" style="margin-top:20px">
+<div class="stage-card"><div class="stage-num">1</div><h4 style="font-size:26px;color:var(--accent)">Empathize</h4><p style="font-size:20px;color:var(--muted)">Understand users deeply</p></div>
+<div class="stage-card"><div class="stage-num" style="background:var(--accent2)">2</div><h4 style="font-size:26px;color:var(--accent2)">Define</h4><p style="font-size:20px;color:var(--muted)">Frame the right problem</p></div>
+<div class="stage-card"><div class="stage-num" style="background:var(--accent3)">3</div><h4 style="font-size:26px;color:var(--accent3)">Ideate</h4><p style="font-size:20px;color:var(--muted)">Generate many solutions</p></div>
+<div class="stage-card"><div class="stage-num" style="background:#7b2cbf">4</div><h4 style="font-size:26px;color:#b388ff">Prototype</h4><p style="font-size:20px;color:var(--muted)">Build testable models</p></div>
+<div class="stage-card"><div class="stage-num" style="background:#1d3557">5</div><h4 style="font-size:26px;color:#a8dadc">Test</h4><p style="font-size:20px;color:var(--muted)">Get user feedback</p></div>
+</div>
+<div class="highlight-box" style="margin-top:24px;text-align:center"><p style="font-size:30px">⚠️ <strong>Non-linear!</strong> You can go BACK to any stage. Iteration is expected.</p></div>
+</div></div></div>
+
+<!-- S6: 5 Stages Table -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let me give you the full breakdown. Each stage has a focus, a key question, and an output. Empathize: focus on users, ask 'what do they REALLY need?', output is user insights and pain points. Define: focus on the problem, ask 'what's the CORE issue?', output is a problem statement. Ideate: focus on solutions, ask 'how might we solve this?', output is a list of possible solutions. Prototype: focus on making it real, ask 'can we make this tangible?', output is a low-fidelity prototype. Test: focus on validation, ask 'does this actually work for users?', output is validated or invalidated ideas. Copy this table, it's gold.">
+<h2>5 Stages: Full Breakdown</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Stage</th><th>Focus</th><th>Key Question</th><th>Output</th></tr>
+<tr><td><strong>1. Empathize</strong></td><td>Understand users</td><td>"What do users REALLY need?"</td><td>User insights, pain points</td></tr>
+<tr><td><strong>2. Define</strong></td><td>Frame the problem</td><td>"What's the CORE problem?"</td><td>Problem statement (POV)</td></tr>
+<tr><td><strong>3. Ideate</strong></td><td>Generate solutions</td><td>"How might we solve this?"</td><td>List of possible solutions</td></tr>
+<tr><td><strong>4. Prototype</strong></td><td>Build models</td><td>"Can we make this tangible?"</td><td>Low-fidelity prototype</td></tr>
+<tr><td><strong>5. Test</strong></td><td>Get feedback</td><td>"Does this actually work?"</td><td>Validated/invalidated ideas</td></tr>
+</table>
+</div></div></div>
+
+<!-- S7: DT vs Traditional -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now, how is Design Thinking DIFFERENT from traditional problem-solving? Traditional approach: you start with a solution in mind. 'Let's build an app!' Then you find a problem for it. That's backwards. Design Thinking starts with the USER PROBLEM. Traditional is linear: plan, build, launch, done. Design Thinking is iterative: try, fail, learn, try again. Traditional avoids failure. Design Thinking EMBRACES failure because each failure teaches you something. Traditional aims for perfection on first try. Design Thinking prototypes quickly and improves. Traditional takes months. Design Thinking? You can prototype in an afternoon.">
+<h2>Design Thinking vs Traditional</h2>
+<div class="divider"></div>
+<table style="margin-top:16px">
+<tr><th>Aspect</th><th>Traditional Approach</th><th>Design Thinking</th></tr>
+<tr><td>Starting point</td><td>Start with <em>solution</em></td><td>Start with <strong>user problem</strong></td></tr>
+<tr><td>Process</td><td>Linear (plan → build → done)</td><td>Iterative, non-linear</td></tr>
+<tr><td>Driven by</td><td>Expert assumptions</td><td>User research & empathy</td></tr>
+<tr><td>Failure</td><td>Avoid at all costs</td><td><strong>Embrace</strong> (learn fast)</td></tr>
+<tr><td>First attempt</td><td>Must be perfect</td><td>Prototype & improve</td></tr>
+<tr><td>Timeline</td><td>Long development cycle</td><td>Rapid experimentation</td></tr>
+<tr><td>Validation</td><td>After launch (too late)</td><td>Continuous user testing</td></tr>
+</table>
+</div></div></div>
+
+<!-- S8: Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick question! Think of a time when you tried to solve a problem the TRADITIONAL way, maybe for a school project, and it didn't work because you assumed what people needed instead of asking them. Maybe you built something nobody actually wanted. Share one example with your seatmate. This happens ALL the time in tech. Someone builds a cool app that nobody uses because they never asked users what they needed. 2 minutes, share!">
+<div class="qa-pause"><h3>⏸️ Quick Reflection</h3><p style="font-size:34px;font-weight:600">Think of a time you assumed what people needed<br>instead of <em>asking</em> them.</p><p class="small" style="max-width:800px">A school project nobody used? An idea that seemed great to you but confused others?</p><p class="tiny" style="margin-top:16px">💬 Share with seatmate (2 min)</p></div>
+</div></div></div>
+
+<!-- S9: Stage 1 Empathize -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Stage 1: EMPATHIZE. This is the foundation. You cannot solve a problem you don't understand. And you cannot understand a problem from your desk. You need to go out, talk to users, OBSERVE them, feel what they feel. Methods: Interviews, ask open-ended questions and LISTEN. Not 'do you like our product?' pero 'tell me about the last time you tried to do X.' Observation: watch users in their natural environment. How do they actually behave? Immersion: experience the problem YOURSELF. If you're designing for commuters, take the jeepney. Feel the frustration. Empathy maps: document what users say, think, do, and feel.">
+<h2>Stage 1: Empathize 👤</h2>
+<div class="divider"></div>
+<div class="highlight-box" style="margin-bottom:16px"><p style="font-size:32px">You cannot solve a problem you don't <strong>understand</strong>. And you cannot understand from your desk.</p></div>
+<div class="grid-2">
+<div class="box"><h4>Methods</h4><ul style="gap:12px"><li style="font-size:26px"><strong>Interviews:</strong> Open questions, deep listening</li><li style="font-size:26px"><strong>Observation:</strong> Watch users in natural environment</li><li style="font-size:26px"><strong>Immersion:</strong> Experience the problem yourself</li><li style="font-size:26px"><strong>Empathy Maps:</strong> Document say/think/do/feel</li></ul></div>
+<div class="box"><h4>Interview Tips</h4><ul style="gap:12px"><li style="font-size:26px">Ask "WHY?" five times to dig deeper</li><li style="font-size:26px">Never lead with your solution</li><li style="font-size:26px">Listen 80%, talk 20%</li><li style="font-size:26px">Look for emotions, not just facts</li><li style="font-size:26px">Ask about SPECIFIC past experiences</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S10: Empathy Map -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The Empathy Map. Four quadrants. SAYS: direct quotes from the user. 'Grabe ka dugay mag-enroll!' THINKS: beliefs and concerns they may not say aloud. Maybe they think 'basin di ko ma-enroll sa gusto nako nga schedule.' DOES: observable actions and behaviors. They arrive at 5am to line up. They bring food for the wait. FEELS: emotions. Frustrated, anxious, hopeless, tired. The magic is in the GAPS between these quadrants. When what someone SAYS doesn't match what they DO, that's an insight. That's where innovation opportunities hide.">
+<h2>The Empathy Map</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="box" style="border-color:var(--accent3)"><h4 style="color:var(--accent3)">💬 SAYS</h4><p class="small" style="margin-top:8px">Direct quotes and statements</p><p style="font-size:22px;color:var(--muted);margin-top:8px;font-style:italic">"Grabe ka dugay mag-enroll! 3 hours ko nag-line!"</p></div>
+<div class="box" style="border-color:var(--accent2)"><h4 style="color:var(--accent2)">🧠 THINKS</h4><p class="small" style="margin-top:8px">Beliefs, concerns (may not say aloud)</p><p style="font-size:22px;color:var(--muted);margin-top:8px;font-style:italic">"Basin di ko makuha ang gusto nako nga schedule..."</p></div>
+<div class="box" style="border-color:#7b2cbf"><h4 style="color:#b388ff">👀 DOES</h4><p class="small" style="margin-top:8px">Observable actions, behaviors</p><p style="font-size:22px;color:var(--muted);margin-top:8px;font-style:italic">Arrives 5am. Brings food. Checks phone repeatedly.</p></div>
+<div class="box" style="border-color:var(--accent)"><h4 style="color:var(--accent)">❤️ FEELS</h4><p class="small" style="margin-top:8px">Emotions, frustrations, desires</p><p style="font-size:22px;color:var(--muted);margin-top:8px;font-style:italic">Frustrated. Anxious. Helpless. Exhausted.</p></div>
+</div>
+<p class="tiny" style="margin-top:16px;text-align:center">💡 Insight lives in GAPS: when SAYS doesn't match DOES, that's where innovation hides.</p>
+</div></div></div>
+
+<!-- S11: Stage 2 Define -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Stage 2: DEFINE. After empathizing, you frame the problem. Not any problem, but the RIGHT problem. The format for a problem statement is: '[User] needs [need] because [insight].' Example: 'A CFCI student needs a faster enrollment process because the current system wastes 3 hours in queues each semester, causing stress and missed class opportunities.' Notice: it's specific. It names the user. It states the need. And it explains WHY based on your empathy research. A bad problem statement: 'We need to build an app.' That's a solution, not a problem. Always start with the HUMAN need.">
+<h2>Stage 2: Define 🎯</h2>
+<div class="divider"></div>
+<div class="highlight-box"><h4 style="color:var(--accent2);margin-bottom:12px">Problem Statement Format</h4><p style="font-size:36px;font-family:var(--mono)">[User] needs [need] because [insight].</p></div>
+<div class="grid-2" style="margin-top:20px">
+<div class="box" style="border-color:var(--accent3)"><h4 style="color:var(--accent3)">✅ Good Problem Statement</h4><p style="font-size:24px;margin-top:8px">"A CFCI student needs a faster enrollment process because the current system wastes 3 hours in queues each semester, causing stress and missed opportunities."</p></div>
+<div class="box" style="border-color:var(--accent)"><h4 style="color:var(--accent)">❌ Bad Problem Statement</h4><p style="font-size:24px;margin-top:8px">"We need to build an app."</p><p style="font-size:22px;color:var(--muted);margin-top:8px">This is a SOLUTION, not a problem. No user, no need, no insight.</p></div>
+</div>
+<p class="small" style="margin-top:16px;text-align:center">💡 The quality of your solution depends on the quality of your problem definition.</p>
+</div></div></div>
+
+<!-- S12: Q&A 2 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick activity! In pairs, write a problem statement about a REAL campus problem. Use the format: User needs Need because Insight. Examples to choose from: enrollment process, finding available computers in the lab, canteen lines during break, or finding parking in school. Remember: the statement must be based on a real user, a real need, and a real insight. Not assumptions. Think about what you've actually EXPERIENCED or OBSERVED. 3 minutes, write it down, then 2 pairs will share.">
+<div class="qa-pause"><h3>⏸️ Write a Problem Statement</h3><p style="font-size:30px;font-weight:600">Pick a REAL campus problem. Use the format:</p><p style="font-size:28px;font-family:var(--mono);color:var(--accent2);margin-top:8px">[User] needs [need] because [insight].</p>
+<div class="grid-2" style="margin-top:20px;width:100%;max-width:1000px">
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:22px">Enrollment queues</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:22px">Finding lab computers</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:22px">Canteen during break</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:22px">School parking</p></div>
+</div><p class="tiny" style="margin-top:16px">💬 Pairs: 3 min to write, then 2 pairs share</p></div>
+</div></div></div>
+
+<!-- S13: Stage 3 Ideate -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Stage 3: IDEATE. Now you generate solutions. But NOT just one solution. MANY solutions. The goal is QUANTITY over quality at this stage. Why? Because your first idea is rarely your best idea. The best ideas usually come after idea 20, 30, 40. When you've exhausted the obvious, that's when creative solutions emerge. Rules of brainstorming, there are 6: One, DEFER judgment. No 'that won't work' during ideation. Two, QUANTITY over quality. Aim for 50+ ideas. Three, BUILD on others' ideas with 'yes, and...' Four, ENCOURAGE wild ideas. Five, ONE conversation at a time. Six, BE visual, sketch and diagram.">
+<h2>Stage 3: Ideate 💡</h2>
+<div class="divider"></div>
+<p class="small" style="margin-bottom:12px">Goal: Generate MANY solutions. Quantity over quality. Best ideas come after idea #20+.</p>
+<div class="box"><h4 style="color:var(--accent2)">6 Rules of Brainstorming</h4>
+<div class="grid-2" style="margin-top:16px;gap:16px">
+<div style="display:flex;gap:12px;align-items:center"><span style="color:var(--accent);font-weight:800;font-size:24px">1.</span><p style="font-size:26px"><strong>Defer judgment</strong> – No "that won't work" during ideation</p></div>
+<div style="display:flex;gap:12px;align-items:center"><span style="color:var(--accent);font-weight:800;font-size:24px">2.</span><p style="font-size:26px"><strong>Quantity over quality</strong> – Aim for 50+ ideas</p></div>
+<div style="display:flex;gap:12px;align-items:center"><span style="color:var(--accent);font-weight:800;font-size:24px">3.</span><p style="font-size:26px"><strong>Build on others'</strong> – "Yes, and..." not "No, but..."</p></div>
+<div style="display:flex;gap:12px;align-items:center"><span style="color:var(--accent);font-weight:800;font-size:24px">4.</span><p style="font-size:26px"><strong>Encourage wild ideas</strong> – Crazy is welcome</p></div>
+<div style="display:flex;gap:12px;align-items:center"><span style="color:var(--accent);font-weight:800;font-size:24px">5.</span><p style="font-size:26px"><strong>One conversation</strong> – Don't talk over each other</p></div>
+<div style="display:flex;gap:12px;align-items:center"><span style="color:var(--accent);font-weight:800;font-size:24px">6.</span><p style="font-size:26px"><strong>Be visual</strong> – Sketch, diagram, draw</p></div>
+</div></div>
+</div></div></div>
+
+<!-- S14: SCAMPER -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="One powerful ideation technique: SCAMPER. It's an acronym. Each letter gives you a different angle to generate ideas. S: Substitute. What can we replace? Like replacing physical IDs with QR codes. C: Combine. What can we merge? Combine enrollment and payment in one step. A: Adapt. What can we borrow from elsewhere? Apply Grab's matching model to tutoring. M: Modify. What can we change? Make forms mobile-friendly. P: Put to other uses. What else can we do with this? Use attendance data for analytics. E: Eliminate. What can we remove? Remove unnecessary approval steps. R: Reverse. What if we flip it? Let students choose schedule first, system confirms after.">
+<h2>SCAMPER Technique</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Letter</th><th>Action</th><th>Campus Example</th></tr>
+<tr><td><strong>S</strong></td><td>Substitute</td><td>Replace physical ID with QR code</td></tr>
+<tr><td><strong>C</strong></td><td>Combine</td><td>Merge enrollment + payment in one step</td></tr>
+<tr><td><strong>A</strong></td><td>Adapt</td><td>Apply Grab's model to school transport</td></tr>
+<tr><td><strong>M</strong></td><td>Modify</td><td>Make forms mobile-friendly</td></tr>
+<tr><td><strong>P</strong></td><td>Put to other uses</td><td>Use attendance data for analytics</td></tr>
+<tr><td><strong>E</strong></td><td>Eliminate</td><td>Remove unnecessary approval steps</td></tr>
+<tr><td><strong>R</strong></td><td>Reverse</td><td>Students choose schedule first, system confirms</td></tr>
+</table>
+</div></div></div>
+
+<!-- S15: How Might We -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Another powerful technique: 'How Might We' questions. You take a problem and reframe it as an opportunity. The format: How might we [desired outcome]? Example: Problem is 'students wait 3 hours for enrollment.' HMW: 'How might we reduce enrollment to under 30 minutes?' Or: 'How might we make waiting time productive?' Or even: 'How might we eliminate the need to be physically present?' See how each HMW opens up DIFFERENT solution spaces? The first one is about speed. The second about experience. The third about fundamentally redesigning the process. Each gives you different creative directions.">
+<h2>"How Might We" Questions</h2>
+<div class="divider"></div>
+<p class="small" style="margin-bottom:16px">Transform problems into opportunity questions that open creative space.</p>
+<div class="box" style="margin-bottom:20px"><h4 style="color:var(--accent)">Problem:</h4><p style="font-size:30px;margin-top:8px">"Students wait 3 hours for enrollment."</p></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="box" style="padding:22px;display:flex;gap:16px;align-items:center"><span style="font-size:28px">🎯</span><p style="font-size:28px"><strong>HMW</strong> reduce enrollment to under 30 minutes?</p><span class="tiny" style="margin-left:auto">→ Speed focus</span></div>
+<div class="box" style="padding:22px;display:flex;gap:16px;align-items:center"><span style="font-size:28px">✨</span><p style="font-size:28px"><strong>HMW</strong> make waiting time productive?</p><span class="tiny" style="margin-left:auto">→ Experience focus</span></div>
+<div class="box" style="padding:22px;display:flex;gap:16px;align-items:center"><span style="font-size:28px">🚀</span><p style="font-size:28px"><strong>HMW</strong> eliminate the need to be physically present?</p><span class="tiny" style="margin-left:auto">→ Redesign focus</span></div>
+</div>
+<p class="tiny" style="margin-top:16px;text-align:center">Each HMW opens DIFFERENT solution spaces → different creative directions</p>
+</div></div></div>
+
+<!-- S16: Q&A 3 - Innovation Exercise -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Graded activity! In groups of 3-4. You will apply stages 1 through 3 to a REAL campus problem. Step 1: Empathize. Interview 2 classmates about the problem. Ask about their EXPERIENCE, not what solution they want. Step 2: Define. Write a proper problem statement using the format we learned. Step 3: Ideate. Generate at LEAST 20 solutions in 10 minutes. Use SCAMPER or HMW. No judging ideas! Then present your top 3 ideas to the class. You have 15 minutes total. Go! I'll walk around.">
+<div class="qa-pause"><h3>⏸️ Innovation Exercise (Graded)</h3><p style="font-size:30px;font-weight:600">Groups of 3-4: Apply Stages 1-3 to a REAL campus problem</p>
+<div style="margin-top:16px;text-align:left;max-width:900px">
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:var(--accent);font-weight:800">Step 1:</span><p style="font-size:24px">Empathize – Interview 2 classmates (their experience, not solutions)</p></div>
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:var(--accent2);font-weight:800">Step 2:</span><p style="font-size:24px">Define – Write problem statement: [User] needs [need] because [insight]</p></div>
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:var(--accent3);font-weight:800">Step 3:</span><p style="font-size:24px">Ideate – 20+ solutions in 10 min (SCAMPER/HMW, no judging!)</p></div>
+<div style="display:flex;gap:12px"><span style="color:#b388ff;font-weight:800">Present:</span><p style="font-size:24px">Top 3 ideas to class</p></div>
+</div><p class="tiny" style="margin-top:16px">⏱️ 15 minutes total. Go!</p></div>
+</div></div></div>
+
+<!-- S17: Real World Example - Airbnb -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Real world example: Airbnb. In 2009, Airbnb was failing. Almost bankrupt. Revenue flat at $200/week. They hired a design thinking consultant. What did they do? EMPATHIZE: they flew to New York and stayed with their hosts. Observed the problem firsthand. Found: the listing photos were TERRIBLE. Taken with phone cameras in bad lighting. Nobody wanted to book an ugly apartment. DEFINE: Hosts need attractive listings because bad photos prevent bookings. IDEATE: Professional photography service? Better camera guidance? Photo requirements? PROTOTYPE: They rented a camera and took professional photos for 20 listings. TEST: Those 20 listings saw bookings DOUBLE. Revenue went from $200/week to $400/week to eventually billions. All from understanding the REAL problem through empathy.">
+<h2>Case Study: Airbnb</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:12px">
+<div class="flex-col" style="gap:16px">
+<div class="box"><h4 style="color:var(--accent)">The Problem (2009)</h4><p class="small">Revenue stuck at $200/week. Almost bankrupt. Listings weren't getting booked.</p></div>
+<div class="box"><h4 style="color:var(--accent3)">Empathize</h4><p class="small">Founders flew to NYC, stayed with hosts. Discovered: listing photos were TERRIBLE. Phone cameras, bad lighting.</p></div>
+<div class="box"><h4 style="color:var(--accent2)">Define</h4><p class="small">"Hosts need attractive listings because bad photos prevent bookings."</p></div>
+</div>
+<div class="flex-col" style="gap:16px">
+<div class="box"><h4 style="color:#b388ff">Prototype</h4><p class="small">Rented a camera. Took professional photos for 20 listings in NYC.</p></div>
+<div class="box"><h4 style="color:#a8dadc">Test & Result</h4><p class="small">Those 20 listings: bookings <strong>DOUBLED</strong>.</p><p class="small" style="margin-top:8px">$200/week → $400/week → eventually <strong>$100 BILLION company</strong></p></div>
+<div class="highlight-box" style="text-align:center;padding:20px"><p style="font-size:26px">All from understanding the <strong>REAL problem</strong> through empathy.</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S18: DT for Final Project -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Connection to your final project. Your final project SHOULD follow Design Thinking. Here's how. Empathize: research a real community or business problem. Interview actual people. Define: clear problem statement based on your research. Ideate: consider multiple solution options before choosing one. Don't just build the first idea. Prototype: create a visual mockup or working demo. Test plan: describe how you would validate with real users. This framework will make your final project SIGNIFICANTLY stronger than just building something random. The panels will ask about your research. They'll ask WHO you talked to. So do the empathy work.">
+<h2>Design Thinking → Your Final Project</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:16px;margin-top:12px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stage-num">1</div><div><strong>Empathize:</strong> Research a REAL community/business problem. Interview actual people.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stage-num" style="background:var(--accent2)">2</div><div><strong>Define:</strong> Clear problem statement based on research, not assumptions.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stage-num" style="background:var(--accent3)">3</div><div><strong>Ideate:</strong> Consider MULTIPLE solutions before choosing. Not just first idea.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stage-num" style="background:#7b2cbf">4</div><div><strong>Prototype:</strong> Visual mockup or working demo.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stage-num" style="background:#1d3557">5</div><div><strong>Test Plan:</strong> How would you validate with real users?</div></div>
+</div>
+<p class="tiny" style="margin-top:12px;text-align:center">⚠️ Panels will ask: "Who did you talk to? What did you discover?" Do the empathy work.</p>
+</div></div></div>
+
+<!-- S19: Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways! Design Thinking is human-centered, iterative, and structured. Five stages: Empathize, Define, Ideate, Prototype, Test. Non-linear, you go back! It starts with EMPATHY, not solutions. Problem statements follow: User needs Need because Insight. Ideation rules: defer judgment, quantity over quality, build on ideas. SCAMPER and How Might We are your ideation power tools. Next session, we'll do Stage 4 and 5: Prototyping and Testing. Bring your ideas from today's activity!">
+<h2>Key Takeaways</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">1.</span><p class="small">Design Thinking = <strong>human-centered + iterative + structured</strong></p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">2.</span><p class="small">5 stages: Empathize → Define → Ideate → Prototype → Test</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">3.</span><p class="small"><strong>Non-linear!</strong> Go back to any stage when needed.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">4.</span><p class="small">Starts with EMPATHY, not solutions.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">5.</span><p class="small">Problem statement: [User] needs [need] because [insight]</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">6.</span><p class="small">Ideation: defer judgment, quantity > quality, "yes and..."</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">7.</span><p class="small">SCAMPER + HMW = ideation power tools</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">8.</span><p class="small">Airbnb: empathy → $100B company</p></div>
+</div>
+</div></div></div>
+
+<!-- S20: Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Quiz time! 15 items. Let's see kung na-internalize na ninyo ang Design Thinking mindset. Get your papers ready.">
+<div class="eyebrow">Session 27</div>
+<h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1>
+<p class="subtitle">15 Items • Multiple Choice</p>
+</div></div></div>
+
+<!-- QUIZ: 15 items -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1. Design Thinking starts with blank."><h3>Q1. Design Thinking starts with ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Building the solution immediately</p></div><div class="quiz-choice"><p class="small">B. Understanding user needs deeply (Empathize)</p></div><div class="quiz-choice"><p class="small">C. Writing code</p></div><div class="quiz-choice"><p class="small">D. Calculating the budget</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2. The 5 stages in order are blank."><h3>Q2. The 5 stages in correct order are ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Define, Ideate, Build, Sell, Profit</p></div><div class="quiz-choice"><p class="small">B. Empathize, Define, Ideate, Prototype, Test</p></div><div class="quiz-choice"><p class="small">C. Plan, Code, Test, Deploy, Maintain</p></div><div class="quiz-choice"><p class="small">D. Research, Design, Build, Market, Support</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3. During ideation you should blank."><h3>Q3. During ideation, you should ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Immediately reject bad ideas</p></div><div class="quiz-choice"><p class="small">B. Generate as many ideas as possible without judgment</p></div><div class="quiz-choice"><p class="small">C. Only accept the first idea suggested</p></div><div class="quiz-choice"><p class="small">D. Work alone in complete silence</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4. A proper problem statement follows blank."><h3>Q4. A proper problem statement follows ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. "Build an app that does X"</p></div><div class="quiz-choice"><p class="small">B. "[User] needs [need] because [insight]"</p></div><div class="quiz-choice"><p class="small">C. "The budget is X pesos"</p></div><div class="quiz-choice"><p class="small">D. "We should use blockchain"</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5. Design Thinking differs from traditional approaches because blank."><h3>Q5. Design Thinking differs from traditional because ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. It never uses technology</p></div><div class="quiz-choice"><p class="small">B. It's iterative, embraces failure, and centers on users</p></div><div class="quiz-choice"><p class="small">C. It's only for graphic designers</p></div><div class="quiz-choice"><p class="small">D. It requires expensive tools</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6. The SCAMPER 'E' stands for blank."><h3>Q6. In SCAMPER, "E" stands for ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Enhance</p></div><div class="quiz-choice"><p class="small">B. Eliminate</p></div><div class="quiz-choice"><p class="small">C. Evaluate</p></div><div class="quiz-choice"><p class="small">D. Encrypt</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7. An empathy map captures blank."><h3>Q7. An empathy map captures ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Only financial data about users</p></div><div class="quiz-choice"><p class="small">B. What users Say, Think, Do, and Feel</p></div><div class="quiz-choice"><p class="small">C. Only technical requirements</p></div><div class="quiz-choice"><p class="small">D. The company's revenue goals</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8. How Might We questions are used to blank."><h3>Q8. "How Might We" questions are used to ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Assign blame for problems</p></div><div class="quiz-choice"><p class="small">B. Reframe problems as opportunity questions for ideation</p></div><div class="quiz-choice"><p class="small">C. Calculate project budgets</p></div><div class="quiz-choice"><p class="small">D. Write final reports</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9. Design Thinking originated from blank."><h3>Q9. Design Thinking originated from ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Microsoft and IBM</p></div><div class="quiz-choice"><p class="small">B. Stanford d.school and IDEO</p></div><div class="quiz-choice"><p class="small">C. Harvard Business School only</p></div><div class="quiz-choice"><p class="small">D. The Philippine government</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10. The key principle of Design Thinking is blank."><h3>Q10. The key principle of Design Thinking is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Technology-first</p></div><div class="quiz-choice"><p class="small">B. Human-centered</p></div><div class="quiz-choice"><p class="small">C. Profit-driven</p></div><div class="quiz-choice"><p class="small">D. Management-focused</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11. Airbnb's breakthrough came from blank."><h3>Q11. Airbnb's breakthrough came from ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Spending millions on advertising</p></div><div class="quiz-choice"><p class="small">B. Empathizing with hosts and discovering bad listing photos</p></div><div class="quiz-choice"><p class="small">C. Copying a competitor's features</p></div><div class="quiz-choice"><p class="small">D. Hiring 1000 developers</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12. The Design Thinking process is blank."><h3>Q12. The Design Thinking process is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Strictly linear (never go back)</p></div><div class="quiz-choice"><p class="small">B. Non-linear and iterative (you can return to any stage)</p></div><div class="quiz-choice"><p class="small">C. Only one step repeated forever</p></div><div class="quiz-choice"><p class="small">D. Random with no structure</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13. Brainstorming rule 'build on others' ideas' means blank."><h3>Q13. "Build on others' ideas" means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Copy exactly what someone said</p></div><div class="quiz-choice"><p class="small">B. Use "yes, and..." to expand on someone's idea</p></div><div class="quiz-choice"><p class="small">C. Criticize and replace their idea</p></div><div class="quiz-choice"><p class="small">D. Ignore all other suggestions</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14. In the Empathize stage you should blank."><h3>Q14. In the Empathize stage, you should ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Present your solution to users</p></div><div class="quiz-choice"><p class="small">B. Listen 80%, talk 20%, and ask about real experiences</p></div><div class="quiz-choice"><p class="small">C. Explain why your idea is best</p></div><div class="quiz-choice"><p class="small">D. Skip talking to users and guess their needs</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15. SCAMPER stands for blank. And that's our quiz! Great job today."><h3>Q15. SCAMPER stands for ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Study, Create, Analyze, Manage, Plan, Execute, Review</p></div><div class="quiz-choice"><p class="small">B. Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Reverse</p></div><div class="quiz-choice"><p class="small">C. Scan, Copy, Apply, Make, Print, Edit, Repeat</p></div><div class="quiz-choice"><p class="small">D. Search, Code, Assemble, Maintain, Publish, Evaluate, Release</p></div></div></div></div></div>
+
+<!-- End -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's Session 27! Next session we cover Stage 4 Prototyping and Stage 5 Testing. Bring your ideas from today's Innovation Exercise because you'll be building prototypes next meeting. Great energy today class! See you next time, ingat!">
+<div class="eyebrow">End of Session 27</div>
+<h1 style="margin-top:20px">Thank You! 🎓</h1>
+<p class="subtitle" style="margin-top:12px">Next: Prototyping & Testing (Session 28)</p>
+<div class="divider" style="margin:24px auto;width:200px"></div>
+<p class="small">📝 Bring your Innovation Exercise ideas next session!</p>
+<p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide'));
+const viewports=Array.from(document.querySelectorAll('.slide-viewport'));
+const navDots=document.getElementById('navDots');
+const progressBar=document.getElementById('progressBar');
+const slideCounter=document.getElementById('slideCounter');
+let currentSlide=0,scriptWindow=null,answerWindow=null;
+
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Slide ${i+1}`);b.addEventListener('click',()=>goToSlide(i));navDots.appendChild(b);});
+function scaleSlides(){viewports.forEach(vp=>{const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${s})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=viewports.indexOf(e.target);if(i>=0){currentSlide=i;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>obs.observe(vp));
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+function updateUI(){const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;syncScript();}
+
+document.addEventListener('keydown',e=>{
+if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}
+if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}
+else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}
+else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
+else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
+else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+});
+let tY=0;document.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;});document.addEventListener('touchend',e=>{const d=tY-e.changedTouches[0].clientY;if(Math.abs(d)>50){d>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+
+function openTeacherScript(){if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');syncScript();}
+function syncScript(){if(!scriptWindow||scriptWindow.closed)return;const sl=slides[currentSlide];const sc=sl.getAttribute('data-script')||'(No script)';const t=sl.querySelector('h1,h2,h3');const tt=t?t.textContent:'Slide '+(currentSlide+1);scriptWindow.document.open();scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body><div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div><div class="slide-title">${tt}</div><div class="script-text">${sc}</div><div class="tip">💡 Auto-updates as you navigate.</div></body></html>`);scriptWindow.document.close();}
+
+function openAnswerKey(){if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');answerWindow.document.open();answerWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}.header h2{font-size:20px;font-weight:700}.header p{font-size:13px;opacity:0.8;margin-top:4px}.item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #2a2a3a}.item:last-child{border-bottom:none}.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}.answer{color:#2a9d8f;font-weight:700;font-size:18px}.rationale{color:#8a8a9a;font-size:14px;margin-top:4px}.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}</style></head><body><div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 27 Quiz • Teacher Only</p></div><div class="item"><span class="num">1.</span><div><span class="answer">B</span> – Understanding user needs deeply (Empathize).<div class="rationale">Design Thinking is human-centered; always starts with empathy.</div></div></div><div class="item"><span class="num">2.</span><div><span class="answer">B</span> – Empathize, Define, Ideate, Prototype, Test.<div class="rationale">The five stages in correct sequence.</div></div></div><div class="item"><span class="num">3.</span><div><span class="answer">B</span> – Generate as many ideas as possible without judgment.<div class="rationale">Defer judgment, quantity over quality during ideation.</div></div></div><div class="item"><span class="num">4.</span><div><span class="answer">B</span> – [User] needs [need] because [insight].<div class="rationale">Human-centered format: user, need, and evidence-based insight.</div></div></div><div class="item"><span class="num">5.</span><div><span class="answer">B</span> – Iterative, embraces failure, centers on users.<div class="rationale">vs Traditional: linear, avoids failure, expert-driven.</div></div></div><div class="item"><span class="num">6.</span><div><span class="answer">B</span> – Eliminate.<div class="rationale">S-C-A-M-P-E-R: Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Reverse.</div></div></div><div class="item"><span class="num">7.</span><div><span class="answer">B</span> – What users Say, Think, Do, and Feel.<div class="rationale">Four quadrants of the empathy map capture holistic understanding.</div></div></div><div class="item"><span class="num">8.</span><div><span class="answer">B</span> – Reframe problems as opportunity questions for ideation.<div class="rationale">HMW transforms constraints into creative openings.</div></div></div><div class="item"><span class="num">9.</span><div><span class="answer">B</span> – Stanford d.school and IDEO.<div class="rationale">Hasso Plattner Institute at Stanford + IDEO consulting (Tim Brown).</div></div></div><div class="item"><span class="num">10.</span><div><span class="answer">B</span> – Human-centered.<div class="rationale">Core principle: start with people and their real needs.</div></div></div><div class="item"><span class="num">11.</span><div><span class="answer">B</span> – Empathizing with hosts and discovering bad listing photos.<div class="rationale">Founders went to NYC, stayed with hosts, found the real problem.</div></div></div><div class="item"><span class="num">12.</span><div><span class="answer">B</span> – Non-linear and iterative (can return to any stage).<div class="rationale">Not waterfall; go back when you learn something new.</div></div></div><div class="item"><span class="num">13.</span><div><span class="answer">B</span> – Use "yes, and..." to expand on someone's idea.<div class="rationale">Additive, not critical. Build on top, don't tear down.</div></div></div><div class="item"><span class="num">14.</span><div><span class="answer">B</span> – Listen 80%, talk 20%, ask about real experiences.<div class="rationale">Empathy = understanding, not presenting your solution.</div></div></div><div class="item"><span class="num">15.</span><div><span class="answer">B</span> – Substitute, Combine, Adapt, Modify, Put to other uses, Eliminate, Reverse.<div class="rationale">Full SCAMPER acronym for structured ideation.</div></div></div><div class="warn">⚠️ TEACHER ONLY – Do not display to students</div></body></html>`);answerWindow.document.close();}
+updateUI();
+})();
+</script>
+</body>
+</html>

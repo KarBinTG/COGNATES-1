@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 29: Digital Entrepreneurship & Startups</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}html::-webkit-scrollbar{display:none}
+body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.slide-scale{width:1920px;height:1080px;position:relative;transform-origin:center center}
+.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:32px;position:relative;overflow:hidden}
+h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}h3{font-size:48px;font-weight:700;line-height:1.2}h4{font-size:36px;font-weight:600;line-height:1.3}
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}.subtitle{font-size:32px;color:var(--muted)}.small{font-size:28px}.tiny{font-size:22px;color:var(--muted)}strong{color:var(--accent)}em{color:var(--accent2)}
+p{font-size:36px;line-height:1.6}ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:18px}li{font-size:32px;line-height:1.5}li::marker{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:28px}th{background:var(--accent);color:#fff;padding:14px 18px;text-align:left;font-weight:600;font-size:24px}td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:26px}tr:nth-child(even) td{background:var(--card)}tr:hover td{background:var(--card2)}
+.box{background:var(--card);border-radius:16px;padding:32px;border:1px solid var(--border)}.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:28px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}.flex-col{display:flex;flex-direction:column;gap:14px}
+.stat-big{font-size:72px;font-weight:900;color:var(--accent);line-height:1}.stat-label{font-size:22px;color:var(--muted);margin-top:6px}
+.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:10px 0}
+.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}.qa-pause h3{color:var(--accent3)}
+.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 24px;transition:background .2s}.quiz-choice:hover{background:var(--card2)}
+.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:100}.nav-dots button{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}
+@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:50px}h3{font-size:38px}p{font-size:30px}li{font-size:28px}td,th{font-size:22px}.grid-2{grid-template-columns:1fr}}
+@media(max-width:768px){body{font-size:28px}h1{font-size:48px}h2{font-size:38px}h3{font-size:30px}p{font-size:24px}li{font-size:22px}.slide{padding:28px 20px;gap:16px}.grid-2,.grid-3{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- S1 Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Good morning class! Karon na session, mag-talk ta about something exciting: DIGITAL ENTREPRENEURSHIP. Basically, how to turn your tech skills into a BUSINESS. As BSIS students, you have a SUPERPOWER: you understand BOTH technology AND business. That combination is rare and valuable. Mark Zuckerberg was a CS student. But he understood business enough to build Facebook. The GCash founders understood fintech AND Filipino behavior. Today, I'll teach you how startups work, the Lean Startup methodology, the Business Model Canvas, ug ang Philippine startup ecosystem. This might inspire some of you to build your own company someday. Let's go!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 18</div>
+<h1 style="margin-top:20px">Digital<br><span style="color:var(--accent)">Entrepreneurship</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 29 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">Lean Startup</span><span class="tag" style="background:var(--accent2);color:#111">BMC</span><span class="tag" style="background:var(--accent3)">Revenue Models</span><span class="tag">PH Startups</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- S2 Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Five objectives. One: define digital entrepreneurship and startup culture. Two: identify characteristics of successful tech startups. Three: explain the Lean Startup methodology. Four: describe the Business Model Canvas, all 9 blocks. Five: analyze Philippine startup ecosystem and opportunities. By the end today, you'll be able to fill out a complete Business Model Canvas for your own tech startup idea. And that's actually part of your final project requirement.">
+<div class="eyebrow">Session Objectives</div>
+<h2>Learning Objectives</h2>
+<div class="divider"></div>
+<ol style="gap:24px;margin-top:12px">
+<li><strong>Define</strong> digital entrepreneurship and startup culture</li>
+<li><strong>Identify</strong> characteristics of successful tech startups</li>
+<li><strong>Explain</strong> the Lean Startup methodology (Build-Measure-Learn)</li>
+<li><strong>Describe</strong> the Business Model Canvas (9 blocks)</li>
+<li><strong>Analyze</strong> Philippine startup ecosystem and opportunities</li>
+</ol>
+</div></div></div>
+
+<!-- S3 What is Digital Entrepreneurship -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="What IS digital entrepreneurship? Using technology and digital platforms to create, deliver, and capture value through new business ventures. Key difference from traditional business: SCALABILITY. A carinderia can serve maybe 100 customers a day. A food delivery app can serve 100,000. Same problem (hunger), completely different scale. Another difference: technology-driven. Your product IS technology, or technology enables your product. Rapid growth orientation. Startups aim to grow FAST, not just sustain. And potentially global from day one. Your app can reach anyone with a phone, anywhere in the world.">
+<h2>What Is Digital Entrepreneurship?</h2>
+<div class="divider"></div>
+<div class="highlight-box"><p style="font-size:32px">Using <strong>technology and digital platforms</strong> to create, deliver, and capture value through new business ventures.</p></div>
+<div class="grid-2" style="margin-top:24px">
+<div class="box"><h4>Startup vs Traditional Business</h4>
+<table style="font-size:24px;margin-top:12px"><tr><td><strong>Startup</strong></td><td><strong>Traditional</strong></td></tr><tr><td>Scalable (serve millions)</td><td>Limited by physical capacity</td></tr><tr><td>Technology-driven</td><td>May not use tech</td></tr><tr><td>Rapid growth</td><td>Steady growth</td></tr><tr><td>VC funded</td><td>Bank loans, savings</td></tr><tr><td>High risk, high reward</td><td>Lower risk, moderate reward</td></tr><tr><td>Global from day one</td><td>Usually local first</td></tr></table>
+</div>
+<div class="box" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center"><p style="font-size:28px;color:var(--accent2)">Key Difference:</p><div class="stat-big" style="font-size:56px;margin:12px 0">SCALE</div><p style="font-size:24px;color:var(--muted)">Carinderia: 100/day<br>Food app: 100,000/day</p></div>
+</div>
+</div></div></div>
+
+<!-- S4 Lean Startup -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The Lean Startup methodology. Created by Eric Ries. The core cycle: BUILD, MEASURE, LEARN. Build: create an MVP, minimum viable product. Remember from last session? Measure: put it in front of real users and measure what happens. Not vanity metrics like page views, but actionable metrics like 'did they actually pay?' Learn: what did the data tell you? Based on learning, decide: PIVOT or PERSEVERE. Pivot means change direction because the data says your current approach isn't working. Persevere means keep going because it IS working. The key insight: don't build something for 2 years then discover nobody wants it. Build small, test fast, learn quick.">
+<h2>Lean Startup Methodology</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="flex-col" style="gap:20px">
+<div class="highlight-box" style="text-align:center"><p style="font-size:48px;font-weight:800;color:var(--accent)">BUILD → MEASURE → LEARN</p><p style="font-size:24px;color:var(--muted);margin-top:8px">by Eric Ries</p></div>
+<div class="box"><h4>The Cycle</h4>
+<ul style="gap:12px"><li style="font-size:26px"><strong>Build:</strong> Create MVP (minimum viable product)</li><li style="font-size:26px"><strong>Measure:</strong> Put in front of real users, track results</li><li style="font-size:26px"><strong>Learn:</strong> What did data tell you?</li><li style="font-size:26px"><strong>Decide:</strong> Pivot or persevere?</li></ul></div>
+</div>
+<div class="flex-col" style="gap:20px">
+<div class="box"><h4 style="color:var(--accent2)">Key Principles</h4>
+<ul style="gap:12px"><li style="font-size:26px"><strong>Validated learning</strong> – use data, not assumptions</li><li style="font-size:26px"><strong>Pivot or persevere</strong> – change if data says so</li><li style="font-size:26px"><strong>MVP first</strong> – simplest version to test</li><li style="font-size:26px"><strong>Innovation accounting</strong> – actionable metrics</li></ul></div>
+<div class="box" style="text-align:center;padding:24px"><p style="font-size:24px;color:var(--accent)">Don't build 2 years then discover<br>nobody wants it.</p><p style="font-size:24px;margin-top:8px">Build small. Test fast. Learn quick.</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S5 Pivot Examples -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Famous pivots. Companies that CHANGED direction based on data. Instagram started as Burbn, a check-in app with too many features. Data showed users only used the photo filter feature. They pivoted to JUST photos. Now worth over 100 billion. Slack started as a GAME company called Tiny Speck. The game failed but they loved the internal chat tool they built. Pivoted to chat. Now worth 27 billion. YouTube started as a video DATING site. Nobody used it for dating. Pivoted to general video sharing. Twitter started as Odeo, a PODCAST platform. iTunes killed their market. Pivoted to microblogging. All these billion-dollar companies started as something ELSE. The pivot saved them.">
+<h2>Famous Pivots</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Company</th><th>Started As</th><th>Pivoted To</th><th>Result</th></tr>
+<tr><td><strong>Instagram</strong></td><td>Burbn (check-in app)</td><td>Photo filters only</td><td>$100B+ value</td></tr>
+<tr><td><strong>Slack</strong></td><td>Tiny Speck (game)</td><td>Team chat tool</td><td>$27B acquisition</td></tr>
+<tr><td><strong>YouTube</strong></td><td>Video dating site</td><td>General video sharing</td><td>$1.65B → Google</td></tr>
+<tr><td><strong>Twitter</strong></td><td>Odeo (podcasts)</td><td>Microblogging</td><td>$44B (Musk)</td></tr>
+<tr><td><strong>Nokia</strong></td><td>Paper mill</td><td>Phones → networks</td><td>Still operating</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:16px;text-align:center"><p style="font-size:26px">Pattern: data showed original idea wasn't working → pivoted → <strong>billion-dollar company</strong></p></div>
+</div></div></div>
+
+<!-- S6 Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick question! If you were to start a tech business TODAY in GenSan, what problem would you solve? Think about problems YOU actually experience. Problems your family experiences. Problems you see in the community. The best startups solve REAL problems that the founder personally understands. Not fancy imaginary problems. Real, painful, daily problems. Share with your seatmate. What problem? Who has it? Would they PAY for a solution? 2 minutes go!">
+<div class="qa-pause"><h3>⏸️ Quick Think</h3><p style="font-size:34px;font-weight:600">If you started a tech business in GenSan TODAY, what problem would you solve?</p><p class="small">Think: problems YOU experience. Your family. Your community. Real and painful.</p><p class="tiny" style="margin-top:12px">💬 Share with seatmate: What problem? Who has it? Would they PAY? (2 min)</p></div>
+</div></div></div>
+
+<!-- S7 Business Model Canvas -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The Business Model Canvas. Created by Alexander Osterwalder. It's a one-page tool that maps your ENTIRE business model. Nine blocks. Let me walk you through each one. This is THE framework used by startups, accelerators, and even big companies worldwide. For your final project, you need to complete all 9 blocks. It forces you to think through every aspect of your business: who you serve, what value you provide, how you make money, and what it costs.">
+<h2>Business Model Canvas (9 Blocks)</h2>
+<div class="divider"></div>
+<div class="grid-3" style="margin-top:12px">
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent)">Key Partners</h4><p style="font-size:20px;color:var(--muted)">Who helps us?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent2)">Key Activities</h4><p style="font-size:20px;color:var(--muted)">What do we DO?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent3)">Value Proposition</h4><p style="font-size:20px;color:var(--muted)">What problem solved?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:#b388ff">Key Resources</h4><p style="font-size:20px;color:var(--muted)">What do we NEED?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent)">Customer Relationships</h4><p style="font-size:20px;color:var(--muted)">How do we interact?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent2)">Customer Segments</h4><p style="font-size:20px;color:var(--muted)">WHO do we serve?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent3)">Cost Structure</h4><p style="font-size:20px;color:var(--muted)">What do we SPEND?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:#b388ff">Channels</h4><p style="font-size:20px;color:var(--muted)">How do we REACH them?</p></div>
+<div class="box" style="padding:20px;text-align:center"><h4 style="font-size:22px;color:var(--accent)">Revenue Streams</h4><p style="font-size:20px;color:var(--muted)">How do we MAKE money?</p></div>
+</div>
+<p class="tiny" style="margin-top:12px;text-align:center">By Alexander Osterwalder • Required for your final project (all 9 blocks filled)</p>
+</div></div></div>
+
+<!-- S8 BMC Deep Dive -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let me explain each block with a Grab Philippines example. Customer Segments: WHO? Riders (commuters) AND drivers (earners). Value Proposition: WHAT problem? Convenient, safe, cashless transport with fare transparency. Channels: HOW reach them? Mobile app, social media marketing, driver recruitment events. Customer Relationships: HOW interact? In-app support, ratings system, loyalty rewards. Revenue Streams: HOW money? Commission per ride (20-25%), GrabPay fees, GrabAds. Key Resources: WHAT need? App platform, driver network, GPS data, funding. Key Activities: WHAT do? App development, driver recruitment, marketing, customer support. Key Partners: WHO helps? Payment processors, map providers, vehicle financers. Cost Structure: WHAT spend? Developer salaries, marketing, customer support, office.">
+<h2>BMC Example: Grab Philippines</h2>
+<div class="divider"></div>
+<table style="margin-top:8px">
+<tr><th>Block</th><th>Grab's Answer</th></tr>
+<tr><td><strong>Customer Segments</strong></td><td>Riders (commuters) + Drivers (earners)</td></tr>
+<tr><td><strong>Value Proposition</strong></td><td>Convenient, safe, cashless transport with fare transparency</td></tr>
+<tr><td><strong>Channels</strong></td><td>Mobile app, social media, driver recruitment events</td></tr>
+<tr><td><strong>Customer Relationships</strong></td><td>In-app support, ratings, loyalty rewards (GrabRewards)</td></tr>
+<tr><td><strong>Revenue Streams</strong></td><td>Commission/ride (20-25%), GrabPay fees, GrabAds</td></tr>
+<tr><td><strong>Key Resources</strong></td><td>App platform, driver network, GPS data, funding</td></tr>
+<tr><td><strong>Key Activities</strong></td><td>App dev, driver recruitment, marketing, support</td></tr>
+<tr><td><strong>Key Partners</strong></td><td>Payment processors, map providers, vehicle financing</td></tr>
+<tr><td><strong>Cost Structure</strong></td><td>Developers, marketing, support, offices, incentives</td></tr>
+</table>
+</div></div></div>
+
+<!-- S9 Revenue Models -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Six common digital business revenue models. Subscription: monthly or yearly fee. Netflix 249/month, Spotify, Adobe. Predictable recurring revenue. Freemium: free basic version with paid premium. Canva, Zoom, Spotify free tier. Get users hooked, then convert. Marketplace: take commission on transactions. Shopee takes 2-5% per sale. Grab takes 20-25% per ride. Advertising: free service, sell user attention. Facebook, TikTok, YouTube. You are the product. SaaS: software subscription for businesses. Salesforce, ClickUp. Monthly per-user fees. E-commerce: sell products online. Lazada, your own Shopee store. For your final project, you need to identify which model fits YOUR solution.">
+<h2>Digital Revenue Models</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Model</th><th>How It Works</th><th>PH Example</th><th>Pros</th></tr>
+<tr><td><strong>Subscription</strong></td><td>Monthly/yearly fee</td><td>Netflix ₱249/mo</td><td>Predictable revenue</td></tr>
+<tr><td><strong>Freemium</strong></td><td>Free basic + paid premium</td><td>Canva, Zoom</td><td>Large user base → convert</td></tr>
+<tr><td><strong>Marketplace</strong></td><td>Commission on transactions</td><td>Shopee (2-5%)</td><td>Scales with volume</td></tr>
+<tr><td><strong>Advertising</strong></td><td>Free service, sell attention</td><td>Facebook, TikTok</td><td>Massive scale possible</td></tr>
+<tr><td><strong>SaaS</strong></td><td>Software subscription (B2B)</td><td>Salesforce</td><td>High margins, sticky</td></tr>
+<tr><td><strong>E-commerce</strong></td><td>Sell products online</td><td>Lazada, Shopee sellers</td><td>Direct to consumer</td></tr>
+</table>
+</div></div></div>
+
+<!-- S10 Startup Failure -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now, let's be real. 90% of startups FAIL. Let me tell you the top reasons WHY so you can AVOID them. Number 1 reason, 42%: no market need. They built something NOBODY wanted. This is why we did Design Thinking first. Empathize BEFORE building. Number 2, 29%: ran out of cash. Poor financial planning. Number 3, 23%: wrong team. Co-founder conflicts, missing skills. Number 4, 19%: outcompeted by better-funded rivals. Number 5, 18%: pricing issues. Couldn't find a sustainable price point. Notice: the NUMBER ONE reason is NOT technology failure. It's building something nobody wants. That's a MARKET problem, not a tech problem. Design Thinking solves this.">
+<h2>Why Startups Fail</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stat-big" style="font-size:48px;min-width:90px">42%</div><div><strong>No market need</strong> – Built something nobody wanted<br><span class="tiny">Design Thinking prevents this!</span></div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stat-big" style="font-size:48px;min-width:90px;color:var(--accent2)">29%</div><div><strong>Ran out of cash</strong> – Poor financial planning</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stat-big" style="font-size:48px;min-width:90px;color:var(--accent3)">23%</div><div><strong>Wrong team</strong> – Co-founder conflicts, skill gaps</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stat-big" style="font-size:48px;min-width:90px;color:#b388ff">19%</div><div><strong>Outcompeted</strong> – Better-funded competitors</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><div class="stat-big" style="font-size:48px;min-width:90px;color:var(--muted)">18%</div><div><strong>Pricing issues</strong> – No sustainable price point</div></div>
+</div>
+<p class="tiny" style="margin-top:12px;text-align:center">#1 reason = NOT tech failure. It's building what nobody wants. Empathy solves this.</p>
+</div></div></div>
+
+<!-- S11 PH Startups -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Philippine startup ecosystem. Growing fast! Let me show you some success stories. Kumu: Filipino live streaming platform, built for Filipinos, by Filipinos. Raised millions in funding. PayMongo: payment processing for Philippine businesses. Makes it easy for ANY business to accept online payments. Backed by Y Combinator, the most famous startup accelerator in the world. Expedock: AI document processing, also YC-backed. Great Deals: e-commerce. Cropital: crowdfunding for Filipino farmers. Beautiful idea, connecting investors directly to farmers. Support ecosystem: QBO Innovation Hub, IdeaSpace, DOST startup grants, DTI programs. You DON'T need to go to Silicon Valley. You can build from GenSan.">
+<h2>Philippine Startup Ecosystem</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:12px">
+<div class="box"><h4 style="color:var(--accent2)">PH Success Stories</h4>
+<table style="font-size:22px;margin-top:8px"><tr><td><strong>Kumu</strong></td><td>Live streaming social</td></tr><tr><td><strong>PayMongo</strong></td><td>Payment processing (YC)</td></tr><tr><td><strong>Expedock</strong></td><td>AI document processing (YC)</td></tr><tr><td><strong>Great Deals</strong></td><td>E-commerce platform</td></tr><tr><td><strong>Cropital</strong></td><td>Crowdfunding for farmers</td></tr><tr><td><strong>Salmon</strong></td><td>Digital banking</td></tr></table></div>
+<div class="flex-col" style="gap:16px">
+<div class="box"><h4 style="color:var(--accent3)">Support Available</h4>
+<ul style="gap:10px"><li style="font-size:24px">QBO Innovation Hub</li><li style="font-size:24px">IdeaSpace Foundation</li><li style="font-size:24px">DOST startup grants</li><li style="font-size:24px">DTI programs</li><li style="font-size:24px">Y Combinator (accepts PH startups!)</li></ul></div>
+<div class="highlight-box" style="text-align:center;padding:18px"><p style="font-size:24px">You DON'T need Silicon Valley.<br>Build from <strong>GenSan</strong>.</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S12 PH Opportunities -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Biggest digital opportunities in Philippines RIGHT NOW. AgriTech: 25% of our workforce is in agriculture pero minimal tech adoption. HUGE opportunity. EdTech: 28 million students, post-pandemic digital habits are set. HealthTech: doctor shortage in provinces, telemedicine growing. FinTech: 46% of Filipinos are unbanked or underbanked. GCash proved there's massive demand. LogisTech: 7,641 islands, logistics is inherently complex. FoodTech: delivery market growing fast. For GenSan specifically? FISHING. Tuna industry. AgriTech. Tourism. These are problems YOU understand because you LIVE here. That's your advantage over Manila-based founders.">
+<h2>PH Digital Opportunities</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Sector</th><th>Why Now</th><th>Market Size</th></tr>
+<tr><td><strong>AgriTech</strong></td><td>25% workforce, minimal tech adoption</td><td>₱1.8T agriculture sector</td></tr>
+<tr><td><strong>EdTech</strong></td><td>28M students, post-pandemic digital habits</td><td>₱500B+ education spend</td></tr>
+<tr><td><strong>HealthTech</strong></td><td>Doctor shortage in provinces</td><td>₱800B healthcare market</td></tr>
+<tr><td><strong>FinTech</strong></td><td>46% unbanked/underbanked</td><td>50M+ Filipinos unserved</td></tr>
+<tr><td><strong>LogisTech</strong></td><td>7,641 islands = complex logistics</td><td>₱600B+ logistics</td></tr>
+<tr><td><strong>FoodTech</strong></td><td>Growing delivery, cloud kitchens</td><td>₱300B+ food service</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:24px">GenSan advantage: <strong>FISHING, tuna, agriculture, tourism</strong>. You understand local problems.</p></div>
+</div></div></div>
+
+<!-- S13 Q&A 2 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick activity! Which of these sectors is most relevant to YOU personally? And within that sector, what specific problem have you EXPERIENCED or OBSERVED? Think local. Think GenSan. Think about problems your parents, neighbors, and community face. FinTech: ang lola nimo naglisod mag-padala ug kwarta? AgriTech: ang mga mag-uuma sa South Cotabato wala nay access sa market information? HealthTech: walay doctor sa barangay? Write it down. This might become your final project idea. 2 minutes!">
+<div class="qa-pause"><h3>⏸️ Opportunity Spotting</h3><p style="font-size:32px;font-weight:600">Which sector is most relevant to YOU? What LOCAL problem have you experienced?</p>
+<div class="grid-3" style="margin-top:16px;width:100%">
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:20px">🌾 AgriTech<br>(farming, fishing)</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:20px">💰 FinTech<br>(money, banking)</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:20px">🏥 HealthTech<br>(doctors, clinics)</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:20px">📚 EdTech<br>(students, schools)</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:20px">🚚 LogisTech<br>(delivery, transport)</p></div>
+<div class="box" style="text-align:center;padding:16px"><p style="font-size:20px">🍜 FoodTech<br>(restaurants, delivery)</p></div>
+</div><p class="tiny" style="margin-top:12px">💬 Write it down! This might be your final project. (2 min)</p></div>
+</div></div></div>
+
+<!-- S14 Funding Stages -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="How do startups get funded? There are stages. Bootstrapping: your own money, zero to 500K pesos. This funds idea validation and MVP. Pre-seed: 500K to 5M from angel investors or family. Funds early product and first users. Seed: 5M to 50M from seed funds and accelerators. This is for product-market fit. Series A: 50M to 500M from venture capital firms. Scale growth. Series B and beyond: 500M+ for market expansion. IPO: going public on stock exchange. The key insight: you DON'T need funding to start. Many successful companies bootstrapped. GCash didn't start with billions. They started with a small team and small budget. Start where you are.">
+<h2>Startup Funding Stages</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Stage</th><th>Amount</th><th>Source</th><th>Funds What</th></tr>
+<tr><td><strong>Bootstrapping</strong></td><td>₱0-500K</td><td>Personal savings</td><td>Idea validation, MVP</td></tr>
+<tr><td><strong>Pre-seed</strong></td><td>₱500K-5M</td><td>Angel investors, family</td><td>Early product, first users</td></tr>
+<tr><td><strong>Seed</strong></td><td>₱5M-50M</td><td>Seed funds, accelerators</td><td>Product-market fit</td></tr>
+<tr><td><strong>Series A</strong></td><td>₱50M-500M</td><td>Venture capital</td><td>Scale growth</td></tr>
+<tr><td><strong>Series B+</strong></td><td>₱500M+</td><td>Large VC, PE</td><td>Market expansion</td></tr>
+<tr><td><strong>IPO</strong></td><td>Public</td><td>Stock exchange</td><td>Full scale</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px">You DON'T need funding to start. Many successes were bootstrapped. Start where you are.</p></div>
+</div></div></div>
+
+<!-- S15 BSIS Advantage -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Why BSIS graduates have a startup ADVANTAGE. One: you understand BOTH technology and business. Pure CS students often can't talk to customers. Pure business students can't build the product. YOU can do both. Two: you can build your own MVP without hiring expensive developers. That saves hundreds of thousands. Three: you can evaluate which technology fits which problem. Not every problem needs blockchain or AI. Four: Philippine digital economy is growing RAPIDLY. Timing is right. Five: freelancing is a stepping stone. Start freelancing, save money, build skills, then launch your own. Philippines is #6 globally in freelancing. Use that.">
+<h2>Your BSIS Entrepreneurship Advantage</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:32px">🎯</span><div>Understand <strong>BOTH technology AND business</strong> (rare combination)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:32px">🛠️</span><div>Can <strong>build MVP yourself</strong> without hiring expensive developers</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:32px">🔍</span><div>Can <strong>evaluate which tech fits</strong> which problem (not everything needs AI)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:32px">📈</span><div>PH digital economy <strong>growing rapidly</strong> – timing is right</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:32px">💻</span><div><strong>Freelancing as stepping stone</strong> – PH #6 globally, build skills + capital</div></div>
+</div>
+</div></div></div>
+
+<!-- S16 Q&A 3 - BMC Workshop -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="GRADED activity! Groups of 3-4. Create a 1-page Business Model Canvas for a tech startup solving a LOCAL problem. Must include ALL 9 blocks filled out. Use the problem you identified earlier. Think about: who's your customer? What value do you provide? How do you make money? What does it cost? Who are your partners? Present in 3 minutes next session. This is the start of your final project thinking. Take it seriously. I'll walk around to help groups that are stuck. You have 15 minutes. Go!">
+<div class="qa-pause"><h3>🛠️ BMC Workshop (Graded)</h3><p style="font-size:28px;font-weight:600">Groups of 3-4: Create a Business Model Canvas for a LOCAL tech startup.</p>
+<div style="margin-top:12px;text-align:left;max-width:900px">
+<p style="font-size:22px;margin-bottom:8px">Fill ALL 9 blocks:</p>
+<div class="grid-3" style="gap:8px">
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Customer Segments</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Value Proposition</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Channels</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Relationships</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Revenue Streams</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Key Resources</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Key Activities</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Key Partners</p></div>
+<div class="box" style="padding:12px;text-align:center"><p style="font-size:18px">Cost Structure</p></div>
+</div></div><p class="tiny" style="margin-top:12px">⏱️ 15 min. Present next session (3 min/group).</p></div>
+</div></div></div>
+
+<!-- S17 Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways. Digital entrepreneurship is about using tech to create scalable value. Lean Startup: Build, Measure, Learn. Don't build 2 years blind. Number 1 failure reason: no market need. Do empathy research first! Business Model Canvas: 9 blocks covering your entire business model. Six revenue models: subscription, freemium, marketplace, advertising, SaaS, e-commerce. PH ecosystem is growing. Opportunities in AgriTech, FinTech, HealthTech especially. Famous pivots show: it's okay to change direction based on data. BSIS gives you rare business PLUS technology skills. And you don't need funding to start, just start with an MVP.">
+<h2>Key Takeaways</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:8px">
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">1.</span><p class="small">Digital entrepreneurship = tech + scalable value creation</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">2.</span><p class="small">Lean Startup: <strong>Build → Measure → Learn</strong> (don't build blind)</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">3.</span><p class="small">#1 failure: no market need. <strong>Empathy research first!</strong></p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">4.</span><p class="small">BMC: 9 blocks covering entire business model</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">5.</span><p class="small">6 revenue models: subscription, freemium, marketplace, ads, SaaS, e-commerce</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">6.</span><p class="small">PH opportunities: AgriTech, FinTech, HealthTech</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">7.</span><p class="small">Pivots are normal. Instagram, Slack, YouTube all pivoted.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">8.</span><p class="small">Don't need funding. Start with MVP. Start NOW.</p></div>
+</div>
+</div></div></div>
+
+<!-- S18 Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Quiz time! 15 items on entrepreneurship, lean startup, and business models. Let's go!">
+<div class="eyebrow">Session 29</div>
+<h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1>
+<p class="subtitle">15 Items • Multiple Choice</p>
+</div></div></div>
+
+<!-- Quiz 15 items -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1. The Lean Startup cycle is blank."><h3>Q1. The Lean Startup cycle is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Plan → Build → Sell</p></div><div class="quiz-choice"><p class="small">B. Build → Measure → Learn</p></div><div class="quiz-choice"><p class="small">C. Design → Code → Deploy</p></div><div class="quiz-choice"><p class="small">D. Think → Write → Submit</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2. The number 1 reason startups fail is blank."><h3>Q2. The #1 reason startups fail is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Too much funding</p></div><div class="quiz-choice"><p class="small">B. No market need (building something nobody wants)</p></div><div class="quiz-choice"><p class="small">C. Too many customers</p></div><div class="quiz-choice"><p class="small">D. Government regulation</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3. The Business Model Canvas has how many blocks?"><h3>Q3. The Business Model Canvas has ____ blocks.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. 3</p></div><div class="quiz-choice"><p class="small">B. 5</p></div><div class="quiz-choice"><p class="small">C. 9</p></div><div class="quiz-choice"><p class="small">D. 12</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4. A pivot in startup terminology means blank."><h3>Q4. A "pivot" means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Giving up entirely</p></div><div class="quiz-choice"><p class="small">B. Changing direction based on data showing current path isn't working</p></div><div class="quiz-choice"><p class="small">C. Spinning in circles</p></div><div class="quiz-choice"><p class="small">D. Copying a competitor exactly</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5. The freemium model works by blank."><h3>Q5. The freemium model works by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Everything always free</p></div><div class="quiz-choice"><p class="small">B. Free basic version with paid premium features</p></div><div class="quiz-choice"><p class="small">C. Charging upfront before use</p></div><div class="quiz-choice"><p class="small">D. Government funding</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6. Instagram pivoted from blank."><h3>Q6. Instagram pivoted from ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. A music streaming app</p></div><div class="quiz-choice"><p class="small">B. Burbn (a check-in app with too many features)</p></div><div class="quiz-choice"><p class="small">C. A banking application</p></div><div class="quiz-choice"><p class="small">D. An email service</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7. What percentage of Filipinos are unbanked or underbanked?"><h3>Q7. ____ of Filipinos are unbanked/underbanked.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. 10%</p></div><div class="quiz-choice"><p class="small">B. 25%</p></div><div class="quiz-choice"><p class="small">C. 46%</p></div><div class="quiz-choice"><p class="small">D. 80%</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8. The Value Proposition block answers blank."><h3>Q8. "Value Proposition" answers ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. How much we spend</p></div><div class="quiz-choice"><p class="small">B. What PROBLEM do we solve for the customer?</p></div><div class="quiz-choice"><p class="small">C. Who our employees are</p></div><div class="quiz-choice"><p class="small">D. Where our office is located</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9. Validated learning means blank."><h3>Q9. "Validated learning" means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Learning from textbooks only</p></div><div class="quiz-choice"><p class="small">B. Using REAL data from users to prove/disprove assumptions</p></div><div class="quiz-choice"><p class="small">C. Guessing what customers want</p></div><div class="quiz-choice"><p class="small">D. Reading competitor reviews</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10. Grab's revenue model is primarily blank."><h3>Q10. Grab's primary revenue model is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Subscription (monthly fee from riders)</p></div><div class="quiz-choice"><p class="small">B. Marketplace (commission per ride from drivers)</p></div><div class="quiz-choice"><p class="small">C. Advertising only</p></div><div class="quiz-choice"><p class="small">D. Selling vehicles</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11. The BSIS advantage in entrepreneurship is blank."><h3>Q11. The BSIS entrepreneurship advantage is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Only knowing business theory</p></div><div class="quiz-choice"><p class="small">B. Understanding BOTH technology AND business (can build + sell)</p></div><div class="quiz-choice"><p class="small">C. Avoiding all technology</p></div><div class="quiz-choice"><p class="small">D. Only following instructions</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12. The bootstrapping stage uses what funding source?"><h3>Q12. Bootstrapping uses ____ as funding.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Venture capital firms</p></div><div class="quiz-choice"><p class="small">B. Personal savings (₱0-500K)</p></div><div class="quiz-choice"><p class="small">C. Stock market IPO</p></div><div class="quiz-choice"><p class="small">D. Government bailout</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13. Network effects mean blank."><h3>Q13. Network effects mean ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Platform gets slower with users</p></div><div class="quiz-choice"><p class="small">B. Platform becomes MORE valuable as more users join</p></div><div class="quiz-choice"><p class="small">C. Networks require physical cables</p></div><div class="quiz-choice"><p class="small">D. Internet speed determines value</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14. PayMongo is a Philippine startup that does blank."><h3>Q14. PayMongo (PH startup) does ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Food delivery</p></div><div class="quiz-choice"><p class="small">B. Payment processing for businesses</p></div><div class="quiz-choice"><p class="small">C. Social media</p></div><div class="quiz-choice"><p class="small">D. Video streaming</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15. The biggest digital opportunity in PH is related to blank. That's our quiz!"><h3>Q15. Biggest unmet digital opportunity in PH is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Social media (already saturated)</p></div><div class="quiz-choice"><p class="small">B. FinTech/AgriTech (large underserved populations)</p></div><div class="quiz-choice"><p class="small">C. Luxury e-commerce</p></div><div class="quiz-choice"><p class="small">D. Space technology</p></div></div></div></div></div>
+
+<!-- End -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's Session 29! Next session we continue with Digital Business Models, platform economics, and network effects. You'll also present your BMC proposals from today. Keep working on those canvases! This feeds directly into your final project. See you, ingat!">
+<div class="eyebrow">End of Session 29</div>
+<h1 style="margin-top:20px">Thank You! 🎓</h1>
+<p class="subtitle" style="margin-top:12px">Next: Digital Business Models (Session 30)</p>
+<div class="divider" style="margin:24px auto;width:200px"></div>
+<p class="small">📝 Complete your BMC for next session's presentation!</p>
+<p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide')),viewports=Array.from(document.querySelectorAll('.slide-viewport')),navDots=document.getElementById('navDots'),progressBar=document.getElementById('progressBar'),slideCounter=document.getElementById('slideCounter');
+let currentSlide=0,scriptWindow=null,answerWindow=null;
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Slide ${i+1}`);b.addEventListener('click',()=>goToSlide(i));navDots.appendChild(b);});
+function scaleSlides(){viewports.forEach(vp=>{const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${s})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=viewports.indexOf(e.target);if(i>=0){currentSlide=i;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>obs.observe(vp));
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+function updateUI(){const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;syncScript();}
+document.addEventListener('keydown',e=>{
+if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}
+if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}
+else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}
+else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
+else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
+else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+});
+let tY=0;document.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;});document.addEventListener('touchend',e=>{const d=tY-e.changedTouches[0].clientY;if(Math.abs(d)>50){d>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+function openTeacherScript(){if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');syncScript();}
+function syncScript(){if(!scriptWindow||scriptWindow.closed)return;const sl=slides[currentSlide];const sc=sl.getAttribute('data-script')||'(No script)';const t=sl.querySelector('h1,h2,h3');const tt=t?t.textContent:'Slide '+(currentSlide+1);scriptWindow.document.open();scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body><div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div><div class="slide-title">${tt}</div><div class="script-text">${sc}</div><div class="tip">💡 Auto-updates as you navigate.</div></body></html>`);scriptWindow.document.close();}
+function openAnswerKey(){if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');answerWindow.document.open();answerWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}.header h2{font-size:20px;font-weight:700}.header p{font-size:13px;opacity:0.8;margin-top:4px}.item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #2a2a3a}.item:last-child{border-bottom:none}.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}.answer{color:#2a9d8f;font-weight:700;font-size:18px}.rationale{color:#8a8a9a;font-size:14px;margin-top:4px}.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}</style></head><body><div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 29 Quiz • Teacher Only</p></div><div class="item"><span class="num">1.</span><div><span class="answer">B</span> – Build → Measure → Learn.<div class="rationale">Core Lean Startup cycle by Eric Ries.</div></div></div><div class="item"><span class="num">2.</span><div><span class="answer">B</span> – No market need (42% build what nobody wants).<div class="rationale">Design Thinking's empathy stage prevents this.</div></div></div><div class="item"><span class="num">3.</span><div><span class="answer">C</span> – 9 blocks.<div class="rationale">BMC by Osterwalder has 9 interconnected blocks.</div></div></div><div class="item"><span class="num">4.</span><div><span class="answer">B</span> – Changing direction based on data.<div class="rationale">Pivot = strategic change when evidence shows current path fails.</div></div></div><div class="item"><span class="num">5.</span><div><span class="answer">B</span> – Free basic + paid premium features.<div class="rationale">Hook users free, convert subset to paid.</div></div></div><div class="item"><span class="num">6.</span><div><span class="answer">B</span> – Burbn (check-in app with too many features).<div class="rationale">Data showed users only used photo filters → pivoted to photos only.</div></div></div><div class="item"><span class="num">7.</span><div><span class="answer">C</span> – 46%.<div class="rationale">Massive FinTech opportunity: 46% unbanked/underbanked.</div></div></div><div class="item"><span class="num">8.</span><div><span class="answer">B</span> – What PROBLEM do we solve for the customer?<div class="rationale">Core of the business: why customers choose you.</div></div></div><div class="item"><span class="num">9.</span><div><span class="answer">B</span> – Using REAL data from users to prove/disprove assumptions.<div class="rationale">Not guessing; measuring actual user behavior.</div></div></div><div class="item"><span class="num">10.</span><div><span class="answer">B</span> – Marketplace (commission per ride).<div class="rationale">Grab takes 20-25% commission from each driver transaction.</div></div></div><div class="item"><span class="num">11.</span><div><span class="answer">B</span> – Understanding BOTH technology AND business.<div class="rationale">Can build AND sell; rare combination that CS or pure biz lacks.</div></div></div><div class="item"><span class="num">12.</span><div><span class="answer">B</span> – Personal savings (₱0-500K).<div class="rationale">Self-funded; no external investors at earliest stage.</div></div></div><div class="item"><span class="num">13.</span><div><span class="answer">B</span> – Platform becomes MORE valuable as more users join.<div class="rationale">Virtuous cycle: more users → more value → more users.</div></div></div><div class="item"><span class="num">14.</span><div><span class="answer">B</span> – Payment processing for businesses.<div class="rationale">YC-backed PH startup enabling online payments for any business.</div></div></div><div class="item"><span class="num">15.</span><div><span class="answer">B</span> – FinTech/AgriTech (large underserved populations).<div class="rationale">46% unbanked + 25% agriculture = massive market gap.</div></div></div><div class="warn">⚠️ TEACHER ONLY – Do not display to students</div></body></html>`);answerWindow.document.close();}
+updateUI();
+})();
+</script>
+</body>
+</html>

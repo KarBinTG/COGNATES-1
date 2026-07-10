@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 26: Data Privacy & Intellectual Property</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.slide-scale{width:1920px;height:1080px;position:relative;transform-origin:center center}
+.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:36px;position:relative;overflow:hidden}
+h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}
+h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}
+h3{font-size:48px;font-weight:700;line-height:1.2}
+h4{font-size:38px;font-weight:600;line-height:1.3}
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.subtitle{font-size:32px;color:var(--muted);font-weight:400}
+p{font-size:36px;line-height:1.6}
+.small{font-size:28px}
+.tiny{font-size:22px;color:var(--muted)}
+strong{color:var(--accent)}
+em{color:var(--accent2)}
+ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:20px}
+li{font-size:34px;line-height:1.5}
+li::marker{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:30px}
+th{background:var(--accent);color:#fff;padding:16px 20px;text-align:left;font-weight:600;font-size:26px}
+td{padding:14px 20px;border-bottom:1px solid var(--border);font-size:28px}
+tr:nth-child(even) td{background:var(--card)}
+tr:hover td{background:var(--card2)}
+.box{background:var(--card);border-radius:16px;padding:36px;border:1px solid var(--border)}
+.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:32px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+.flex-col{display:flex;flex-direction:column;gap:16px}
+.stat-big{font-size:80px;font-weight:900;color:var(--accent);line-height:1}
+.stat-label{font-size:24px;color:var(--muted);margin-top:8px}
+.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}
+.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:12px 0}
+.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:48px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.qa-pause h3{color:var(--accent3)}
+.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 28px;transition:background .2s}
+.quiz-choice:hover{background:var(--card2)}
+.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:100}
+.nav-dots button{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}
+.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}
+.nav-dots button:hover{opacity:0.8}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}
+.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}
+@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:52px}h3{font-size:40px}p{font-size:32px}li{font-size:30px}td,th{font-size:24px;padding:10px 14px}.grid-2{grid-template-columns:1fr}}
+@media(max-width:768px){body{font-size:28px}h1{font-size:52px}h2{font-size:40px}h3{font-size:32px}p{font-size:26px}li{font-size:24px}td,th{font-size:20px;padding:8px 10px}.slide{padding:32px 24px;gap:20px}.grid-2,.grid-3{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- S1: Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Good morning class! Maayong buntag! So last session nag-discuss ta about ethical issues sa emerging technologies. Karon, mag-deep dive ta sa duha ka super important na topics: DATA PRIVACY ug INTELLECTUAL PROPERTY. Nganong importante ni? Kay as IS professionals, every system you build collects data. Ug kung dili mo kabalo sa law, pwede mo ma-liable. Up to 5 million pesos fine ug imprisonment under RA 10173. So listen carefully ha, kay this protects BOTH you and your future users. Let's go!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 16</div>
+<h1 style="margin-top:20px">Data Privacy &<br><span style="color:var(--accent)">Intellectual Property</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 26 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">RA 10173</span><span class="tag" style="background:var(--accent2);color:#111">GDPR</span><span class="tag" style="background:var(--accent3)">IP Rights</span><span class="tag">Privacy by Design</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- S2: Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Atong objectives for today. Five ka objectives. First, explain RA 10173 in depth. Second, describe individual data privacy rights under Philippine law. Third, define intellectual property types relevant to tech. Fourth, compare Philippine data privacy with GDPR sa Europe. Fifth, apply privacy-by-design principles to IS projects. By the end of today, you should know EXACTLY what data rights Filipinos have, and what happens when those rights are violated.">
+<div class="eyebrow">Session Objectives</div>
+<h2>Learning Objectives</h2>
+<div class="divider"></div>
+<ol style="gap:28px;margin-top:12px">
+<li><strong>Explain</strong> RA 10173 (Data Privacy Act) in depth</li>
+<li><strong>Describe</strong> individual data privacy rights under Philippine law</li>
+<li><strong>Define</strong> intellectual property types relevant to technology</li>
+<li><strong>Compare</strong> Philippine data privacy with GDPR (EU)</li>
+<li><strong>Apply</strong> privacy-by-design principles to IS projects</li>
+</ol>
+</div></div></div>
+
+<!-- S3: RA 10173 Overview -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="So, RA 10173. Republic Act 10173, also known as the Data Privacy Act of 2012. This is THE law that protects personal information in the Philippines. It covers BOTH government and private sector information systems. Enacted 2012, pero enforcement really picked up around 2016 when the National Privacy Commission became active. Key provisions: Personal Information Controllers, meaning any organization that collects your data, MUST protect it. Data subjects, meaning YOU, have rights. Every organization collecting data must have a Data Protection Officer. The NPC enforces the law. And penalties? Up to 5 million pesos and imprisonment. So this is not a joke.">
+<h2>RA 10173: Data Privacy Act of 2012</h2>
+<div class="divider"></div>
+<div class="highlight-box"><p style="font-size:34px"><strong>Purpose:</strong> Protects individual personal information in government and private sector information and communications systems in the Philippines.</p></div>
+<div class="grid-2" style="margin-top:24px">
+<div class="flex-col" style="gap:16px">
+<h4>Key Provisions</h4>
+<ul style="gap:14px">
+<li>Personal Information Controller (PIC) must protect data</li>
+<li>Data subjects have enforceable rights</li>
+<li>Mandatory Data Protection Officer (DPO)</li>
+<li>National Privacy Commission (NPC) enforces</li>
+<li>Breach notification within 72 hours</li>
+</ul>
+</div>
+<div class="flex-col" style="gap:16px">
+<h4>Penalties</h4>
+<div class="box" style="text-align:center;padding:28px"><div class="stat-big" style="font-size:56px">₱5M</div><p class="stat-label">Maximum fine</p></div>
+<div class="box" style="text-align:center;padding:28px"><div class="stat-big" style="font-size:56px;color:var(--accent2)">1-6 yrs</div><p class="stat-label">Imprisonment</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S4: Personal Info Types -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="What counts as personal information under the law? There are three categories. Regular personal information: name, address, phone number, email, birthday. Anything that can identify you. Sensitive personal information: race, ethnicity, health records, government IDs like SSS or PhilHealth number, education records, and importantly, court records. This has HIGHER protection. Then there's Privileged information: any information from privileged communication like attorney-client, doctor-patient. The higher the sensitivity, the stricter the protection required. Violation of sensitive info? Heavier penalties.">
+<h2>Types of Personal Information</h2>
+<div class="divider"></div>
+<div class="grid-3" style="margin-top:16px">
+<div class="box" style="padding:28px">
+<h4 style="color:var(--accent3);font-size:28px;margin-bottom:12px">📋 Regular Personal Info</h4>
+<ul style="gap:10px;padding-left:24px"><li style="font-size:24px">Name, address</li><li style="font-size:24px">Phone, email</li><li style="font-size:24px">Birthday, age</li><li style="font-size:24px">Any identifier</li></ul>
+<p class="tiny" style="margin-top:12px">Standard protection</p>
+</div>
+<div class="box" style="padding:28px;border-color:var(--accent2)">
+<h4 style="color:var(--accent2);font-size:28px;margin-bottom:12px">🔒 Sensitive Personal Info</h4>
+<ul style="gap:10px;padding-left:24px"><li style="font-size:24px">Race, ethnicity</li><li style="font-size:24px">Health records</li><li style="font-size:24px">Gov't IDs (SSS, PhilHealth)</li><li style="font-size:24px">Education records</li><li style="font-size:24px">Court records</li></ul>
+<p class="tiny" style="margin-top:12px">Higher protection + heavier penalties</p>
+</div>
+<div class="box" style="padding:28px;border-color:var(--accent)">
+<h4 style="color:var(--accent);font-size:28px;margin-bottom:12px">⚖️ Privileged Info</h4>
+<ul style="gap:10px;padding-left:24px"><li style="font-size:24px">Attorney-client</li><li style="font-size:24px">Doctor-patient</li><li style="font-size:24px">Other privileged communication</li></ul>
+<p class="tiny" style="margin-top:12px">Highest protection</p>
+</div>
+</div>
+</div></div></div>
+
+<!-- S5: Individual Data Rights -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now, what are YOUR rights as a data subject? Seven rights under RA 10173. Right to be informed: you must know WHAT data is collected and WHY. Right to access: you can request to SEE your own data. Right to correct: if there's wrong info, you can demand they fix it. Right to erase: you can request deletion. Right to object: you can refuse processing. Right to data portability: you can take your data and transfer to another service. Right to damages: if your rights are violated, you can seek compensation. These are ENFORCEABLE rights. Meaning you can file a complaint with the NPC.">
+<h2>Your Data Rights (RA 10173)</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Right</th><th>What It Means</th><th>Example</th></tr>
+<tr><td><strong>Be Informed</strong></td><td>Know what's collected and why</td><td>Privacy notice before sign-up</td></tr>
+<tr><td><strong>Access</strong></td><td>See your own data</td><td>Request copy of your records</td></tr>
+<tr><td><strong>Correct</strong></td><td>Fix inaccurate information</td><td>Wrong birthday in system</td></tr>
+<tr><td><strong>Erase</strong></td><td>Request deletion of data</td><td>Close account, delete everything</td></tr>
+<tr><td><strong>Object</strong></td><td>Refuse processing</td><td>Opt out of marketing</td></tr>
+<tr><td><strong>Data Portability</strong></td><td>Transfer data elsewhere</td><td>Move from one bank to another</td></tr>
+<tr><td><strong>Damages</strong></td><td>Seek compensation for violations</td><td>Data breach exposed your info</td></tr>
+</table>
+<p class="tiny" style="margin-top:16px">All enforceable via complaint to NPC (National Privacy Commission)</p>
+</div></div></div>
+
+<!-- S6: Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick check! Let me ask: have you ever tried to exercise any of these rights? Ni-request ba mo ug deletion sa account ninyo? Ni-ask ba mo sa school or company unsay data nila about you? Most people never exercise these rights even though they HAVE them. That's part of the privacy paradox na gi-discuss nato last session. Now think: if you could exercise ONE right today, which one would it be and why? Share with your seatmate. 2 minutes.">
+<div class="qa-pause"><h3>⏸️ Quick Check</h3><p style="font-size:36px;font-weight:600">Have you ever exercised any of these data rights?</p><p class="small" style="max-width:800px">Requested data deletion? Asked what info a company has on you? Opted out of marketing?</p><p class="tiny" style="margin-top:16px">💬 If you could use ONE right today, which one? (2 min pair discussion)</p></div>
+</div></div></div>
+
+<!-- S7: NPC & Enforcement -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The National Privacy Commission. Established 2016. They are the enforcement body. What do they do? They investigate complaints, issue compliance orders, impose fines, and conduct audits. They've been increasingly active. In 2023, they issued multiple compliance orders against companies that violated data privacy. You can actually file complaints online through their website. They also do advisories, like during COVID when many contact tracing apps were collecting too much data, the NPC stepped in. Not as powerful as GDPR enforcement in Europe yet, but growing fast.">
+<h2>National Privacy Commission (NPC)</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="flex-col" style="gap:20px">
+<div class="box"><h4>What NPC Does</h4>
+<ul style="gap:12px"><li>Investigates complaints from citizens</li><li>Issues compliance orders to violators</li><li>Imposes fines and penalties</li><li>Conducts organizational audits</li><li>Issues advisories and guidelines</li><li>Registers Data Protection Officers</li></ul></div>
+</div>
+<div class="flex-col" style="gap:20px">
+<div class="box"><h4>How to File Complaint</h4>
+<ul style="gap:12px"><li>Online via NPC website</li><li>Written complaint with evidence</li><li>NPC investigates within 10 days</li><li>Mediation or formal hearing</li><li>Can result in fines + imprisonment</li></ul></div>
+<div class="highlight-box" style="text-align:center;padding:20px"><p class="small"><strong>NPC Hotline:</strong> (02) 8234-2228</p><p class="tiny">complaints@privacy.gov.ph</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S8: GDPR Comparison -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now let's compare our law with GDPR, ang data privacy law sa European Union. GDPR is considered the GOLD STANDARD globally. Ang scope sa GDPR is GLOBAL, meaning any company serving EU citizens must comply, even if based in the Philippines. Ato naman, Philippine entities lang. Penalties: GDPR can fine up to 20 million euros or 4% of GLOBAL revenue, whichever is higher. Imagine, 4% of Google's global revenue! Ato kay up to 5 million pesos lang. Enforcement: GDPR has issued billions of euros in fines. Ato, growing pa. But the RIGHTS are similar. Both have access, correct, erase, object. So our law is good, enforcement just needs to catch up.">
+<h2>GDPR vs RA 10173</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Feature</th><th>GDPR (EU)</th><th>RA 10173 (PH)</th></tr>
+<tr><td><strong>Scope</strong></td><td>Global (any company serving EU)</td><td>Philippine entities</td></tr>
+<tr><td><strong>Consent</strong></td><td>Explicit, specific, informed</td><td>Consent required</td></tr>
+<tr><td><strong>Max Penalty</strong></td><td>€20M or 4% global revenue</td><td>₱5M + imprisonment</td></tr>
+<tr><td><strong>DPO Required</strong></td><td>Yes (certain orgs)</td><td>Yes (all PICs)</td></tr>
+<tr><td><strong>Right to Erasure</strong></td><td>Yes ("right to be forgotten")</td><td>Yes</td></tr>
+<tr><td><strong>Breach Notification</strong></td><td>72 hours</td><td>72 hours</td></tr>
+<tr><td><strong>Enforcement</strong></td><td>Strong (billions in fines)</td><td>Growing (NPC active since 2016)</td></tr>
+</table>
+</div></div></div>
+
+<!-- S9: IP Overview -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now let's shift to Intellectual Property. As IS professionals, you CREATE things. Software, apps, designs, content. And you need to protect what you create AND respect what others create. Five types of IP relevant to tech. Copyright: protects original creative works. Your code, your designs, your content. Duration: life plus 50 years. Patent: protects novel inventions, 20 years. Algorithms, hardware designs. Trademark: brand identity, logos, app names. Renewable every 10 years. Trade Secret: confidential business info, like Google's search algorithm. And Industrial Design: visual design of products.">
+<h2>Intellectual Property in Technology</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>IP Type</th><th>Protects</th><th>Duration</th><th>Tech Example</th></tr>
+<tr><td><strong>Copyright</strong></td><td>Original creative works</td><td>Life + 50 years</td><td>Software code, content</td></tr>
+<tr><td><strong>Patent</strong></td><td>Novel inventions</td><td>20 years</td><td>Algorithms, hardware</td></tr>
+<tr><td><strong>Trademark</strong></td><td>Brand identity</td><td>Renewable/10 yrs</td><td>Logos, app names</td></tr>
+<tr><td><strong>Trade Secret</strong></td><td>Confidential business info</td><td>As long as kept secret</td><td>Google's algorithm</td></tr>
+<tr><td><strong>Industrial Design</strong></td><td>Visual product design</td><td>5-15 years</td><td>Phone hardware design</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:16px;text-align:center"><p class="small">In PH: Copyright is <strong>AUTOMATIC</strong> upon creation. No registration needed.</p></div>
+</div></div></div>
+
+<!-- S10: Software & Copyright -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Important for you as BSIS students: SOFTWARE is protected as a LITERARY WORK under copyright. Yes, your code is treated like a book. The moment you write it, it's automatically protected. No registration needed. But registration with IPOPHL gives you stronger evidence in court. Now, the digital age IP issues. Software piracy: using software without license. Very common sa Philippines, especially cracked software. AI-generated content: who owns it? Unresolved globally. Open source vs proprietary: different licensing models. Data ownership: who owns data you generate on platforms like Facebook? Patent trolls: companies that buy patents only to sue. Fair use vs infringement: when is copying allowed?">
+<h2>Software & Copyright</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="flex-col" style="gap:20px">
+<div class="highlight-box"><h4 style="color:var(--accent3)">Key Fact</h4><p class="small">Software is protected as a <strong>literary work</strong> under Philippine copyright law (RA 8293). Protection is <strong>automatic</strong> upon creation.</p></div>
+<div class="box"><h4>Philippine IP Framework</h4>
+<ul style="gap:10px"><li style="font-size:26px">RA 8293: IP Code of PH</li><li style="font-size:26px">IPOPHL: enforcement agency</li><li style="font-size:26px">RA 10175: computer-related IP offenses</li><li style="font-size:26px">No registration needed for copyright</li></ul></div>
+</div>
+<div class="flex-col" style="gap:20px">
+<div class="box"><h4 style="color:var(--accent)">Digital Age IP Issues</h4>
+<ul style="gap:10px"><li style="font-size:26px">Software piracy (cracked software)</li><li style="font-size:26px">AI-generated content ownership (?)</li><li style="font-size:26px">Open source vs proprietary licensing</li><li style="font-size:26px">Data ownership on platforms</li><li style="font-size:26px">Patent trolls</li><li style="font-size:26px">Fair use vs infringement</li></ul></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S11: AI Copyright Controversy -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Hot topic right now: AI and Copyright. Here's the controversy. AI like ChatGPT, Midjourney, Stable Diffusion, they were trained on BILLIONS of copyrighted works. Books, art, music. Without permission from the creators. Now these AI generate NEW content 'inspired by' those works. Artists are suing. Writers are suing. The New York Times is suing OpenAI. Key questions: Can AI training on copyrighted works be 'fair use'? Who owns AI output? Can AI be an 'author'? Most courts currently say NO, AI cannot be an author. But the user who prompted it? Unresolved. The Philippines has no specific AI copyright law yet. This will likely be a major legal battleground in your career.">
+<h2>AI & Copyright Controversy 🤖</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:12px">
+<div class="flex-col" style="gap:20px">
+<div class="box"><h4>The Problem</h4>
+<ul style="gap:12px"><li style="font-size:26px">AI trained on billions of copyrighted works <strong>without permission</strong></li><li style="font-size:26px">Generates content "inspired by" artists' styles</li><li style="font-size:26px">Multiple lawsuits ongoing globally</li><li style="font-size:26px">NYT vs OpenAI, artists vs Stability AI</li></ul></div>
+<div class="box"><h4>PH Status</h4><p class="small">No specific AI copyright law yet. Will be major legal issue in your career.</p></div>
+</div>
+<div class="flex-col" style="gap:20px">
+<div class="box"><h4 style="color:var(--accent2)">Unresolved Questions</h4>
+<ul style="gap:12px"><li style="font-size:26px">Is AI training "fair use"?</li><li style="font-size:26px">Who owns AI-generated output?</li><li style="font-size:26px">Can AI be an "author"? (Courts say NO)</li><li style="font-size:26px">Does the prompter own the result?</li><li style="font-size:26px">What about AI mimicking specific artists?</li></ul></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S12: Q&A 2 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick pause! Real scenario para sa inyo. You're a freelance graphic designer. You use Midjourney to generate an initial concept, then you modify it heavily in Photoshop. Adding your own elements, changing colors, restructuring. The final product is maybe 30% AI, 70% your work. Question: Do you OWN that final product? Can you sell it to a client? Should you disclose that AI was used? What if the AI-generated part accidentally copied another artist's style? Discuss with your seatmate. No clear legal answer exists yet, pero think about the ethical implications. 3 minutes.">
+<div class="qa-pause"><h3>⏸️ Ethical Scenario</h3><p style="font-size:32px;font-weight:600">You use Midjourney for initial concept, then heavily modify in Photoshop (30% AI, 70% you).</p>
+<div class="grid-2" style="margin-top:20px;width:100%;max-width:1000px">
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:22px">Do you OWN the final product?</p></div>
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:22px">Can you sell it to a client?</p></div>
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:22px">Should you DISCLOSE AI use?</p></div>
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:22px">What if AI copied an artist's style?</p></div>
+</div><p class="tiny" style="margin-top:16px">💬 No clear legal answer exists. Discuss the ethics. (3 min)</p></div>
+</div></div></div>
+
+<!-- S13: Privacy by Design -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now, Privacy by Design. This is a concept na super relevant for you as future IS builders. Seven principles. One: Proactive not reactive. Prevent problems, don't just fix them after. Two: Privacy as default. The system should protect privacy WITHOUT the user doing anything. Three: Privacy embedded in design. Not an add-on, built INTO the architecture. Four: Full functionality. You can have BOTH privacy AND features. It's not one or the other. Five: End-to-end security. Protect data throughout its entire lifecycle. Six: Visibility and transparency. Users can verify. Seven: Respect for user privacy. User-centric design. Ann Cavoukian developed these in the 1990s and they became global standard.">
+<h2>Privacy by Design (7 Principles)</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">1</span><div><strong>Proactive not reactive</strong> – Prevent, don't just remedy</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">2</span><div><strong>Privacy as default</strong> – Protected without user action</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">3</span><div><strong>Embedded in design</strong> – Built-in, not bolted-on</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">4</span><div><strong>Full functionality</strong> – Privacy AND features, not either/or</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">5</span><div><strong>End-to-end security</strong> – Protect entire data lifecycle</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">6</span><div><strong>Visibility & transparency</strong> – Users can verify</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">7</span><div><strong>Respect for user privacy</strong> – User-centric always</div></div>
+</div>
+</div></div></div>
+
+<!-- S14: Applying Privacy by Design -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let's apply this. Imagine you're building a student information system for CFCI. How would you apply privacy by design? Proactive: before you write a single line of code, identify what data you ACTUALLY need. Don't collect what you don't use. Default: when a student creates account, sharing is OFF by default. They must opt IN, not opt out. Embedded: encrypt all data in the database, not as an afterthought. Full functionality: students can still access everything they need while data is protected. End-to-end: data encrypted in transit AND at rest AND during processing. Transparency: students can see what data you have about them. Respect: always ask 'is this necessary? Does this serve the student?'">
+<h2>Applying Privacy by Design</h2>
+<div class="divider"></div>
+<p class="small" style="margin-bottom:12px"><strong>Scenario:</strong> Building a Student Information System for CFCI</p>
+<div class="grid-2">
+<div class="box"><h4 style="font-size:28px;color:var(--accent3)">✅ Good Design</h4>
+<ul style="gap:10px"><li style="font-size:24px">Collect ONLY necessary data</li><li style="font-size:24px">Sharing OFF by default (opt-in)</li><li style="font-size:24px">Encrypt database from day one</li><li style="font-size:24px">Auto-delete after retention period</li><li style="font-size:24px">Students can view/export their data</li><li style="font-size:24px">Role-based access (not everyone sees all)</li></ul></div>
+<div class="box"><h4 style="font-size:28px;color:var(--accent)">❌ Bad Design</h4>
+<ul style="gap:10px"><li style="font-size:24px">Collect everything "just in case"</li><li style="font-size:24px">Share with partners by default</li><li style="font-size:24px">Store passwords in plain text</li><li style="font-size:24px">Keep data forever</li><li style="font-size:24px">No way for students to see their data</li><li style="font-size:24px">Everyone has admin access</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S15: Q&A 3 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick activity! Your group is hired to build a mobile health app for a clinic in GenSan. The app will store patient medical records, appointment schedules, and prescriptions. Apply the 7 Privacy by Design principles. What specific decisions would you make for EACH principle? Think about: what data to collect, how to store it, who has access, what happens when patient stops using the app. Discuss 3 minutes, then one group shares.">
+<div class="qa-pause"><h3>⏸️ Group Activity</h3><p style="font-size:32px;font-weight:600">You're building a mobile health app for a GenSan clinic.</p><p class="small">Stores: patient records, appointments, prescriptions.</p>
+<div style="margin-top:20px;text-align:left;max-width:800px"><p style="font-size:24px;color:var(--accent2)">Apply all 7 Privacy by Design principles:</p><p style="font-size:22px;color:var(--muted);margin-top:8px">What data to collect? How to store? Who has access? What if patient leaves?</p></div>
+<p class="tiny" style="margin-top:16px">💬 Group discussion (3 min) then one group presents</p></div>
+</div></div></div>
+
+<!-- S16: Data Breach Examples -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let's look at what happens when data privacy FAILS. The COMELEC breach of 2016: 55 MILLION Filipino voter records leaked online. Full names, addresses, passport numbers, fingerprint data. Largest government data breach in world history at the time. The attacker was caught pero the damage was done. Those records are still circulating on the dark web. More recently, PhilHealth ransomware attack 2023: 750 gigabytes of data stolen including member records. These are not theoretical, guys. These happened HERE. To US. To our data. And this is why RA 10173 matters.">
+<h2>Philippine Data Breaches</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="box" style="border-color:var(--accent)">
+<h4 style="color:var(--accent)">COMELEC Breach (2016)</h4>
+<div style="text-align:center;margin:16px 0"><div class="stat-big" style="font-size:64px">55M</div><p class="stat-label">Filipino voter records leaked</p></div>
+<ul style="gap:8px"><li style="font-size:24px">Full names, addresses, passport numbers</li><li style="font-size:24px">Fingerprint data exposed</li><li style="font-size:24px">Largest gov't breach at the time</li><li style="font-size:24px">Still circulating on dark web</li></ul>
+</div>
+<div class="box" style="border-color:var(--accent2)">
+<h4 style="color:var(--accent2)">PhilHealth Ransomware (2023)</h4>
+<div style="text-align:center;margin:16px 0"><div class="stat-big" style="font-size:64px;color:var(--accent2)">750GB</div><p class="stat-label">Data stolen including member records</p></div>
+<ul style="gap:8px"><li style="font-size:24px">Medusa ransomware group</li><li style="font-size:24px">$300K ransom demanded</li><li style="font-size:24px">Member personal data exposed</li><li style="font-size:24px">System down for weeks</li></ul>
+</div>
+</div>
+</div></div></div>
+
+<!-- S17: Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways. One: RA 10173 gives Filipinos real, enforceable data rights. Two: You have 7 rights including access, correct, erase, and damages. Three: The NPC enforces with fines up to 5 million pesos. Four: GDPR is the global gold standard, our law is similar but enforcement growing. Five: Software is automatically copyrighted as literary work. Six: AI content ownership is unresolved legally. Seven: Privacy by Design means building protection IN, not adding it after. Eight: Real breaches like COMELEC show why this matters.">
+<h2>Key Takeaways</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">1.</span><p class="small">RA 10173 gives Filipinos <strong>enforceable</strong> data rights.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">2.</span><p class="small">7 rights: informed, access, correct, erase, object, portability, damages.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">3.</span><p class="small">NPC enforces: up to <strong>₱5M fine + imprisonment</strong>.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">4.</span><p class="small">GDPR = gold standard; PH law similar, enforcement growing.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">5.</span><p class="small">Software = <strong>automatic copyright</strong> as literary work.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">6.</span><p class="small">AI content ownership: <strong>legally unresolved</strong> globally.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">7.</span><p class="small">Privacy by Design: build protection IN, not after.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:26px;min-width:30px">8.</span><p class="small">COMELEC 55M leak shows why this matters <strong>HERE</strong>.</p></div>
+</div>
+</div></div></div>
+
+<!-- S18: Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Alright, quiz time! 15 items. Multiple choice. Get your answer sheets ready. Let's check if na-absorb ninyo ang lesson.">
+<div class="eyebrow">Session 26</div>
+<h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1>
+<p class="subtitle">15 Items • Multiple Choice</p>
+<p class="tiny" style="margin-top:32px">Get your answer sheets ready</p>
+</div></div></div>
+
+<!-- QUIZ: 15 items, no answers -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1. Under RA 10173 individuals have the right to blank.">
+<h3>Q1. Under RA 10173, individuals have the right to ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Access anyone else's data freely</p></div><div class="quiz-choice"><p class="small">B. Access, correct, erase, and object to processing of their own data</p></div><div class="quiz-choice"><p class="small">C. Ignore all data collection</p></div><div class="quiz-choice"><p class="small">D. Collect other people's data without consent</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2. The National Privacy Commission enforces blank.">
+<h3>Q2. The National Privacy Commission enforces ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Traffic laws</p></div><div class="quiz-choice"><p class="small">B. RA 10173 (Data Privacy Act)</p></div><div class="quiz-choice"><p class="small">C. Criminal laws only</p></div><div class="quiz-choice"><p class="small">D. Tax collection</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3. Who owns content generated by AI?">
+<h3>Q3. Who owns content generated by AI?</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Clearly the AI itself</p></div><div class="quiz-choice"><p class="small">B. Clearly the user who prompted it</p></div><div class="quiz-choice"><p class="small">C. Currently unresolved legally in most jurisdictions</p></div><div class="quiz-choice"><p class="small">D. Always the training data creators</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4. Privacy by design means blank.">
+<h3>Q4. "Privacy by design" means ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Adding privacy features after product is finished</p></div><div class="quiz-choice"><p class="small">B. Embedding privacy protection into system design from the START</p></div><div class="quiz-choice"><p class="small">C. Removing all privacy features</p></div><div class="quiz-choice"><p class="small">D. Making privacy optional for users</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5. Software is protected under Philippine IP law as blank.">
+<h3>Q5. Software is protected under PH IP law as ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. A patent</p></div><div class="quiz-choice"><p class="small">B. A trademark</p></div><div class="quiz-choice"><p class="small">C. A literary work (copyright)</p></div><div class="quiz-choice"><p class="small">D. Not protected at all</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6. The maximum penalty under RA 10173 is blank.">
+<h3>Q6. Maximum penalty under RA 10173 is ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. ₱10,000 fine only</p></div><div class="quiz-choice"><p class="small">B. Up to ₱5 million fine and/or imprisonment</p></div><div class="quiz-choice"><p class="small">C. Community service only</p></div><div class="quiz-choice"><p class="small">D. No penalty exists</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7. GDPR differs from RA 10173 primarily in blank.">
+<h3>Q7. GDPR differs from RA 10173 primarily in ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. GDPR has no right to erasure</p></div><div class="quiz-choice"><p class="small">B. GDPR has global scope and much larger penalties (€20M or 4% revenue)</p></div><div class="quiz-choice"><p class="small">C. GDPR doesn't require consent</p></div><div class="quiz-choice"><p class="small">D. They are completely identical</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8. The COMELEC data breach of 2016 exposed blank records.">
+<h3>Q8. The COMELEC breach (2016) exposed ____ voter records.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. 1 million</p></div><div class="quiz-choice"><p class="small">B. 10 million</p></div><div class="quiz-choice"><p class="small">C. 55 million</p></div><div class="quiz-choice"><p class="small">D. 100 million</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9. Which is NOT a data subject right under RA 10173?">
+<h3>Q9. Which is NOT a right under RA 10173?</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Right to access your own data</p></div><div class="quiz-choice"><p class="small">B. Right to correct inaccurate data</p></div><div class="quiz-choice"><p class="small">C. Right to access other people's data</p></div><div class="quiz-choice"><p class="small">D. Right to data portability</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10. A trade secret is protected blank.">
+<h3>Q10. A trade secret is protected ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. For exactly 20 years</p></div><div class="quiz-choice"><p class="small">B. As long as it remains secret</p></div><div class="quiz-choice"><p class="small">C. Only after registration</p></div><div class="quiz-choice"><p class="small">D. For the creator's lifetime only</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11. Data breach notification under RA 10173 must happen within blank.">
+<h3>Q11. Breach notification must happen within ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. 24 hours</p></div><div class="quiz-choice"><p class="small">B. 72 hours</p></div><div class="quiz-choice"><p class="small">C. 7 days</p></div><div class="quiz-choice"><p class="small">D. 30 days</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12. Sensitive personal information includes blank.">
+<h3>Q12. Sensitive personal information includes ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Only your name and email</p></div><div class="quiz-choice"><p class="small">B. Health records, government IDs, race, and education records</p></div><div class="quiz-choice"><p class="small">C. Only financial data</p></div><div class="quiz-choice"><p class="small">D. Only social media posts</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13. Privacy by design principle number 2 states blank.">
+<h3>Q13. Privacy by Design Principle #2 states ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Privacy requires user action to enable</p></div><div class="quiz-choice"><p class="small">B. Privacy should be the DEFAULT setting (no user action needed)</p></div><div class="quiz-choice"><p class="small">C. Privacy is optional</p></div><div class="quiz-choice"><p class="small">D. Privacy reduces functionality</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14. RA 8293 is the blank.">
+<h3>Q14. RA 8293 is the ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Cybercrime Prevention Act</p></div><div class="quiz-choice"><p class="small">B. Intellectual Property Code of the Philippines</p></div><div class="quiz-choice"><p class="small">C. Data Privacy Act</p></div><div class="quiz-choice"><p class="small">D. Anti-Wiretapping Law</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15. The right to data portability means blank. And that's our quiz! Great job everyone.">
+<h3>Q15. The right to data portability means ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Data can never be moved</p></div><div class="quiz-choice"><p class="small">B. You can transfer your data to another service provider</p></div><div class="quiz-choice"><p class="small">C. Only government can move data</p></div><div class="quiz-choice"><p class="small">D. Data must stay on one device forever</p></div></div>
+</div></div></div>
+
+<!-- End -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's it for Session 26! Great discussion today. Remember: you have REAL, enforceable rights over your data. And as IS professionals, it's YOUR responsibility to protect user data. Privacy by Design, not privacy as an afterthought. Next session we start Design Thinking. Don't forget your position papers from last session! See you, ingat!">
+<div class="eyebrow">End of Session 26</div>
+<h1 style="margin-top:20px">Thank You! 🎓</h1>
+<p class="subtitle" style="margin-top:12px">Next: Design Thinking Process (Week 17)</p>
+<div class="divider" style="margin:24px auto;width:200px"></div>
+<p class="small">📝 Position papers from Session 25 still due!</p>
+<p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide'));
+const viewports=Array.from(document.querySelectorAll('.slide-viewport'));
+const navDots=document.getElementById('navDots');
+const progressBar=document.getElementById('progressBar');
+const slideCounter=document.getElementById('slideCounter');
+let currentSlide=0,scriptWindow=null,answerWindow=null;
+
+slides.forEach((_,i)=>{const btn=document.createElement('button');btn.setAttribute('aria-label',`Slide ${i+1}`);btn.addEventListener('click',()=>goToSlide(i));navDots.appendChild(btn);});
+
+function scaleSlides(){viewports.forEach(vp=>{const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${s})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=viewports.indexOf(e.target);if(i>=0){currentSlide=i;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>obs.observe(vp));
+
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+function updateUI(){const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;syncScript();}
+
+document.addEventListener('keydown',e=>{
+if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}
+if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}
+else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}
+else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
+else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
+else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+});
+let tY=0;document.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;});document.addEventListener('touchend',e=>{const d=tY-e.changedTouches[0].clientY;if(Math.abs(d)>50){d>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+
+function openTeacherScript(){if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');syncScript();}
+function syncScript(){if(!scriptWindow||scriptWindow.closed)return;const sl=slides[currentSlide];const sc=sl.getAttribute('data-script')||'(No script)';const t=sl.querySelector('h1,h2,h3');const tt=t?t.textContent:'Slide '+(currentSlide+1);scriptWindow.document.open();scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px;font-weight:600}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;color:#e8e6e3;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body><div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div><div class="slide-title">${tt}</div><div class="script-text">${sc}</div><div class="tip">💡 Auto-updates as you navigate.</div></body></html>`);scriptWindow.document.close();}
+
+function openAnswerKey(){if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');answerWindow.document.open();answerWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}.header h2{font-size:20px;font-weight:700}.header p{font-size:13px;opacity:0.8;margin-top:4px}.item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #2a2a3a}.item:last-child{border-bottom:none}.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}.answer{color:#2a9d8f;font-weight:700;font-size:18px}.rationale{color:#8a8a9a;font-size:15px;margin-top:4px}.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}</style></head><body><div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 26 Quiz • Teacher Only</p></div><div class="item"><span class="num">1.</span><div><span class="answer">B</span> – Access, correct, erase, and object to processing of own data.<div class="rationale">Seven enforceable rights under RA 10173.</div></div></div><div class="item"><span class="num">2.</span><div><span class="answer">B</span> – RA 10173 (Data Privacy Act).<div class="rationale">NPC is the sole enforcement body for data privacy.</div></div></div><div class="item"><span class="num">3.</span><div><span class="answer">C</span> – Currently unresolved legally in most jurisdictions.<div class="rationale">No country has definitively settled AI content ownership.</div></div></div><div class="item"><span class="num">4.</span><div><span class="answer">B</span> – Embedding privacy into system design from the START.<div class="rationale">Proactive, built-in, not bolted on after.</div></div></div><div class="item"><span class="num">5.</span><div><span class="answer">C</span> – A literary work (copyright).<div class="rationale">Software code protected as literary work under RA 8293.</div></div></div><div class="item"><span class="num">6.</span><div><span class="answer">B</span> – Up to ₱5 million fine and/or imprisonment.<div class="rationale">Serious penalties for data privacy violations.</div></div></div><div class="item"><span class="num">7.</span><div><span class="answer">B</span> – GDPR has global scope and much larger penalties.<div class="rationale">€20M or 4% global revenue vs ₱5M.</div></div></div><div class="item"><span class="num">8.</span><div><span class="answer">C</span> – 55 million voter records.<div class="rationale">Largest government data breach at the time globally.</div></div></div><div class="item"><span class="num">9.</span><div><span class="answer">C</span> – Right to access other people's data.<div class="rationale">Rights apply to YOUR OWN data only, not others'.</div></div></div><div class="item"><span class="num">10.</span><div><span class="answer">B</span> – As long as it remains secret.<div class="rationale">No expiration; protection lost when secrecy is lost.</div></div></div><div class="item"><span class="num">11.</span><div><span class="answer">B</span> – 72 hours.<div class="rationale">Same as GDPR; mandatory notification window.</div></div></div><div class="item"><span class="num">12.</span><div><span class="answer">B</span> – Health records, gov't IDs, race, education records.<div class="rationale">Higher protection category with heavier penalties.</div></div></div><div class="item"><span class="num">13.</span><div><span class="answer">B</span> – Privacy should be the DEFAULT (no user action needed).<div class="rationale">Users shouldn't have to opt-in to protection.</div></div></div><div class="item"><span class="num">14.</span><div><span class="answer">B</span> – Intellectual Property Code of the Philippines.<div class="rationale">Governs copyright, patents, trademarks in PH.</div></div></div><div class="item"><span class="num">15.</span><div><span class="answer">B</span> – Transfer your data to another service provider.<div class="rationale">Prevents vendor lock-in; your data belongs to you.</div></div></div><div class="warn">⚠️ TEACHER ONLY – Do not display to students</div></body></html>`);answerWindow.document.close();}
+
+updateUI();
+})();
+</script>
+</body>
+</html>
