@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en" data-teacher-version>
+<head>
+<script src="../../../assets/js/teacher-gate.js"></script>
+<script>document.documentElement.classList.add('teacher-checking');</script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../../../cronasia-icon.png">
+<!-- skill:chassis -->
+<style>
+/* =====================================================
+   PRESENTATION CHASSIS — style-invariant base styles
+   Fixed 1920×1080 canvas scaled to fit any viewport.
+   Customize colors, fonts, and chrome via :root tokens.
+   ===================================================== */
+
+/* ---------- Universal reset ---------- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ---------- Theme tokens (override in your deck's CSS) ---------- */
+:root {
+    color-scheme: light;
+
+    --background:      #ffffff;
+    --foreground:      #111111;
+    --card:            #f5f5f5;
+    --card-foreground: var(--foreground);
+    --accent:          #c94a3d;
+    --accent-foreground: #ffffff;
+
+    --muted-foreground: color-mix(in srgb, var(--foreground) 55%, transparent);
+    --border:           color-mix(in srgb, var(--foreground) 12%, transparent);
+
+    --font-display: Georgia, serif;
+    --font-body: -apple-system, system-ui, sans-serif;
+    --font-mono: ui-monospace, monospace;
+
+    /* Reveal animation */
+    --reveal-duration: 0.8s;
+    --reveal-ease:     cubic-bezier(0.16, 1, 0.3, 1);
+    --reveal-distance: 28px;
+
+    /* Chrome (nav dots, keyboard hint) */
+    --nav-dot-size: 9px;
+    --nav-dot-radius: 50%;
+    --nav-dot-color: var(--foreground);
+    --nav-dot-active-color: var(--accent);
+    --nav-dot-opacity: 0.4;
+}
+
+/* ---------- Viewport lock + scroll snap ---------- */
+html, body { height: 100%; overflow-x: hidden; }
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+/* ---------- Type scale ----------
+   Fixed px sizes on a 1920×1080 canvas. The canvas is scaled to fit
+   any viewport via transform, so these sizes are absolute within the
+   design surface — no responsive units needed. */
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 36px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1 { font-size: 120px; line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-size: 64px; line-height: 1.1; letter-spacing: -0.01em; }
+h3 { font-size: 44px; line-height: 1.2; }
+.eyebrow {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+ul, ol { padding-left: 48px; display: flex; flex-direction: column; gap: 24px; }
+li::marker { color: var(--accent); }
+
+/* ---------- Slide structure ----------
+   .slide is the authored 1920×1080 artboard.
+   The chassis wraps it in viewport + scale layers at runtime. */
+.slide-viewport {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: block;
+    position: relative;
+    background: var(--background);
+    isolation: isolate;
+    z-index: 1;
+}
+
+.slide-scale {
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
+    transform-origin: center center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+}
+
+.slide {
+    width: 1920px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 60px;
+    position: relative;
+    background: transparent;
+}
+
+
+/* ---------- Image defaults ---------- */
+img, .image-container {
+    max-width: 100%;
+    max-height: 540px;
+    object-fit: contain;
+}
+
+/* ---------- Reveal primitives ----------
+   Driven by chassis.js via the Web Animations API, not CSS transitions.
+   Put .reveal* or .step on ANY element — author CSS on the same element
+   (opacity, transform, transition, filter) never conflicts, because
+   WAAPI animations live in the animation cascade origin and win over
+   normal author declarations. The .dN stagger classes below still apply
+   to theme-authored CSS animations via animation-delay.
+
+   Variants: .reveal (fade + up), .reveal-left, .reveal-right,
+   .reveal-scale, .reveal-blur. .step stays hidden until the user
+   advances forward. Don't combine .step with .reveal* on the same
+   element. */
+
+/* FOUC guard: hide reveals until chassis.js marks the document ready. */
+:root:not(.reveals-ready) .reveal,
+:root:not(.reveals-ready) .reveal-left,
+:root:not(.reveals-ready) .reveal-right,
+:root:not(.reveals-ready) .reveal-scale,
+:root:not(.reveals-ready) .reveal-blur,
+:root:not(.reveals-ready) .step {
+    opacity: 0;
+}
+:root:not(.reveals-ready) .reveal-blur { filter: blur(10px); }
+
+/* ---------- Stagger delays (.d1 … .d8) ---------- */
+.slide.visible .d1 { transition-delay: 0.10s; animation-delay: 0.10s; }
+.slide.visible .d2 { transition-delay: 0.25s; animation-delay: 0.25s; }
+.slide.visible .d3 { transition-delay: 0.40s; animation-delay: 0.40s; }
+.slide.visible .d4 { transition-delay: 0.55s; animation-delay: 0.55s; }
+.slide.visible .d5 { transition-delay: 0.70s; animation-delay: 0.70s; }
+.slide.visible .d6 { transition-delay: 0.85s; animation-delay: 0.85s; }
+.slide.visible .d7 { transition-delay: 1.00s; animation-delay: 1.00s; }
+.slide.visible .d8 { transition-delay: 1.15s; animation-delay: 1.15s; }
+
+/* ---------- Nav dots ----------
+   Default: right-center (vertical stack on right edge).
+   Override with <body data-nav="bottom | top-right | hidden">. */
+.nav-dots {
+    position: fixed;
+    right: clamp(0.6rem, 1.5vw, 1.4rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1vh, 0.8rem);
+    z-index: 50;
+}
+
+body[data-nav="bottom"] .nav-dots {
+    right: auto;
+    top: auto;
+    bottom: clamp(1rem, 2.5vh, 2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+}
+
+body[data-nav="top-right"] .nav-dots {
+    right: clamp(1rem, 2.5vw, 2rem);
+    top: clamp(1rem, 2.5vh, 2rem);
+    transform: none;
+    flex-direction: row;
+}
+
+body[data-nav="hidden"] .nav-dots { display: none; }
+
+body[data-nav="bottom"] .keyboard-hint {
+    left: clamp(1rem, 2vw, 1.5rem);
+    transform: none;
+}
+
+.nav-dots button {
+    width: var(--nav-dot-size);
+    height: var(--nav-dot-size);
+    border-radius: var(--nav-dot-radius);
+    border: 1.5px solid var(--nav-dot-color);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    opacity: var(--nav-dot-opacity);
+}
+.nav-dots button:hover { opacity: 0.85; transform: scale(1.15); }
+.nav-dots button:focus-visible {
+    outline: 2px solid var(--nav-dot-active-color);
+    outline-offset: 3px;
+    opacity: 1;
+}
+.nav-dots button.active {
+    background: var(--nav-dot-active-color);
+    border-color: var(--nav-dot-active-color);
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* ---------- Keyboard hint ---------- */
+.keyboard-hint {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.keyboard-hint kbd {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9em;
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--background);
+    margin: 0 0.15em;
+}
+
+/* ---------- Credit line ---------- */
+.chassis-credit {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: clamp(1rem, 2vw, 1.5rem);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    letter-spacing: 0.02em;
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.chassis-credit .chassis-credit-emoji {
+    font-style: normal;
+    margin: 0 0.15em;
+}
+
+body[data-nav="bottom"] .chassis-credit {
+    left: auto;
+    right: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ---------- Custom cursor ---------- */
+.chassis-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: var(--accent);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    will-change: transform;
+}
+.chassis-cursor.visible { opacity: 1; }
+body.artifact-editor-editing .chassis-cursor { display: none; }
+
+@media (hover: none) {
+    .chassis-cursor { display: none; }
+}
+
+body.chassis-cursor-active:not(.artifact-editor-editing),
+body.chassis-cursor-active:not(.artifact-editor-editing) * { cursor: none; }
+
+/* ---------- Opt-outs ---------- */
+body[data-no-chrome] .nav-dots,
+body[data-no-chrome] .keyboard-hint,
+body[data-no-chrome] .chassis-credit,
+body[data-no-chrome] .chassis-cursor,
+body[data-no-chrome] .artifact-editor-toggle { display: none; }
+
+:fullscreen .keyboard-hint,
+:fullscreen .chassis-credit,
+:fullscreen .artifact-editor-toggle { display: none; }
+
+@media (hover: none) {
+    .keyboard-hint,
+    .chassis-credit { display: none; }
+}
+
+@media (max-width: 900px), (max-height: 560px) {
+    .nav-dots,
+    .keyboard-hint,
+    .chassis-credit,
+    .chassis-cursor { display: none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+/* ---------- Print (PDF export) ---------- */
+@media print {
+    .nav-dots, .keyboard-hint, .chassis-credit, .chassis-cursor { display: none !important; }
+    html, body { height: auto; overflow: visible; }
+    html { scroll-snap-type: none; }
+    .slide-viewport {
+        page-break-after: always;
+        break-after: page;
+        height: 100vh;
+    }
+    .slide-scale {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    .slide {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+</style>
+<script>
+/* =====================================================
+   PRESENTATION CHASSIS — slide controller
+   Auto-initializes on DOMContentLoaded.
+   Exposes window.slides for programmatic control.
+   ===================================================== */
+(function () {
+    'use strict';
+
+    const REVEAL_SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur';
+    const STEP_SELECTOR = '.step';
+    const ALL_REVEAL_SELECTOR = REVEAL_SELECTOR + ', ' + STEP_SELECTOR;
+    const VIEWPORT_CLASS = 'slide-viewport';
+    const SCALE_CLASS = 'slide-scale';
+
+    function _detectLang() {
+        const param = new URLSearchParams(location.search).get('lang');
+        return (param || navigator.language || 'en').slice(0, 2).toLowerCase();
+    }
+
+    class SlidePresentation {
+        constructor() {
+            this.slides = Array.from(document.querySelectorAll('.slide'));
+            if (this.slides.length === 0) return;
+
+            // Ensure every slide has an id so hashes + anchor links work.
+            // Author-defined ids are preserved; the rest get slide-N (1-indexed).
+            this.slides.forEach((slide, idx) => {
+                if (!slide.id) slide.id = `slide-${idx + 1}`;
+            });
+            this.viewports = this._setupViewports();
+            this.scales = this.viewports.map((viewport) => viewport.querySelector(`.${SCALE_CLASS}`));
+
+            // Hide every reveal element BEFORE lifting the CSS FOUC guard.
+            // After this, .reveals-ready is on <html>, so CSS no longer hides
+            // reveals — inline styles keep them hidden until JS animates them.
+            this._setupReveals();
+
+            this.navDotsContainer = this._ensureNavDots();
+            this.keyboardHint = this._ensureKeyboardHint();
+            this.credit = this._ensureCredit();
+
+            this._setupCanvasScale();
+            this._setupIntersectionObserver();
+            this._setupKeyboardNav();
+            this._setupWheelNav();
+            this._setupTouchNav();
+            this._setupViewportSync();
+            this._buildNavDots();
+            this._setupHashNav();
+            this._setupCursor();
+            this._setupPrintSettling();
+
+            // If URL has a matching hash, start there; otherwise start at slide 0.
+            const initial = this._slideIndexFromHash(location.hash);
+            this.currentSlide = initial >= 0 ? initial : 0;
+            if (this.currentSlide !== 0) {
+                this._scrollToSlide(this.currentSlide, 'auto');
+            }
+            // Reveal initial slide immediately (observer may miss it on load).
+            const first = this.slides[this.currentSlide];
+            first.classList.add('visible');
+            this._playSlideReveals(first);
+            this._updateNavDots();
+        }
+
+        /* ---------- Viewport scaffolding ----------
+           Authors write .slide as the 1920×1080 artboard. The chassis wraps
+           that authored section in viewport and scale layers. */
+        _setupViewports() {
+            return this.slides.map((slide) => {
+                const existingScale = slide.parentElement?.classList.contains(SCALE_CLASS)
+                    ? slide.parentElement
+                    : null;
+                const existingViewport = existingScale?.parentElement?.classList.contains(VIEWPORT_CLASS)
+                    ? existingScale.parentElement
+                    : null;
+                if (existingViewport) {
+                    this._syncViewportBackground(slide, existingViewport);
+                    return existingViewport;
+                }
+
+                const viewport = document.createElement('div');
+                viewport.className = VIEWPORT_CLASS;
+                const scale = document.createElement('div');
+                scale.className = SCALE_CLASS;
+
+                slide.parentNode.insertBefore(viewport, slide);
+                viewport.appendChild(scale);
+                scale.appendChild(slide);
+                this._syncViewportBackground(slide, viewport);
+
+                return viewport;
+            });
+        }
+
+        _syncViewportBackground(slide, viewport) {
+            const style = getComputedStyle(slide);
+            const hasBackgroundImage = style.backgroundImage && style.backgroundImage !== 'none';
+            const hasBackgroundColor = !['rgba(0, 0, 0, 0)', 'transparent'].includes(style.backgroundColor);
+            if (hasBackgroundImage || hasBackgroundColor) {
+                viewport.style.background = style.background;
+            } else {
+                viewport.style.background = '';
+            }
+            slide.style.background = 'transparent';
+        }
+
+        /* ---------- DOM scaffolding (auto-inserted if missing) ---------- */
+        _ensureNavDots() {
+            let el = document.getElementById('navDots');
+            if (!el) {
+                el = document.createElement('nav');
+                el.id = 'navDots';
+                el.className = 'nav-dots';
+                el.setAttribute('aria-label', 'Slide navigation');
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureKeyboardHint() {
+            let el = document.querySelector('.keyboard-hint');
+            if (!el) {
+                const i18n = {
+                    en: { navigate: 'navigate', restart: 'restart', fullscreen: 'fullscreen' },
+                    es: { navigate: 'navegar',   restart: 'inicio',   fullscreen: 'fullscreen' },
+                    fr: { navigate: 'naviguer',  restart: 'début',    fullscreen: 'fullscreen' },
+                    de: { navigate: 'blättern',  restart: 'anfang',   fullscreen: 'vollbild' },
+                    pt: { navigate: 'navegar',   restart: 'início',   fullscreen: 'fullscreen' },
+                    ja: { navigate: '移動',      restart: '先頭',      fullscreen: '全画面' },
+                    ko: { navigate: '이동',      restart: '처음',      fullscreen: '전체화면' },
+                    zh: { navigate: '翻页',      restart: '重置',      fullscreen: '全屏' },
+                    it: { navigate: 'navigare',  restart: 'inizio',   fullscreen: 'fullscreen' },
+                    nl: { navigate: 'bladeren',  restart: 'begin',    fullscreen: 'vollscherm' },
+                };
+                const t = i18n[_detectLang()] || i18n.en;
+                el = document.createElement('div');
+                el.className = 'keyboard-hint';
+                el.innerHTML = `<kbd>←</kbd> <kbd>→</kbd> ${t.navigate} &middot; <kbd>R</kbd> ${t.restart} &middot; <kbd>F</kbd> ${t.fullscreen}`;
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureCredit() {
+            let el = document.querySelector('.chassis-credit');
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'chassis-credit';
+                el.setAttribute('aria-hidden', 'true');
+                el.innerHTML = 'KarBin the Great';
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        /* ---------- Reveal engine ----------
+           Reveals are driven by the Web Animations API instead of CSS
+           transitions. This lets authors put .reveal* / .step on any
+           element: animation values live in the animation cascade origin
+           and win over normal author declarations, so no wrapper element
+           is required to isolate the chassis from author CSS.
+
+           State per slide:
+           - "hidden":  inline opacity/transform/filter from the 'from'
+                        keyframe of the variant. Set on init and on
+                        forward re-entry.
+           - "played":  animation is running or has run; the class
+                        `reveals-played` on the slide makes playback
+                        idempotent so observer re-fires (resize,
+                        fullscreen) don't restart the animation.
+           - "settled": animation canceled, inline styles cleared. Used
+                        for backward entries (we skip the animation and
+                        show the final state instantly) and for print. */
+
+        _setupReveals() {
+            // Lift the CSS FOUC guard first so getComputedStyle reads each
+            // element's natural opacity, not the guard's blanket opacity: 0.
+            // No paint occurs mid-task — inline hidden styles are applied
+            // before the browser yields, so there is no visible flash.
+            document.documentElement.classList.add('reveals-ready');
+            this.slides.forEach((slide) => {
+                slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                    el._targetOpacity = parseFloat(getComputedStyle(el).opacity);
+                    this._applyHiddenStyle(el);
+                });
+            });
+        }
+
+        _setupPrintSettling() {
+            // Browsers snapshot the document for print/PDF export. WAAPI
+            // animations don't necessarily complete in that snapshot, so
+            // settle every slide to its final state first. After printing,
+            // reset — but only for slides that haven't already been viewed,
+            // so the audience experience picks up where it left off.
+            window.addEventListener('beforeprint', () => {
+                this.slides.forEach((slide) => this._settleSlide(slide));
+            });
+        }
+
+        _readTokens() {
+            const cs = getComputedStyle(document.documentElement);
+            const rawDuration = parseFloat(cs.getPropertyValue('--reveal-duration'));
+            const duration = Number.isFinite(rawDuration) ? rawDuration * 1000 : 800;
+            const ease = cs.getPropertyValue('--reveal-ease').trim() || 'cubic-bezier(0.16, 1, 0.3, 1)';
+            const distance = cs.getPropertyValue('--reveal-distance').trim() || '28px';
+            const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            return {
+                duration: reducedMotion ? 1 : duration,
+                ease,
+                distance,
+            };
+        }
+
+        _getRevealDelay(el) {
+            // Use getAttribute('class') rather than el.className: on SVG
+            // elements, `.className` is an SVGAnimatedString (not a string)
+            // and calling .match on it throws. getAttribute is uniform
+            // across HTML and SVG.
+            const classes = el.getAttribute('class') || '';
+            const m = classes.match(/\bd([1-8])\b/);
+            if (!m) return 0;
+            // Matches CSS .dN: d1 = 100ms, d2 = 250ms, +150ms per step.
+            return 100 + (parseInt(m[1], 10) - 1) * 150;
+        }
+
+        _getRevealKeyframes(el, distance) {
+            const to = el._targetOpacity ?? 1;
+            if (el.classList.contains('reveal-left')) {
+                return [
+                    { opacity: 0, transform: `translateX(calc(-1 * ${distance}))` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-right')) {
+                return [
+                    { opacity: 0, transform: `translateX(${distance})` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-scale')) {
+                return [
+                    { opacity: 0, transform: 'scale(0.88)' },
+                    { opacity: to, transform: 'scale(1)' },
+                ];
+            }
+            if (el.classList.contains('reveal-blur')) {
+                return [
+                    { opacity: 0, filter: 'blur(10px)' },
+                    { opacity: to, filter: 'blur(0)' },
+                ];
+            }
+            // Default: .reveal or .step (slide up + fade)
+            return [
+                { opacity: 0, transform: `translateY(${distance})` },
+                { opacity: to, transform: 'translateY(0)' },
+            ];
+        }
+
+        _applyHiddenStyle(el) {
+            const { distance } = this._readTokens();
+            const from = this._getRevealKeyframes(el, distance)[0];
+            if ('opacity' in from) el.style.opacity = from.opacity;
+            if ('transform' in from) el.style.transform = from.transform;
+            if ('filter' in from) el.style.filter = from.filter;
+        }
+
+        _clearHiddenStyle(el) {
+            el.style.opacity = '';
+            el.style.transform = '';
+            el.style.filter = '';
+        }
+
+        _cancelReveal(el) {
+            if (el._revealAnim) {
+                el._revealAnim.cancel();
+                el._revealAnim = null;
+            }
+        }
+
+        _playReveal(el, delayOverride) {
+            this._cancelReveal(el);
+            const { duration, ease, distance } = this._readTokens();
+            const delay = typeof delayOverride === 'number' ? delayOverride : this._getRevealDelay(el);
+            const keyframes = this._getRevealKeyframes(el, distance);
+            // fill: 'backwards' applies the 'from' keyframe during the
+            // stagger delay so the element stays hidden until its turn,
+            // without pinning the 'to' keyframe after the animation ends.
+            // This lets co-existing author CSS (e.g. a `.pulse` CSS
+            // animation on the same element) take over naturally once the
+            // entrance completes — otherwise our fill would mask anything
+            // the author wanted to happen post-reveal.
+            const anim = el.animate(keyframes, {
+                duration,
+                delay,
+                easing: ease,
+                fill: 'backwards',
+            });
+            el._revealAnim = anim;
+            // Safe to clear inline 'from' styles now — the animation's
+            // backwards-fill holds the element at the 'from' keyframe for
+            // the duration of any stagger delay.
+            this._clearHiddenStyle(el);
+        }
+
+        _playSlideReveals(slide) {
+            if (slide.classList.contains('reveals-played')) return;
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => this._playReveal(el));
+            // .step elements stay hidden until the user advances.
+        }
+
+        _resetSlideReveals(slide) {
+            // Forward re-entry: cancel in-flight animations, re-hide
+            // everything, and reset step state so the slide replays cleanly
+            // when the observer next adds .visible.
+            slide.classList.remove('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step.step-shown').forEach((el) => el.classList.remove('step-shown'));
+        }
+
+        _settleSlide(slide) {
+            // Print / PDF export: jump to the final state with everything
+            // shown, so every step appears in the exported document.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => el.classList.add('step-shown'));
+        }
+
+        _rewindSlide(slide) {
+            // Backward re-entry: show reveals instantly (no replay — the
+            // viewer already saw the intro) but hide every step, so the
+            // slide is positioned at the start of its stepped content and
+            // can be stepped through again.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => {
+                el.classList.remove('step-shown');
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+        }
+
+        /* ---------- Navigation ----------
+           goTo scrolls to the target. Both forward-replay and backward-
+           rewind need to mutate the target BEFORE scrolling — while it's
+           still offscreen — so the viewer never sees the old state flash
+           into view. Resetting after the slide is in view causes a visible
+           "show then hide" blink; the IntersectionObserver fires too late
+           (80% threshold) to catch it. */
+        goTo(index) {
+            const clamped = Math.max(0, Math.min(this.slides.length - 1, index));
+            if (clamped === this.currentSlide) return;
+
+            const target = this.slides[clamped];
+            const goingForward = clamped > this.currentSlide;
+
+            if (target.classList.contains('visible')) {
+                if (goingForward) {
+                    // Forward replay: full reset so the observer can play reveals fresh.
+                    target.classList.remove('visible');
+                    this._resetSlideReveals(target);
+                } else {
+                    // Backward rewind: hide any shown steps so the slide
+                    // scrolls back in at the start of its stepped content.
+                    this._rewindSlide(target);
+                }
+            }
+
+            this._scrollToSlide(clamped, 'smooth');
+        }
+
+        _scrollToSlide(index, behavior) {
+            this.viewports[index]?.scrollIntoView({ behavior, block: 'start' });
+        }
+
+        _slideIndexFromHash(hash) {
+            if (!hash) return -1;
+            return this.slides.findIndex((s) => '#' + s.id === hash);
+        }
+
+        _syncHash() {
+            const slide = this.slides[this.currentSlide];
+            if (!slide || !slide.id) return;
+            const newHash = '#' + slide.id;
+            if (location.hash !== newHash) {
+                // replaceState — keeps the URL in sync without polluting history,
+                // so the browser back button exits the deck instead of stepping through slides.
+                try {
+                    history.replaceState(null, '', newHash);
+                } catch {
+                    // Sandboxed iframes (opaque origin, about:srcdoc) reject URL
+                    // mutation with a SecurityError. Hash sync is a nicety — an
+                    // unguarded throw here kills the observer callback before it
+                    // marks the slide visible and plays its reveals.
+                }
+            }
+        }
+
+        _setupHashNav() {
+            // React to external hash changes (anchor link clicks, back/forward if user uses pushState manually)
+            window.addEventListener('hashchange', () => {
+                const idx = this._slideIndexFromHash(location.hash);
+                if (idx >= 0 && idx !== this.currentSlide) this.goTo(idx);
+            });
+        }
+
+        /* ---------- Custom cursor ----------
+           Accent disc that follows the pointer, hidden after idle. */
+        _setupCursor() {
+            if (!matchMedia('(hover: hover)').matches) return;
+
+            const cursor = document.createElement('div');
+            cursor.className = 'chassis-cursor';
+            cursor.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(cursor);
+            document.body.classList.add('chassis-cursor-active');
+
+            const half = 16;  // matches width/height / 2 in CSS
+            const IDLE_MS = 2500;
+            let idleTimer = null;
+
+            const show = () => {
+                cursor.classList.add('visible');
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    cursor.classList.remove('visible');
+                }, IDLE_MS);
+            };
+            const hide = () => {
+                clearTimeout(idleTimer);
+                cursor.classList.remove('visible');
+            };
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate3d(${e.clientX - half}px, ${e.clientY - half}px, 0)`;
+                show();
+            });
+            document.addEventListener('mouseleave', hide);
+            document.addEventListener('mouseenter', show);
+        }
+
+        /* ---------- Fullscreen ---------- */
+        toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen?.().catch(() => {});
+            } else {
+                document.exitFullscreen?.();
+            }
+        }
+
+        next() { this.goTo(this.currentSlide + 1); }
+        prev() { this.goTo(this.currentSlide - 1); }
+        first() { this.goTo(0); }
+        last() { this.goTo(this.slides.length - 1); }
+
+        /* ---------- Step-aware advance / retreat ----------
+           advance() reveals the next .step on the current slide (if any),
+           otherwise advances to the next slide. retreat() hides the last
+           revealed step, otherwise goes back to the previous slide. */
+        advance() {
+            const current = this.slides[this.currentSlide];
+            const nextStep = current?.querySelector('.step:not(.step-shown)');
+            if (nextStep) {
+                nextStep.classList.add('step-shown');
+                // No stagger on click-reveal — the user's gesture is the trigger.
+                this._playReveal(nextStep, 0);
+                return;
+            }
+            this.next();
+        }
+        retreat() {
+            const current = this.slides[this.currentSlide];
+            const shown = current?.querySelectorAll('.step.step-shown');
+            if (shown && shown.length > 0) {
+                const last = shown[shown.length - 1];
+                last.classList.remove('step-shown');
+                this._cancelReveal(last);
+                this._applyHiddenStyle(last);
+                return;
+            }
+            this.prev();
+        }
+
+        /* ---------- Intersection observer ----------
+           Fire late (>= 80% in view) so reveals play on a settled slide.
+           This is the single source of truth for active-slide state.
+
+           Forward:  add .visible, play reveals. (goTo() has already reset
+                     the target to pre-reveal state if this is a re-visit,
+                     so the animation is fresh either way.)
+           Backward: add .visible, rewind to the start of the stepped
+                     content — reveals are shown instantly (no replay) and
+                     every step is hidden again so the viewer can step
+                     through it fresh. */
+        _setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const idx = this.viewports.indexOf(entry.target);
+                    if (idx < 0) return;
+                    const slide = this.slides[idx];
+
+                    if (idx === this.currentSlide) {
+                        // Same-slide re-fire (initial load, resize, fullscreen).
+                        if (!slide.classList.contains('visible')) {
+                            slide.classList.add('visible');
+                        }
+                        // Idempotent: only plays if not already marked played.
+                        this._playSlideReveals(slide);
+                        return;
+                    }
+
+                    const goingForward = idx > this.currentSlide;
+                    this.currentSlide = idx;
+                    this._updateNavDots();
+                    this._syncHash();
+
+                    slide.classList.add('visible');
+                    if (goingForward) {
+                        this._playSlideReveals(slide);
+                    } else {
+                        this._rewindSlide(slide);
+                    }
+                });
+            }, { threshold: 0.8 });
+
+            this.viewports.forEach((viewport) => observer.observe(viewport));
+        }
+
+        /* ---------- Keyboard ---------- */
+        _setupKeyboardNav() {
+            document.addEventListener('keydown', (e) => {
+                // Skip when user is editing text
+                if (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+
+                switch (e.key) {
+                    // Step-aware: consume steps first, then advance slides
+                    case 'ArrowDown':
+                    case 'ArrowRight':
+                    case ' ':
+                        e.preventDefault(); this.advance(); break;
+                    case 'ArrowUp':
+                    case 'ArrowLeft':
+                        e.preventDefault(); this.retreat(); break;
+                    // Slide-level: always skip past steps
+                    case 'PageDown':
+                        e.preventDefault(); this.next(); break;
+                    case 'PageUp':
+                        e.preventDefault(); this.prev(); break;
+                    case 'Home':
+                        e.preventDefault(); this.first(); break;
+                    case 'End':
+                        e.preventDefault(); this.last(); break;
+                    case 'f':
+                    case 'F':
+                        e.preventDefault(); this.toggleFullscreen(); break;
+                    case 'r':
+                    case 'R':
+                        e.preventDefault(); this.first(); break;
+                }
+            });
+        }
+
+        /* ---------- Wheel / trackpad ----------
+           ALWAYS preventDefault — letting any native wheel scroll through
+           races against scrollIntoView + mandatory snap, and blocks macOS
+           two-finger horizontal swipes from triggering browser back/forward.
+           Whichever axis has the larger magnitude wins, so vertical scroll
+           and horizontal trackpad swipes both drive advance/retreat. Lock
+           briefly after a gesture so trackpad inertia (continuous small
+           deltas) can't spam next(). */
+        _setupWheelNav() {
+            let locked = false;
+            window.addEventListener('wheel', (e) => {
+                if (e.ctrlKey) return;                // preserve browser pinch-zoom (ctrl+wheel)
+                e.preventDefault();                   // block native scroll + horizontal back-swipe
+                if (locked) return;
+                const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                if (Math.abs(delta) < 20) return;     // ignore tiny flicks
+                locked = true;
+                if (delta > 0) this.advance(); else this.retreat();
+                setTimeout(() => { locked = false; }, 500);
+            }, { passive: false });
+        }
+
+        /* ---------- Touch / swipe ----------
+           Horizontal swipes advance / retreat slides; left = next, right =
+           prev (matches stories / carousel conventions). Dominantly
+           vertical swipes fall through to native scroll-snap so the
+           existing top/bottom behavior keeps working. A time budget
+           rejects slow pans that were really aborted scrolls. */
+        _setupTouchNav() {
+            const MIN_DISTANCE = 50;     // px — below this is a tap or jitter
+            const MAX_TIME = 600;        // ms — slower than this is a pan, not a swipe
+            const DOMINANCE = 1.2;       // horizontal must beat vertical by this factor
+
+            let startX = 0, startY = 0, startTime = 0;
+            let tracking = false;
+
+            window.addEventListener('touchstart', (e) => {
+                if (document.body.classList.contains('artifact-editor-editing')) { tracking = false; return; }
+                if (e.touches.length !== 1) { tracking = false; return; }
+                const t = e.touches[0];
+                startX = t.clientX;
+                startY = t.clientY;
+                startTime = performance.now();
+                tracking = true;
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                if (!tracking) return;
+                tracking = false;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - startX;
+                const dy = t.clientY - startY;
+                const ax = Math.abs(dx), ay = Math.abs(dy);
+                if (ax < MIN_DISTANCE) return;
+                if (ax < ay * DOMINANCE) return;
+                if (performance.now() - startTime > MAX_TIME) return;
+                if (dx < 0) this.advance(); else this.retreat();
+            }, { passive: true });
+
+            window.addEventListener('touchcancel', () => { tracking = false; }, { passive: true });
+        }
+
+        /* ---------- Canvas scaling ----------
+           Each scaler holds a fixed 1920×1080 slide. Compute the
+           scale factor that fits it inside the viewport and apply via
+           CSS custom property. Runs on init, resize, and fullscreen. */
+        _setupCanvasScale() {
+            const CANVAS_W = 1920;
+            const CANVAS_H = 1080;
+            const scales = this.scales;
+
+            const update = () => {
+                const scale = Math.min(
+                    window.innerWidth / CANVAS_W,
+                    window.innerHeight / CANVAS_H
+                );
+                scales.forEach((el) => {
+                    el?.style.setProperty('--slide-scale', scale);
+                });
+            };
+
+            update();
+            window.addEventListener('resize', update);
+            document.addEventListener('fullscreenchange', () => {
+                requestAnimationFrame(update);
+            });
+        }
+
+        /* ---------- Viewport sync ----------
+           Resize / fullscreenchange → realign current slide. Each slide is
+           100vh, so a viewport height change leaves the existing scroll
+           position out of alignment with the slide top; scroll-snap doesn't
+           re-snap on its own. */
+        _setupViewportSync() {
+            const realign = () => {
+                requestAnimationFrame(() => {
+                    this._scrollToSlide(this.currentSlide, 'auto');
+                });
+            };
+            window.addEventListener('resize', realign);
+            document.addEventListener('fullscreenchange', realign);
+        }
+
+        /* ---------- Nav dots ---------- */
+        _buildNavDots() {
+            // Clear first — prevents duplicates when DOM is re-serialized/re-opened
+            this.navDotsContainer.innerHTML = '';
+            this.slides.forEach((slide, idx) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+                if (idx === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => this.goTo(idx));
+                this.navDotsContainer.appendChild(dot);
+            });
+        }
+
+        _updateNavDots() {
+            const dots = this.navDotsContainer.querySelectorAll('button');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === this.currentSlide);
+            });
+        }
+    }
+
+    /* ---------- Auto-init ---------- */
+    function init() {
+        // Each slide canvas is its own editable host for the inline editor.
+        document.querySelectorAll('.slide').forEach(function (el) {
+            el.classList.add('artifact-editable');
+        });
+        window.slides = new SlidePresentation();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chassis -->
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>COGNATES 6 · Week 11 · Session 17 – Extended Reality (XR) Fundamentals</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"/>
+<style>
+:root{--background:#1a0a0a;--foreground:#f5e6d3;--accent:#ff4444;--accent-gold:#ffd700;--card:#2a1215;--border:rgba(255,68,68,0.2);--font-display:'Archivo Black',sans-serif;--font-body:'Space Grotesk',sans-serif;--nav-dot-color:rgba(255,68,68,0.4);--nav-dot-active-color:#ff4444}
+body{background:var(--background)}h1,h2,h3{font-family:var(--font-display);color:var(--foreground);margin:0}p,li,td,th,span,div{font-family:var(--font-body)}
+.slide{background:var(--background);padding:80px;display:flex;flex-direction:column;justify-content:center}
+.slide.title-slide{background:radial-gradient(ellipse at 70% 30%,rgba(255,68,68,0.15) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(255,215,0,0.08) 0%,transparent 50%),var(--background)}
+.slide.title-slide h1{font-size:130px;line-height:1.05}.accent-word{color:var(--accent)}.gold-word{color:var(--accent-gold)}
+.subtitle{font-size:32px;color:rgba(245,230,211,0.7);margin-top:24px;max-width:900px;line-height:1.4}
+.meta{font-size:22px;color:rgba(245,230,211,0.5);margin-top:40px}
+.slide.section-divider{background:radial-gradient(ellipse at 50% 50%,rgba(255,68,68,0.12) 0%,transparent 70%),var(--background);align-items:flex-start}
+.section-number{font-family:var(--font-display);font-size:180px;color:var(--accent);opacity:0.3;position:absolute;top:60px;right:80px}
+.slide.section-divider h2{font-size:72px;line-height:1.1}.section-sub{font-size:32px;color:rgba(245,230,211,0.6);margin-top:16px}
+.slide.content-slide h2{font-size:72px;margin-bottom:40px;line-height:1.1}
+.slide.content-slide h3{font-size:52px;margin-bottom:30px;color:var(--accent-gold)}
+.slide.content-slide p{font-size:40px;color:rgba(245,230,211,0.85);line-height:1.5;max-width:1400px}
+.slide.content-slide ul{list-style:none;padding:0;margin:0}
+.slide.content-slide ul li{font-size:40px;color:rgba(245,230,211,0.85);padding:12px 0;padding-left:40px;position:relative;line-height:1.4}
+.slide.content-slide ul li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+.slide table{width:100%;border-collapse:collapse;margin-top:30px}
+.slide table th{font-family:var(--font-body);font-size:28px;font-weight:700;text-align:left;padding:16px 20px;background:rgba(255,68,68,0.15);color:var(--accent-gold);border-bottom:2px solid var(--accent)}
+.slide table td{font-size:32px;padding:14px 20px;color:rgba(245,230,211,0.85);border-bottom:1px solid rgba(255,68,68,0.1);vertical-align:top}
+.slide.pause-slide{background:radial-gradient(ellipse at 50% 50%,rgba(255,215,0,0.1) 0%,transparent 60%),var(--background);align-items:center;text-align:center}
+.pause-icon{font-size:80px;margin-bottom:30px}
+.slide.pause-slide h2{font-size:64px;color:var(--accent-gold);margin-bottom:20px}
+.slide.pause-slide p{font-size:36px;color:rgba(245,230,211,0.7);max-width:900px;text-align:center}
+.def-box{background:var(--card);border-left:4px solid var(--accent);padding:40px;border-radius:8px;margin-top:30px}
+.def-box p{font-size:36px;color:rgba(245,230,211,0.9);line-height:1.5;margin:0}
+.def-box .def-term{font-family:var(--font-display);font-size:44px;color:var(--accent-gold);margin-bottom:16px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:30px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;margin-top:30px}
+.col-card{background:var(--card);padding:36px;border-radius:12px;border:1px solid var(--border)}
+.col-card h3{font-size:36px;color:var(--accent-gold);margin-bottom:16px}
+.col-card p,.col-card li{font-size:28px;color:rgba(245,230,211,0.8);line-height:1.4}
+.col-card ul{list-style:none;padding:0}.col-card ul li{padding:6px 0;padding-left:24px;position:relative}
+.col-card ul li::before{content:'•';position:absolute;left:0;color:var(--accent)}
+.eyebrow{font-size:24px;color:var(--accent);text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;font-weight:600}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:60px;margin-top:40px}
+.stat-item{text-align:center}.stat-item .stat-number{font-family:var(--font-display);font-size:110px;color:var(--accent-gold);line-height:1}
+.stat-item .stat-label{font-size:26px;color:rgba(245,230,211,0.6);margin-top:10px}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.3}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- Slide 1: Title -->
+<section class="slide title-slide">
+  <span class="eyebrow reveal d1">COGNATES 6 · Week 11 · Session 17</span>
+  <h1 class="reveal d2">Extended<br><span class="accent-word">Reality</span></h1>
+  <p class="subtitle reveal d3">VR, AR, and MR: immersive technologies reshaping how we learn, work, and experience the world</p>
+  <p class="meta reveal d4">Instructor: Carvin Paul G. Tampos · Cronasia Foundation College, Inc.</p>
+</section>
+
+<!-- Slide 2: Objectives -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">02</span>
+  <h2 class="reveal d2">Session 17 Goals</h2>
+  <ul>
+    <li class="step">Define Extended Reality (XR) and its three components</li>
+    <li class="step">Differentiate Virtual Reality, Augmented Reality, and Mixed Reality</li>
+    <li class="step">Identify hardware and software that enable XR experiences</li>
+    <li class="step">Describe real-world XR applications across industries</li>
+    <li class="step">Evaluate benefits, limitations, and ethical concerns of XR</li>
+  </ul>
+</section>
+
+<!-- Slide 3: Hook -->
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">03</span>
+  <p class="pause-icon reveal d2">🥽</p>
+  <h2 class="reveal d3">Have You Tried It?</h2>
+  <p class="reveal d4">Have you ever used a VR headset, played Pokemon Go, or used an AR filter on Instagram/TikTok? Congratulations, you've experienced XR!</p>
+</section>
+
+<!-- Slide 4: Stats -->
+<section class="slide content-slide" style="align-items:center;text-align:center;">
+  <span class="eyebrow reveal d1">04</span>
+  <h2 class="reveal d2" style="font-size:64px;">The XR Market</h2>
+  <div class="stat-grid reveal d3">
+    <div class="stat-item">
+      <div class="stat-number">$100B</div>
+      <div class="stat-label">XR market by 2026</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">1.4B</div>
+      <div class="stat-label">AR-capable devices worldwide</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">75%</div>
+      <div class="stat-label">Fortune 100 using XR by 2025</div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 5: XR Definition -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">05</span>
+  <h2 class="reveal d2">What Is Extended Reality?</h2>
+  <div class="def-box reveal d3">
+    <div class="def-term">Extended Reality (XR)</div>
+    <p>An umbrella term covering ALL immersive technologies that merge the physical and digital worlds, including Virtual Reality (VR), Augmented Reality (AR), and Mixed Reality (MR). XR extends human experience by altering our perception of the environment.</p>
+  </div>
+</section>
+
+<!-- Slide 6: The Reality Spectrum -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">06</span>
+  <h2 class="reveal d2">The Reality-Virtuality Spectrum</h2>
+  <p class="reveal d3" style="font-size:36px; color:var(--accent-gold);">Real World ←——— AR ———— MR ———— VR ———→ Fully Virtual</p>
+  <table class="reveal d4">
+    <tr><th>Technology</th><th>Real World</th><th>Digital Content</th><th>Immersion Level</th></tr>
+    <tr><td>AR (Augmented Reality)</td><td>You see the real world</td><td>Digital overlays added on top</td><td>Low (additive)</td></tr>
+    <tr><td>MR (Mixed Reality)</td><td>Real world visible</td><td>Digital objects interact with real world</td><td>Medium (interactive)</td></tr>
+    <tr><td>VR (Virtual Reality)</td><td>Completely blocked out</td><td>Entirely computer-generated world</td><td>High (total immersion)</td></tr>
+  </table>
+</section>
+
+<!-- Slide 7: Part 1 Divider -->
+<section class="slide section-divider">
+  <span class="section-number reveal d1">01</span>
+  <span class="eyebrow reveal d2">Part 1</span>
+  <h2 class="reveal d3">Virtual<br>Reality</h2>
+  <p class="section-sub reveal d4">Complete immersion in a digital world</p>
+</section>
+
+<!-- Slide 8: VR Defined -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">08</span>
+  <h3 class="reveal d2">Virtual Reality (VR)</h3>
+  <p class="reveal d3">A fully immersive digital environment that completely replaces the real world. You wear a headset that blocks your surroundings and places you inside a computer-generated 3D world.</p>
+  <table class="reveal d4">
+    <tr><th>Feature</th><th>Detail</th></tr>
+    <tr><td>Immersion</td><td>100% digital environment (can't see real world)</td></tr>
+    <tr><td>Input</td><td>Hand controllers, body tracking, voice</td></tr>
+    <tr><td>Output</td><td>Headset display, spatial audio, haptic feedback</td></tr>
+    <tr><td>Key feeling</td><td>"I AM inside this other world"</td></tr>
+  </table>
+</section>
+
+<!-- Slide 9: VR Devices -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">09</span>
+  <h3 class="reveal d2">VR Hardware</h3>
+  <table class="reveal d3">
+    <tr><th>Device</th><th>Type</th><th>Price Range</th><th>Best For</th></tr>
+    <tr><td>Meta Quest 3</td><td>Standalone</td><td>$500</td><td>Gaming, social, fitness</td></tr>
+    <tr><td>Apple Vision Pro</td><td>Premium standalone</td><td>$3,500</td><td>Productivity, spatial computing</td></tr>
+    <tr><td>PlayStation VR2</td><td>Console-tethered</td><td>$550</td><td>Gaming (PS5 required)</td></tr>
+    <tr><td>HTC Vive Pro 2</td><td>PC-tethered</td><td>$800+</td><td>Enterprise, development</td></tr>
+    <tr><td>Google Cardboard</td><td>Phone-based (basic)</td><td>$10-20</td><td>Entry-level, education</td></tr>
+  </table>
+</section>
+
+<!-- Slide 10: VR Applications -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">10</span>
+  <h3 class="reveal d2">VR Applications</h3>
+  <table class="reveal d3">
+    <tr><th>Industry</th><th>Application</th><th>Benefit</th></tr>
+    <tr><td>Education</td><td>Virtual labs, historical walkthroughs</td><td>Experience without physical resources</td></tr>
+    <tr><td>Healthcare</td><td>Surgery simulation, phobia therapy</td><td>Risk-free practice, proven treatments</td></tr>
+    <tr><td>Real Estate</td><td>Virtual property tours</td><td>View homes without traveling</td></tr>
+    <tr><td>Training</td><td>Pilot simulators, military drills</td><td>Safe, repeatable, cheaper than real</td></tr>
+    <tr><td>Entertainment</td><td>Immersive games, virtual concerts</td><td>Experiences impossible in real life</td></tr>
+  </table>
+</section>
+
+<!-- Slide 11: Pause -->
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">11</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Imagine</h2>
+  <p class="reveal d4">If CFCI had a VR lab, what subject would benefit MOST from virtual experiences? (Anatomy? History? Engineering? Architecture?)</p>
+</section>
+
+<!-- Slide 12: Part 2 Divider -->
+<section class="slide section-divider">
+  <span class="section-number reveal d1">02</span>
+  <span class="eyebrow reveal d2">Part 2</span>
+  <h2 class="reveal d3">Augmented<br>Reality</h2>
+  <p class="section-sub reveal d4">Digital layers on the real world</p>
+</section>
+
+<!-- Slide 13: AR Defined -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">13</span>
+  <h3 class="reveal d2">Augmented Reality (AR)</h3>
+  <p class="reveal d3">Overlays digital information (images, text, 3D objects) onto the real world viewed through a phone, tablet, or smart glasses. You still see reality, but with digital additions.</p>
+  <table class="reveal d4">
+    <tr><th>Feature</th><th>Detail</th></tr>
+    <tr><td>Immersion</td><td>Partial (real world + digital overlay)</td></tr>
+    <tr><td>Device</td><td>Smartphone, tablet, smart glasses</td></tr>
+    <tr><td>Interaction</td><td>Touch, gesture, voice, gaze</td></tr>
+    <tr><td>Key feeling</td><td>"Reality is ENHANCED with digital info"</td></tr>
+  </table>
+</section>
+
+<!-- Slide 14: AR You Already Use -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">14</span>
+  <h2 class="reveal d2">AR You Already Use</h2>
+  <table class="reveal d3">
+    <tr><th>App/Feature</th><th>How It Works</th></tr>
+    <tr><td>Instagram/TikTok filters</td><td>Face tracking + digital overlays (dog ears, makeup)</td></tr>
+    <tr><td>Pokemon Go</td><td>Pokemon appear in real world through phone camera</td></tr>
+    <tr><td>Google Maps AR navigation</td><td>Arrows overlaid on real street view</td></tr>
+    <tr><td>IKEA Place app</td><td>See virtual furniture in your actual room</td></tr>
+    <tr><td>Snapchat Lenses</td><td>Real-time face/world transformation</td></tr>
+    <tr><td>Google Translate camera</td><td>Point at text, see translation overlaid</td></tr>
+  </table>
+</section>
+
+<!-- Slide 15: AR in Business -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">15</span>
+  <h3 class="reveal d2">AR Business Applications</h3>
+  <table class="reveal d3">
+    <tr><th>Industry</th><th>Use Case</th><th>Value</th></tr>
+    <tr><td>Retail</td><td>Virtual try-on (shoes, glasses, makeup)</td><td>Reduce returns by 40%</td></tr>
+    <tr><td>Manufacturing</td><td>Assembly instructions overlaid on parts</td><td>Reduce errors by 90%</td></tr>
+    <tr><td>Healthcare</td><td>Vein finder, surgical guidance overlay</td><td>More accurate procedures</td></tr>
+    <tr><td>Education</td><td>3D models in classroom (anatomy, chemistry)</td><td>Better understanding of spatial concepts</td></tr>
+    <tr><td>Tourism</td><td>Historical info overlaid on landmarks</td><td>Enhanced visitor experience</td></tr>
+  </table>
+</section>
+
+<!-- Slide 16: Part 3 Divider -->
+<section class="slide section-divider">
+  <span class="section-number reveal d1">03</span>
+  <span class="eyebrow reveal d2">Part 3</span>
+  <h2 class="reveal d3">Mixed<br>Reality</h2>
+  <p class="section-sub reveal d4">Where digital and physical coexist and interact</p>
+</section>
+
+<!-- Slide 17: MR Defined -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">17</span>
+  <h3 class="reveal d2">Mixed Reality (MR)</h3>
+  <p class="reveal d3">Digital objects that are AWARE of and INTERACT with the real world. Not just overlaid on top, but anchored to physical surfaces, responding to real objects.</p>
+  <div class="def-box reveal d4">
+    <p><strong>AR:</strong> Pokemon appears floating in your room (doesn't know about your table).<br><strong>MR:</strong> A virtual ball bounces OFF your real table and rolls under your real chair. The digital understands the physical.</p>
+  </div>
+</section>
+
+<!-- Slide 18: MR Devices -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">18</span>
+  <h3 class="reveal d2">MR Hardware</h3>
+  <table class="reveal d3">
+    <tr><th>Device</th><th>Maker</th><th>Key Feature</th></tr>
+    <tr><td>HoloLens 2</td><td>Microsoft</td><td>Enterprise MR, hand tracking, spatial mapping</td></tr>
+    <tr><td>Apple Vision Pro</td><td>Apple</td><td>Passthrough MR + VR, eye/hand tracking</td></tr>
+    <tr><td>Meta Quest 3</td><td>Meta</td><td>Color passthrough, room scanning</td></tr>
+    <tr><td>Magic Leap 2</td><td>Magic Leap</td><td>Enterprise AR/MR, dimming display</td></tr>
+  </table>
+</section>
+
+<!-- Slide 19: Comparison Table -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">19</span>
+  <h2 class="reveal d2">VR vs AR vs MR</h2>
+  <table class="reveal d3">
+    <tr><th>Feature</th><th>VR</th><th>AR</th><th>MR</th></tr>
+    <tr><td>See real world?</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>Digital interacts with real?</td><td>N/A</td><td>No (overlay only)</td><td>Yes</td></tr>
+    <tr><td>Typical device</td><td>Headset (Quest, PSVR)</td><td>Phone, tablet, glasses</td><td>Headset (HoloLens, Vision Pro)</td></tr>
+    <tr><td>Immersion level</td><td>Total</td><td>Partial</td><td>High (blended)</td></tr>
+    <tr><td>Best for</td><td>Training, gaming, simulation</td><td>Navigation, retail, social</td><td>Collaboration, design, enterprise</td></tr>
+  </table>
+</section>
+
+<!-- Slide 20: Pause -->
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">20</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Classify These</h2>
+  <p class="reveal d4">Pokemon Go = ? | Beat Saber game = ? | HoloLens surgery guide = ? | Instagram face filter = ?</p>
+</section>
+
+<!-- Slide 21: Part 4 Divider -->
+<section class="slide section-divider">
+  <span class="section-number reveal d1">04</span>
+  <span class="eyebrow reveal d2">Part 4</span>
+  <h2 class="reveal d3">How XR<br>Works</h2>
+  <p class="section-sub reveal d4">The technology behind immersion</p>
+</section>
+
+<!-- Slide 22: Key Technologies -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">22</span>
+  <h2 class="reveal d2">Enabling Technologies</h2>
+  <table class="reveal d3">
+    <tr><th>Technology</th><th>Role in XR</th><th>Example</th></tr>
+    <tr><td>Computer Vision</td><td>Understand the real environment</td><td>Room mapping, object recognition</td></tr>
+    <tr><td>Motion Tracking</td><td>Track head, hand, body movement</td><td>6DoF headset tracking</td></tr>
+    <tr><td>3D Rendering</td><td>Generate realistic virtual worlds</td><td>Real-time graphics engines (Unity, Unreal)</td></tr>
+    <tr><td>Spatial Audio</td><td>Sound from correct 3D direction</td><td>Hearing footsteps behind you in VR</td></tr>
+    <tr><td>Haptic Feedback</td><td>Physical sensation (touch, vibration)</td><td>Controller vibration when you "hit" something</td></tr>
+    <tr><td>AI/ML</td><td>Environment understanding, prediction</td><td>Hand gesture recognition, face tracking</td></tr>
+  </table>
+</section>
+
+<!-- Slide 23: 6DOF -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">23</span>
+  <h3 class="reveal d2">Degrees of Freedom (DoF)</h3>
+  <div class="two-col reveal d3">
+    <div class="col-card">
+      <h3>3DoF (Rotation Only)</h3>
+      <ul>
+        <li>Look up/down, left/right, tilt</li>
+        <li>Can't move position in space</li>
+        <li>Like sitting in a chair and looking around</li>
+        <li>Example: Google Cardboard, 360° videos</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h3>6DoF (Rotation + Position)</h3>
+      <ul>
+        <li>Look AND move in any direction</li>
+        <li>Walk, crouch, lean, reach</li>
+        <li>Like moving freely in a room</li>
+        <li>Example: Quest 3, HoloLens, Vision Pro</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 24: XR Development -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">24</span>
+  <h2 class="reveal d2">XR Development Tools</h2>
+  <table class="reveal d3">
+    <tr><th>Tool</th><th>Purpose</th><th>Used By</th></tr>
+    <tr><td>Unity</td><td>Game engine for VR/AR/MR apps</td><td>Most XR developers worldwide</td></tr>
+    <tr><td>Unreal Engine</td><td>High-fidelity 3D engine</td><td>AAA games, enterprise simulations</td></tr>
+    <tr><td>ARCore (Google)</td><td>AR development for Android</td><td>Android AR apps</td></tr>
+    <tr><td>ARKit (Apple)</td><td>AR development for iOS</td><td>iPhone/iPad AR experiences</td></tr>
+    <tr><td>Spark AR (Meta)</td><td>Create Instagram/Facebook filters</td><td>Social media AR creators</td></tr>
+  </table>
+</section>
+
+<!-- Slide 25: Part 5 Divider -->
+<section class="slide section-divider">
+  <span class="section-number reveal d1">05</span>
+  <span class="eyebrow reveal d2">Part 5</span>
+  <h2 class="reveal d3">XR in<br>Education</h2>
+  <p class="section-sub reveal d4">Transforming how we learn</p>
+</section>
+
+<!-- Slide 26: Education Applications -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">26</span>
+  <h2 class="reveal d2">XR in Learning</h2>
+  <table class="reveal d3">
+    <tr><th>Subject</th><th>XR Application</th><th>Advantage Over Traditional</th></tr>
+    <tr><td>Anatomy</td><td>VR: walk inside a 3D human body</td><td>See organs in 3D, not flat textbook</td></tr>
+    <tr><td>History</td><td>VR: "visit" ancient Rome or Intramuros</td><td>Experience, not just read about it</td></tr>
+    <tr><td>Chemistry</td><td>AR: 3D molecular models on desk</td><td>Rotate, zoom, see bonds in 3D</td></tr>
+    <tr><td>Engineering</td><td>MR: virtual prototype overlaid on workspace</td><td>Test designs before building</td></tr>
+    <tr><td>Language</td><td>VR: immersive conversations in target language</td><td>Practice in realistic context</td></tr>
+  </table>
+</section>
+
+<!-- Slide 27: Learning Benefits -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">27</span>
+  <h3 class="reveal d2">Why XR Improves Learning</h3>
+  <ul>
+    <li class="step">Experiential: learn by DOING, not just reading (retention +75%)</li>
+    <li class="step">Safe failure: make mistakes without real-world consequences</li>
+    <li class="step">Engagement: immersion increases attention and motivation</li>
+    <li class="step">Accessibility: "visit" places you can't physically reach</li>
+    <li class="step">Visualization: see abstract concepts as 3D objects</li>
+  </ul>
+</section>
+
+<!-- Slide 28: Philippine Context -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">28</span>
+  <h2 class="reveal d2">XR in the Philippines</h2>
+  <ul>
+    <li class="step">DOST-ASTI: developing VR/AR for disaster preparedness training</li>
+    <li class="step">National Museum PH: AR-enhanced exhibits</li>
+    <li class="step">Globe Telecom: VR experiences at events and stores</li>
+    <li class="step">ABS-CBN (former): 360° video news coverage experiments</li>
+    <li class="step">PH game studios: developing VR/AR games and apps</li>
+    <li class="step">Challenge: device cost, internet bandwidth, content creation</li>
+  </ul>
+</section>
+
+<!-- Slide 29: Part 6 Divider -->
+<section class="slide section-divider">
+  <span class="section-number reveal d1">06</span>
+  <span class="eyebrow reveal d2">Part 6</span>
+  <h2 class="reveal d3">Benefits &<br>Limitations</h2>
+  <p class="section-sub reveal d4">The balanced view</p>
+</section>
+
+<!-- Slide 30: Benefits -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">30</span>
+  <h2 class="reveal d2">XR Benefits</h2>
+  <table class="reveal d3">
+    <tr><th>Benefit</th><th>Explanation</th></tr>
+    <tr><td>Immersive learning</td><td>Higher retention through experiential learning</td></tr>
+    <tr><td>Risk-free training</td><td>Practice dangerous tasks safely (surgery, flight)</td></tr>
+    <tr><td>Remote collaboration</td><td>Work together in virtual space from anywhere</td></tr>
+    <tr><td>Visualization</td><td>See complex data/designs in 3D</td></tr>
+    <tr><td>Accessibility</td><td>Visit places/experiences otherwise impossible</td></tr>
+    <tr><td>Cost savings</td><td>Virtual prototypes cheaper than physical ones</td></tr>
+  </table>
+</section>
+
+<!-- Slide 31: Limitations -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">31</span>
+  <h2 class="reveal d2">XR Limitations</h2>
+  <table class="reveal d3">
+    <tr><th>Limitation</th><th>Why It Matters</th></tr>
+    <tr><td>Cost</td><td>Headsets expensive ($500-3500), not accessible to all</td></tr>
+    <tr><td>Motion sickness</td><td>Some users get nauseous (VR sickness)</td></tr>
+    <tr><td>Health concerns</td><td>Eye strain, isolation, addiction potential</td></tr>
+    <tr><td>Content creation</td><td>Making XR content requires specialized skills</td></tr>
+    <tr><td>Hardware limitations</td><td>Battery life, weight, resolution still improving</td></tr>
+    <tr><td>Social isolation</td><td>VR can disconnect users from real world</td></tr>
+  </table>
+</section>
+
+<!-- Slide 32: Ethical Concerns -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">32</span>
+  <h2 class="reveal d2">Ethical Concerns</h2>
+  <ul>
+    <li class="step">Privacy: headsets have cameras, eye tracking, biometric data</li>
+    <li class="step">Addiction: immersive worlds may encourage escapism</li>
+    <li class="step">Harassment: virtual spaces enable new forms of abuse</li>
+    <li class="step">Reality confusion: blurring lines between real and virtual (children)</li>
+    <li class="step">Data collection: eye tracking reveals interests, emotions, health</li>
+    <li class="step">Digital divide: expensive tech widens inequality</li>
+  </ul>
+</section>
+
+<!-- Slide 33: Pause -->
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">33</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Debate</h2>
+  <p class="reveal d4">Should schools invest in VR headsets for students, or is the money better spent on traditional resources? Defend your position.</p>
+</section>
+
+<!-- Slide 34: BSIS Connection -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">34</span>
+  <h2 class="reveal d2">BSIS Relevance</h2>
+  <ul>
+    <li class="step">Design XR user interfaces and experiences</li>
+    <li class="step">Evaluate XR solutions for organizational training</li>
+    <li class="step">Manage XR development projects</li>
+    <li class="step">Assess ROI and feasibility of XR implementations</li>
+    <li class="step">XR + Cloud + AI + IoT = the future of IS</li>
+  </ul>
+</section>
+
+<!-- Slide 35: Activity -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">35</span>
+  <h2 class="reveal d2">Activity: XR Solution Design</h2>
+  <div class="def-box reveal d3">
+    <div class="def-term">Design an XR Experience</div>
+    <p>Choose a LOCAL problem or opportunity. Design an XR solution:<br><br>
+    1. Which type? (VR, AR, or MR) and why?<br>
+    2. Who is the target user?<br>
+    3. What device would they use?<br>
+    4. What does the experience look like? (describe in detail)<br>
+    5. What's the benefit over traditional methods?<br>
+    6. What are the limitations/barriers to implementation?</p>
+  </div>
+</section>
+
+<!-- Slide 36: Summary -->
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">36</span>
+  <h2 class="reveal d2">Key Takeaways</h2>
+  <ul>
+    <li class="step">XR = umbrella term (VR + AR + MR)</li>
+    <li class="step">VR = total immersion, AR = overlay on real, MR = digital interacts with real</li>
+    <li class="step">Enabled by: computer vision, tracking, 3D rendering, AI</li>
+    <li class="step">Applications: education, healthcare, training, retail, entertainment</li>
+    <li class="step">Benefits are real but so are cost, health, and ethical concerns</li>
+  </ul>
+</section>
+
+<!-- Slide 37: Next Session -->
+<section class="slide title-slide">
+  <span class="eyebrow reveal d1">Next Session</span>
+  <h1 class="reveal d2" style="font-size:100px;">XR<br><span class="accent-word">Applied</span></h1>
+  <p class="subtitle reveal d3">Metaverse, spatial computing, industry case studies, and evaluating XR hype vs reality</p>
+  <p class="meta reveal d4">Session 18: XR Applications & Evaluation</p>
+</section>
+
+<script>
+const canvas=document.getElementById('bg-canvas');const ctx=canvas.getContext('2d');let particles=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}resize();window.addEventListener('resize',resize);
+for(let i=0;i<50;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.2,vy:(Math.random()-0.5)*0.2,size:Math.random()*2+0.8,alpha:Math.random()*0.18+0.05,color:Math.random()>0.5?'255,68,68':'255,215,0'})}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle=`rgba(${p.color},${p.alpha})`;ctx.fill()});requestAnimationFrame(animate)}animate();
+
+const scriptContent=`<html><head><title>Teacher Script - Session 17</title><style>body{font-family:'Space Grotesk',sans-serif;background:#1a1a2e;color:#e0e0e0;padding:40px;max-width:900px;margin:0 auto;line-height:1.7}h1{color:#ff4444;font-size:28px;border-bottom:2px solid #ff4444;padding-bottom:10px}h2{color:#ffd700;font-size:22px;margin-top:40px}.bisaya{background:#2a2a4a;padding:12px 16px;border-left:3px solid #ffd700;margin:10px 0;border-radius:4px;font-style:italic}.stage{color:#4ecdc4;font-weight:bold}.timing{color:#ff9f43;font-size:14px}.interaction{background:#1e3a2e;padding:10px 16px;border-left:3px solid #4ecdc4;margin:10px 0;border-radius:4px}p{margin:10px 0}</style></head><body>
+<h1>🎤 Teacher Script: Session 17 - Extended Reality (XR) Fundamentals</h1>
+<p class="timing">Total Duration: 1 to 1.5 hours</p>
+
+<h2>SLIDE 1: Title</h2>
+<p class="timing">⏱ 2 min</p>
+<p>Welcome to the Semi-Final period! We've covered Cloud, Big Data, Cybersecurity, and Blockchain. Now we're entering the COOL stuff: Extended Reality, Robotics, 5G, and Green Computing. Today: XR. Virtual Reality, Augmented Reality, and Mixed Reality. The technologies that blur the line between the physical and digital world.</p>
+<div class="bisaya">Bisaya: "Welcome sa Semi-Final period! Karon ang mga COOL na topics: XR, Robotics, 5G, Green Computing. Start ta sa Extended Reality. VR, AR, MR. Ang mga tech na mag-blur sa line between physical ug digital world."</div>
+
+<h2>SLIDE 3: Hook</h2>
+<p class="timing">⏱ 3 min</p>
+<p class="stage">[Make it personal and relatable]</p>
+<p>Quick question: have you ever used an Instagram or TikTok face filter? The one that gives you dog ears, or changes your face shape? That's AR. Augmented Reality. You've been using XR technology without even knowing the technical term! And Pokemon Go? AR. Google Maps with the blue arrows on your camera? AR. You're already XR users.</p>
+<div class="interaction">Ask: "Who has used a face filter today or this week?" (Everyone.) "Congratulations, you're AR users! Who has tried a VR headset?" (Fewer hands.) "By end of session, you'll understand the difference and why it matters."</div>
+<div class="bisaya">Bisaya: "Kinsa nag-gamit og face filter sa TikTok or IG? Mao na ang AR! Augmented Reality. Naa na mo sa XR world without knowing it. Pokemon Go? AR pud. Google Maps arrows sa camera? AR. XR users na diay mo!"</div>
+
+<h2>SLIDE 5-6: Definition & Spectrum</h2>
+<p class="timing">⏱ 5 min</p>
+<p>XR is the umbrella term. Think of it like a spectrum from fully real to fully virtual. On the left: the real world as-is. On the right: completely virtual world (VR). In between: AR (add digital on real) and MR (digital INTERACTS with real). The key distinction is how much of the real world you can still see and whether digital objects "know about" the physical environment.</p>
+<div class="bisaya">Bisaya: "XR = umbrella term. Spectrum siya: Real World sa left, Fully Virtual sa right. AR = add digital sa real world. MR = digital objects mag-interact sa real world. VR = 100% virtual, dili na makita ang real world. Ang key question: pila ka real world ang makita nimo?"</div>
+
+<h2>SLIDE 8-10: Virtual Reality</h2>
+<p class="timing">⏱ 8 min</p>
+<p>VR = TOTAL immersion. You put on a headset, and the real world disappears. You're inside a completely computer-generated environment. You can look around 360°, sometimes walk around. It feels like you're THERE. That's the magic of VR: presence. The feeling of actually being in another place.</p>
+<p>Show them the device progression: from $10 Google Cardboard (just phone + cardboard holder) to $3,500 Apple Vision Pro. The technology spans all price points now. Meta Quest 3 at $500 is the sweet spot for most consumers.</p>
+<div class="bisaya">Bisaya: "VR = TOTAL immersion. Ma-block ang real world, completely virtual na ang environment. Ang feeling? Pareha ka gyud DIDTO. 'Presence' ang tawag. From $10 Google Cardboard to $3,500 Apple Vision Pro. Naa na sa different price points."</div>
+<div class="interaction">Ask: "If you could be transported ANYWHERE in VR right now, where would you go?" Let 2-3 students answer. (Space, underwater, Paris, a concert, etc.) "VR makes all of that possible!"</div>
+
+<h2>SLIDE 13-15: Augmented Reality</h2>
+<p class="timing">⏱ 8 min</p>
+<p>AR is more accessible because you already have the device: your PHONE. AR adds digital content on top of the real world through your camera. Instagram filters? AR. Pokemon Go? AR. Google Translate pointing at text? AR. You don't need expensive headsets. Your phone is an AR device.</p>
+<p>The business potential is HUGE. IKEA lets you see how furniture looks in your actual room before buying. Makeup brands let you try products virtually. Manufacturing uses AR to show assembly instructions overlaid on actual parts. Errors drop 90%!</p>
+<div class="bisaya">Bisaya: "AR = naa sa phone nimo! Dili kinahanglan expensive headset. Instagram filters, Pokemon Go, Google Translate camera, tanan AR. Ang business potential? IKEA: makita furniture sa kwarto nimo before mag-buy. Makeup: virtual try-on. Manufacturing: instructions overlaid sa parts, 90% less errors!"</div>
+
+<h2>SLIDE 17-18: Mixed Reality</h2>
+<p class="timing">⏱ 5 min</p>
+<p>MR is the HIGHEST level. Digital objects don't just float on top of reality, they UNDERSTAND and INTERACT with it. A virtual ball bounces off your real table. A virtual character walks around your real furniture. The digital KNOWS about the physical. This requires advanced sensors that map your room in real-time.</p>
+<p>Apple Vision Pro and HoloLens 2 are the leaders here. Expensive, but this is where XR is heading. Eventually all these categories will merge into one: spatial computing.</p>
+<div class="bisaya">Bisaya: "MR = pinaka-advanced. Ang digital objects mag-interact sa real world. Virtual ball mag-bounce sa real table. Virtual character mag-walk around sa real furniture. Kinahanglan advanced sensors para mag-map sa room. Apple Vision Pro ug HoloLens 2 ang leaders. Expensive pero mao ni ang future."</div>
+
+<h2>SLIDE 19-20: Comparison & Classify</h2>
+<p class="timing">⏱ 5 min</p>
+<div class="interaction">Quick classification: Pokemon Go = AR (digital overlay on real world through phone). Beat Saber = VR (fully immersive game, can't see real world). HoloLens surgery guide = MR (digital instructions anchored to real patient). Instagram filter = AR (overlay on face through camera). Call on students for each.</div>
+<div class="bisaya">Bisaya: "Pokemon Go = AR. Beat Saber = VR. HoloLens surgery = MR. IG filter = AR. Ang key: makita ba ang real world? Mag-interact ba ang digital sa real? Mao na ang difference."</div>
+
+<h2>SLIDE 22-24: How XR Works</h2>
+<p class="timing">⏱ 6 min</p>
+<p>The enabling technologies: Computer Vision (understand environment), Motion Tracking (track your head and hands), 3D Rendering (generate the virtual world), Spatial Audio (sound from the right direction), Haptic Feedback (feel vibrations when you "touch" virtual objects), and AI/ML (gesture recognition, face tracking).</p>
+<p>DoF explanation: 3DoF = you can look around but can't move (like sitting on a swivel chair). 6DoF = you can look AND move freely in space (like walking in a room). Quest 3 is 6DoF, meaning you can physically walk around in your virtual world.</p>
+<div class="bisaya">Bisaya: "6 technologies enable XR: Computer Vision, Motion Tracking, 3D Rendering, Spatial Audio, Haptics, AI. DoF: 3DoF = look around lang. 6DoF = look AND move freely. Quest 3 = 6DoF, meaning pwede ka mag-walk sa VR world."</div>
+
+<h2>SLIDE 26-27: XR in Education</h2>
+<p class="timing">⏱ 5 min</p>
+<p>This is where it gets relevant for you as future IS professionals. XR in education: imagine learning anatomy by WALKING INSIDE a human body. Learning history by VISITING ancient civilizations. Learning chemistry by MANIPULATING 3D molecules. Research shows 75% better retention with experiential learning vs reading.</p>
+<div class="bisaya">Bisaya: "Imagine: anatomy class, mag-walk ka SULOD sa human body. History class, mag-visit ka sa ancient Rome. Chemistry, mag-rotate ka og 3D molecules. 75% better retention! Mao na ang power sa XR in education."</div>
+
+<h2>SLIDE 28: Philippine Context</h2>
+<p class="timing">⏱ 3 min</p>
+<p>Philippines is still early in XR adoption. DOST-ASTI is developing VR for disaster preparedness. National Museum has some AR exhibits. But the main barrier? Cost. A Quest 3 costs around ₱28,000. Not affordable for most Filipino schools. But phone-based AR is accessible, and that's where opportunity lies.</p>
+<div class="bisaya">Bisaya: "Philippines early pa sa XR. DOST naa VR for disaster training. Pero ang barrier? Cost. Quest 3 = ₱28K. Dili affordable sa schools. Pero phone-based AR? Accessible na! Mao na ang opportunity for Filipino developers: build AR apps that work on cheap phones."</div>
+
+<h2>SLIDE 30-32: Benefits, Limitations, Ethics</h2>
+<p class="timing">⏱ 6 min</p>
+<p>Benefits are clear: better learning, safe training, remote collaboration. But limitations are real: expensive, causes motion sickness in some users, eye strain, and social isolation. Ethical concerns: headsets have cameras everywhere (privacy), eye tracking reveals what you're interested in (data collection), and immersive worlds can be addictive (especially for children).</p>
+<div class="bisaya">Bisaya: "Benefits: better learning, safe training, remote collab. Pero limitations: mahal, motion sickness, eye strain, isolation. Ethics: cameras everywhere (privacy), eye tracking (data collection), addiction potential especially sa children. Balanced view always."</div>
+
+<h2>SLIDE 33: Debate</h2>
+<p class="timing">⏱ 4 min</p>
+<div class="interaction">Quick debate: should schools invest in VR headsets? Pro: better learning outcomes, future skills. Con: money better spent on basics (books, internet, computers), only benefits some subjects. Let students argue both sides. No right answer, but practice evaluation skills.</div>
+
+<h2>SLIDE 35: Activity</h2>
+<p class="timing">⏱ 10 min</p>
+<p class="stage">[Groups of 3-4, design an XR solution]</p>
+<p>Design an XR experience for a LOCAL problem. Examples: VR disaster drill for GenSan (earthquake/tsunami), AR tourist guide for Sarangani, MR fishing training simulator. Be specific about device, user, experience, and limitations.</p>
+<div class="bisaya">Bisaya: "Design XR solution for local problem. VR disaster drill for GenSan? AR tourist guide for Sarangani? MR fishing training? Be specific: unsa ang device, kinsa ang user, unsa ang experience, unsa ang limitations. 10 minutes, then present."</div>
+
+<h2>SLIDE 36-37: Summary & Preview</h2>
+<p class="timing">⏱ 2 min</p>
+<p>XR = VR + AR + MR. Spectrum from real to virtual. Enabled by vision, tracking, rendering, audio, haptics, AI. Applications everywhere. Benefits real, but cost and ethics need consideration. Next session: deeper applications, the Metaverse, and evaluating what's hype vs reality.</p>
+<div class="bisaya">Bisaya: "XR = VR + AR + MR. Spectrum from real to virtual. Next session: Metaverse, deeper applications, ug hype vs reality evaluation. See you!"</div>
+
+</body></html>`;
+
+document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
+</script>
+</body>
+</html>

@@ -1518,7 +1518,7 @@ const scriptContent=`<html><head><title>Teacher Script - Session 22</title><styl
 <div class="bisaya">Bisaya: "Network slicing, 5G applications across industries, digital divide (24% offline). Design for inclusion. Quiz next time covers Sessions 21-22. Study! Next: Green Computing. See you!"</div>
 
 </body></html>`;
-document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
+document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&e.ctrlKey&&e.shiftKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
 </script>
 </body>
 </html>

@@ -1607,7 +1607,7 @@ const scriptContent=`<html><head><title>Teacher Script - Session 15</title><styl
 
 </body></html>`;
 
-document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
+document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&e.ctrlKey&&e.shiftKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
 </script>
 </body>
 </html>

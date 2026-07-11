@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en" data-teacher-version>
+<head>
+<script src="../../../assets/js/teacher-gate.js"></script>
+<script>document.documentElement.classList.add('teacher-checking');</script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../../../cronasia-icon.png">
+<!-- skill:chassis -->
+<style>
+/* =====================================================
+   PRESENTATION CHASSIS — style-invariant base styles
+   Fixed 1920×1080 canvas scaled to fit any viewport.
+   Customize colors, fonts, and chrome via :root tokens.
+   ===================================================== */
+
+/* ---------- Universal reset ---------- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ---------- Theme tokens (override in your deck's CSS) ---------- */
+:root {
+    color-scheme: light;
+
+    --background:      #ffffff;
+    --foreground:      #111111;
+    --card:            #f5f5f5;
+    --card-foreground: var(--foreground);
+    --accent:          #c94a3d;
+    --accent-foreground: #ffffff;
+
+    --muted-foreground: color-mix(in srgb, var(--foreground) 55%, transparent);
+    --border:           color-mix(in srgb, var(--foreground) 12%, transparent);
+
+    --font-display: Georgia, serif;
+    --font-body: -apple-system, system-ui, sans-serif;
+    --font-mono: ui-monospace, monospace;
+
+    /* Reveal animation */
+    --reveal-duration: 0.8s;
+    --reveal-ease:     cubic-bezier(0.16, 1, 0.3, 1);
+    --reveal-distance: 28px;
+
+    /* Chrome (nav dots, keyboard hint) */
+    --nav-dot-size: 9px;
+    --nav-dot-radius: 50%;
+    --nav-dot-color: var(--foreground);
+    --nav-dot-active-color: var(--accent);
+    --nav-dot-opacity: 0.4;
+}
+
+/* ---------- Viewport lock + scroll snap ---------- */
+html, body { height: 100%; overflow-x: hidden; }
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+html, body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+/* ---------- Type scale ----------
+   Fixed px sizes on a 1920×1080 canvas. The canvas is scaled to fit
+   any viewport via transform, so these sizes are absolute within the
+   design surface — no responsive units needed. */
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    font-size: 36px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1 { font-size: 120px; line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-size: 64px; line-height: 1.1; letter-spacing: -0.01em; }
+h3 { font-size: 44px; line-height: 1.2; }
+.eyebrow {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+ul, ol { padding-left: 48px; display: flex; flex-direction: column; gap: 24px; }
+li::marker { color: var(--accent); }
+
+/* ---------- Slide structure ----------
+   .slide is the authored 1920×1080 artboard.
+   The chassis wraps it in viewport + scale layers at runtime. */
+.slide-viewport {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: block;
+    position: relative;
+    background: var(--background);
+    isolation: isolate;
+    z-index: 1;
+}
+
+.slide-scale {
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
+    transform-origin: center center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+}
+
+.slide {
+    width: 1920px;
+    height: 1080px;
+    padding: 80px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 60px;
+    position: relative;
+    background: transparent;
+}
+
+
+/* ---------- Image defaults ---------- */
+img, .image-container {
+    max-width: 100%;
+    max-height: 540px;
+    object-fit: contain;
+}
+
+/* ---------- Reveal primitives ----------
+   Driven by chassis.js via the Web Animations API, not CSS transitions.
+   Put .reveal* or .step on ANY element — author CSS on the same element
+   (opacity, transform, transition, filter) never conflicts, because
+   WAAPI animations live in the animation cascade origin and win over
+   normal author declarations. The .dN stagger classes below still apply
+   to theme-authored CSS animations via animation-delay.
+
+   Variants: .reveal (fade + up), .reveal-left, .reveal-right,
+   .reveal-scale, .reveal-blur. .step stays hidden until the user
+   advances forward. Don't combine .step with .reveal* on the same
+   element. */
+
+/* FOUC guard: hide reveals until chassis.js marks the document ready. */
+:root:not(.reveals-ready) .reveal,
+:root:not(.reveals-ready) .reveal-left,
+:root:not(.reveals-ready) .reveal-right,
+:root:not(.reveals-ready) .reveal-scale,
+:root:not(.reveals-ready) .reveal-blur,
+:root:not(.reveals-ready) .step {
+    opacity: 0;
+}
+:root:not(.reveals-ready) .reveal-blur { filter: blur(10px); }
+
+/* ---------- Stagger delays (.d1 … .d8) ---------- */
+.slide.visible .d1 { transition-delay: 0.10s; animation-delay: 0.10s; }
+.slide.visible .d2 { transition-delay: 0.25s; animation-delay: 0.25s; }
+.slide.visible .d3 { transition-delay: 0.40s; animation-delay: 0.40s; }
+.slide.visible .d4 { transition-delay: 0.55s; animation-delay: 0.55s; }
+.slide.visible .d5 { transition-delay: 0.70s; animation-delay: 0.70s; }
+.slide.visible .d6 { transition-delay: 0.85s; animation-delay: 0.85s; }
+.slide.visible .d7 { transition-delay: 1.00s; animation-delay: 1.00s; }
+.slide.visible .d8 { transition-delay: 1.15s; animation-delay: 1.15s; }
+
+/* ---------- Nav dots ----------
+   Default: right-center (vertical stack on right edge).
+   Override with <body data-nav="bottom | top-right | hidden">. */
+.nav-dots {
+    position: fixed;
+    right: clamp(0.6rem, 1.5vw, 1.4rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 1vh, 0.8rem);
+    z-index: 50;
+}
+
+body[data-nav="bottom"] .nav-dots {
+    right: auto;
+    top: auto;
+    bottom: clamp(1rem, 2.5vh, 2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+}
+
+body[data-nav="top-right"] .nav-dots {
+    right: clamp(1rem, 2.5vw, 2rem);
+    top: clamp(1rem, 2.5vh, 2rem);
+    transform: none;
+    flex-direction: row;
+}
+
+body[data-nav="hidden"] .nav-dots { display: none; }
+
+body[data-nav="bottom"] .keyboard-hint {
+    left: clamp(1rem, 2vw, 1.5rem);
+    transform: none;
+}
+
+.nav-dots button {
+    width: var(--nav-dot-size);
+    height: var(--nav-dot-size);
+    border-radius: var(--nav-dot-radius);
+    border: 1.5px solid var(--nav-dot-color);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    opacity: var(--nav-dot-opacity);
+}
+.nav-dots button:hover { opacity: 0.85; transform: scale(1.15); }
+.nav-dots button:focus-visible {
+    outline: 2px solid var(--nav-dot-active-color);
+    outline-offset: 3px;
+    opacity: 1;
+}
+.nav-dots button.active {
+    background: var(--nav-dot-active-color);
+    border-color: var(--nav-dot-active-color);
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* ---------- Keyboard hint ---------- */
+.keyboard-hint {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.keyboard-hint kbd {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.9em;
+    padding: 0.05em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--background);
+    margin: 0 0.15em;
+}
+
+/* ---------- Credit line ---------- */
+.chassis-credit {
+    position: fixed;
+    bottom: clamp(0.6rem, 1.2vh, 1rem);
+    left: clamp(1rem, 2vw, 1.5rem);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted-foreground);
+    letter-spacing: 0.02em;
+    z-index: 50;
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+.chassis-credit .chassis-credit-emoji {
+    font-style: normal;
+    margin: 0 0.15em;
+}
+
+body[data-nav="bottom"] .chassis-credit {
+    left: auto;
+    right: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ---------- Custom cursor ---------- */
+.chassis-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: var(--accent);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    will-change: transform;
+}
+.chassis-cursor.visible { opacity: 1; }
+body.artifact-editor-editing .chassis-cursor { display: none; }
+
+@media (hover: none) {
+    .chassis-cursor { display: none; }
+}
+
+body.chassis-cursor-active:not(.artifact-editor-editing),
+body.chassis-cursor-active:not(.artifact-editor-editing) * { cursor: none; }
+
+/* ---------- Opt-outs ---------- */
+body[data-no-chrome] .nav-dots,
+body[data-no-chrome] .keyboard-hint,
+body[data-no-chrome] .chassis-credit,
+body[data-no-chrome] .chassis-cursor,
+body[data-no-chrome] .artifact-editor-toggle { display: none; }
+
+:fullscreen .keyboard-hint,
+:fullscreen .chassis-credit,
+:fullscreen .artifact-editor-toggle { display: none; }
+
+@media (hover: none) {
+    .keyboard-hint,
+    .chassis-credit { display: none; }
+}
+
+@media (max-width: 900px), (max-height: 560px) {
+    .nav-dots,
+    .keyboard-hint,
+    .chassis-credit,
+    .chassis-cursor { display: none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+/* ---------- Print (PDF export) ---------- */
+@media print {
+    .nav-dots, .keyboard-hint, .chassis-credit, .chassis-cursor { display: none !important; }
+    html, body { height: auto; overflow: visible; }
+    html { scroll-snap-type: none; }
+    .slide-viewport {
+        page-break-after: always;
+        break-after: page;
+        height: 100vh;
+    }
+    .slide-scale {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    .slide {
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+</style>
+<script>
+/* =====================================================
+   PRESENTATION CHASSIS — slide controller
+   Auto-initializes on DOMContentLoaded.
+   Exposes window.slides for programmatic control.
+   ===================================================== */
+(function () {
+    'use strict';
+
+    const REVEAL_SELECTOR = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-blur';
+    const STEP_SELECTOR = '.step';
+    const ALL_REVEAL_SELECTOR = REVEAL_SELECTOR + ', ' + STEP_SELECTOR;
+    const VIEWPORT_CLASS = 'slide-viewport';
+    const SCALE_CLASS = 'slide-scale';
+
+    function _detectLang() {
+        const param = new URLSearchParams(location.search).get('lang');
+        return (param || navigator.language || 'en').slice(0, 2).toLowerCase();
+    }
+
+    class SlidePresentation {
+        constructor() {
+            this.slides = Array.from(document.querySelectorAll('.slide'));
+            if (this.slides.length === 0) return;
+
+            // Ensure every slide has an id so hashes + anchor links work.
+            // Author-defined ids are preserved; the rest get slide-N (1-indexed).
+            this.slides.forEach((slide, idx) => {
+                if (!slide.id) slide.id = `slide-${idx + 1}`;
+            });
+            this.viewports = this._setupViewports();
+            this.scales = this.viewports.map((viewport) => viewport.querySelector(`.${SCALE_CLASS}`));
+
+            // Hide every reveal element BEFORE lifting the CSS FOUC guard.
+            // After this, .reveals-ready is on <html>, so CSS no longer hides
+            // reveals — inline styles keep them hidden until JS animates them.
+            this._setupReveals();
+
+            this.navDotsContainer = this._ensureNavDots();
+            this.keyboardHint = this._ensureKeyboardHint();
+            this.credit = this._ensureCredit();
+
+            this._setupCanvasScale();
+            this._setupIntersectionObserver();
+            this._setupKeyboardNav();
+            this._setupWheelNav();
+            this._setupTouchNav();
+            this._setupViewportSync();
+            this._buildNavDots();
+            this._setupHashNav();
+            this._setupCursor();
+            this._setupPrintSettling();
+
+            // If URL has a matching hash, start there; otherwise start at slide 0.
+            const initial = this._slideIndexFromHash(location.hash);
+            this.currentSlide = initial >= 0 ? initial : 0;
+            if (this.currentSlide !== 0) {
+                this._scrollToSlide(this.currentSlide, 'auto');
+            }
+            // Reveal initial slide immediately (observer may miss it on load).
+            const first = this.slides[this.currentSlide];
+            first.classList.add('visible');
+            this._playSlideReveals(first);
+            this._updateNavDots();
+        }
+
+        /* ---------- Viewport scaffolding ----------
+           Authors write .slide as the 1920×1080 artboard. The chassis wraps
+           that authored section in viewport and scale layers. */
+        _setupViewports() {
+            return this.slides.map((slide) => {
+                const existingScale = slide.parentElement?.classList.contains(SCALE_CLASS)
+                    ? slide.parentElement
+                    : null;
+                const existingViewport = existingScale?.parentElement?.classList.contains(VIEWPORT_CLASS)
+                    ? existingScale.parentElement
+                    : null;
+                if (existingViewport) {
+                    this._syncViewportBackground(slide, existingViewport);
+                    return existingViewport;
+                }
+
+                const viewport = document.createElement('div');
+                viewport.className = VIEWPORT_CLASS;
+                const scale = document.createElement('div');
+                scale.className = SCALE_CLASS;
+
+                slide.parentNode.insertBefore(viewport, slide);
+                viewport.appendChild(scale);
+                scale.appendChild(slide);
+                this._syncViewportBackground(slide, viewport);
+
+                return viewport;
+            });
+        }
+
+        _syncViewportBackground(slide, viewport) {
+            const style = getComputedStyle(slide);
+            const hasBackgroundImage = style.backgroundImage && style.backgroundImage !== 'none';
+            const hasBackgroundColor = !['rgba(0, 0, 0, 0)', 'transparent'].includes(style.backgroundColor);
+            if (hasBackgroundImage || hasBackgroundColor) {
+                viewport.style.background = style.background;
+            } else {
+                viewport.style.background = '';
+            }
+            slide.style.background = 'transparent';
+        }
+
+        /* ---------- DOM scaffolding (auto-inserted if missing) ---------- */
+        _ensureNavDots() {
+            let el = document.getElementById('navDots');
+            if (!el) {
+                el = document.createElement('nav');
+                el.id = 'navDots';
+                el.className = 'nav-dots';
+                el.setAttribute('aria-label', 'Slide navigation');
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureKeyboardHint() {
+            let el = document.querySelector('.keyboard-hint');
+            if (!el) {
+                const i18n = {
+                    en: { navigate: 'navigate', restart: 'restart', fullscreen: 'fullscreen' },
+                    es: { navigate: 'navegar',   restart: 'inicio',   fullscreen: 'fullscreen' },
+                    fr: { navigate: 'naviguer',  restart: 'début',    fullscreen: 'fullscreen' },
+                    de: { navigate: 'blättern',  restart: 'anfang',   fullscreen: 'vollbild' },
+                    pt: { navigate: 'navegar',   restart: 'início',   fullscreen: 'fullscreen' },
+                    ja: { navigate: '移動',      restart: '先頭',      fullscreen: '全画面' },
+                    ko: { navigate: '이동',      restart: '처음',      fullscreen: '전체화면' },
+                    zh: { navigate: '翻页',      restart: '重置',      fullscreen: '全屏' },
+                    it: { navigate: 'navigare',  restart: 'inizio',   fullscreen: 'fullscreen' },
+                    nl: { navigate: 'bladeren',  restart: 'begin',    fullscreen: 'vollscherm' },
+                };
+                const t = i18n[_detectLang()] || i18n.en;
+                el = document.createElement('div');
+                el.className = 'keyboard-hint';
+                el.innerHTML = `<kbd>←</kbd> <kbd>→</kbd> ${t.navigate} &middot; <kbd>R</kbd> ${t.restart} &middot; <kbd>F</kbd> ${t.fullscreen}`;
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        _ensureCredit() {
+            let el = document.querySelector('.chassis-credit');
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'chassis-credit';
+                el.setAttribute('aria-hidden', 'true');
+                el.innerHTML = 'KarBin the Great';
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        /* ---------- Reveal engine ----------
+           Reveals are driven by the Web Animations API instead of CSS
+           transitions. This lets authors put .reveal* / .step on any
+           element: animation values live in the animation cascade origin
+           and win over normal author declarations, so no wrapper element
+           is required to isolate the chassis from author CSS.
+
+           State per slide:
+           - "hidden":  inline opacity/transform/filter from the 'from'
+                        keyframe of the variant. Set on init and on
+                        forward re-entry.
+           - "played":  animation is running or has run; the class
+                        `reveals-played` on the slide makes playback
+                        idempotent so observer re-fires (resize,
+                        fullscreen) don't restart the animation.
+           - "settled": animation canceled, inline styles cleared. Used
+                        for backward entries (we skip the animation and
+                        show the final state instantly) and for print. */
+
+        _setupReveals() {
+            // Lift the CSS FOUC guard first so getComputedStyle reads each
+            // element's natural opacity, not the guard's blanket opacity: 0.
+            // No paint occurs mid-task — inline hidden styles are applied
+            // before the browser yields, so there is no visible flash.
+            document.documentElement.classList.add('reveals-ready');
+            this.slides.forEach((slide) => {
+                slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                    el._targetOpacity = parseFloat(getComputedStyle(el).opacity);
+                    this._applyHiddenStyle(el);
+                });
+            });
+        }
+
+        _setupPrintSettling() {
+            // Browsers snapshot the document for print/PDF export. WAAPI
+            // animations don't necessarily complete in that snapshot, so
+            // settle every slide to its final state first. After printing,
+            // reset — but only for slides that haven't already been viewed,
+            // so the audience experience picks up where it left off.
+            window.addEventListener('beforeprint', () => {
+                this.slides.forEach((slide) => this._settleSlide(slide));
+            });
+        }
+
+        _readTokens() {
+            const cs = getComputedStyle(document.documentElement);
+            const rawDuration = parseFloat(cs.getPropertyValue('--reveal-duration'));
+            const duration = Number.isFinite(rawDuration) ? rawDuration * 1000 : 800;
+            const ease = cs.getPropertyValue('--reveal-ease').trim() || 'cubic-bezier(0.16, 1, 0.3, 1)';
+            const distance = cs.getPropertyValue('--reveal-distance').trim() || '28px';
+            const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            return {
+                duration: reducedMotion ? 1 : duration,
+                ease,
+                distance,
+            };
+        }
+
+        _getRevealDelay(el) {
+            // Use getAttribute('class') rather than el.className: on SVG
+            // elements, `.className` is an SVGAnimatedString (not a string)
+            // and calling .match on it throws. getAttribute is uniform
+            // across HTML and SVG.
+            const classes = el.getAttribute('class') || '';
+            const m = classes.match(/\bd([1-8])\b/);
+            if (!m) return 0;
+            // Matches CSS .dN: d1 = 100ms, d2 = 250ms, +150ms per step.
+            return 100 + (parseInt(m[1], 10) - 1) * 150;
+        }
+
+        _getRevealKeyframes(el, distance) {
+            const to = el._targetOpacity ?? 1;
+            if (el.classList.contains('reveal-left')) {
+                return [
+                    { opacity: 0, transform: `translateX(calc(-1 * ${distance}))` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-right')) {
+                return [
+                    { opacity: 0, transform: `translateX(${distance})` },
+                    { opacity: to, transform: 'translateX(0)' },
+                ];
+            }
+            if (el.classList.contains('reveal-scale')) {
+                return [
+                    { opacity: 0, transform: 'scale(0.88)' },
+                    { opacity: to, transform: 'scale(1)' },
+                ];
+            }
+            if (el.classList.contains('reveal-blur')) {
+                return [
+                    { opacity: 0, filter: 'blur(10px)' },
+                    { opacity: to, filter: 'blur(0)' },
+                ];
+            }
+            // Default: .reveal or .step (slide up + fade)
+            return [
+                { opacity: 0, transform: `translateY(${distance})` },
+                { opacity: to, transform: 'translateY(0)' },
+            ];
+        }
+
+        _applyHiddenStyle(el) {
+            const { distance } = this._readTokens();
+            const from = this._getRevealKeyframes(el, distance)[0];
+            if ('opacity' in from) el.style.opacity = from.opacity;
+            if ('transform' in from) el.style.transform = from.transform;
+            if ('filter' in from) el.style.filter = from.filter;
+        }
+
+        _clearHiddenStyle(el) {
+            el.style.opacity = '';
+            el.style.transform = '';
+            el.style.filter = '';
+        }
+
+        _cancelReveal(el) {
+            if (el._revealAnim) {
+                el._revealAnim.cancel();
+                el._revealAnim = null;
+            }
+        }
+
+        _playReveal(el, delayOverride) {
+            this._cancelReveal(el);
+            const { duration, ease, distance } = this._readTokens();
+            const delay = typeof delayOverride === 'number' ? delayOverride : this._getRevealDelay(el);
+            const keyframes = this._getRevealKeyframes(el, distance);
+            // fill: 'backwards' applies the 'from' keyframe during the
+            // stagger delay so the element stays hidden until its turn,
+            // without pinning the 'to' keyframe after the animation ends.
+            // This lets co-existing author CSS (e.g. a `.pulse` CSS
+            // animation on the same element) take over naturally once the
+            // entrance completes — otherwise our fill would mask anything
+            // the author wanted to happen post-reveal.
+            const anim = el.animate(keyframes, {
+                duration,
+                delay,
+                easing: ease,
+                fill: 'backwards',
+            });
+            el._revealAnim = anim;
+            // Safe to clear inline 'from' styles now — the animation's
+            // backwards-fill holds the element at the 'from' keyframe for
+            // the duration of any stagger delay.
+            this._clearHiddenStyle(el);
+        }
+
+        _playSlideReveals(slide) {
+            if (slide.classList.contains('reveals-played')) return;
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => this._playReveal(el));
+            // .step elements stay hidden until the user advances.
+        }
+
+        _resetSlideReveals(slide) {
+            // Forward re-entry: cancel in-flight animations, re-hide
+            // everything, and reset step state so the slide replays cleanly
+            // when the observer next adds .visible.
+            slide.classList.remove('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step.step-shown').forEach((el) => el.classList.remove('step-shown'));
+        }
+
+        _settleSlide(slide) {
+            // Print / PDF export: jump to the final state with everything
+            // shown, so every step appears in the exported document.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(ALL_REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => el.classList.add('step-shown'));
+        }
+
+        _rewindSlide(slide) {
+            // Backward re-entry: show reveals instantly (no replay — the
+            // viewer already saw the intro) but hide every step, so the
+            // slide is positioned at the start of its stepped content and
+            // can be stepped through again.
+            slide.classList.add('reveals-played');
+            slide.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+                this._cancelReveal(el);
+                this._clearHiddenStyle(el);
+            });
+            slide.querySelectorAll('.step').forEach((el) => {
+                el.classList.remove('step-shown');
+                this._cancelReveal(el);
+                this._applyHiddenStyle(el);
+            });
+        }
+
+        /* ---------- Navigation ----------
+           goTo scrolls to the target. Both forward-replay and backward-
+           rewind need to mutate the target BEFORE scrolling — while it's
+           still offscreen — so the viewer never sees the old state flash
+           into view. Resetting after the slide is in view causes a visible
+           "show then hide" blink; the IntersectionObserver fires too late
+           (80% threshold) to catch it. */
+        goTo(index) {
+            const clamped = Math.max(0, Math.min(this.slides.length - 1, index));
+            if (clamped === this.currentSlide) return;
+
+            const target = this.slides[clamped];
+            const goingForward = clamped > this.currentSlide;
+
+            if (target.classList.contains('visible')) {
+                if (goingForward) {
+                    // Forward replay: full reset so the observer can play reveals fresh.
+                    target.classList.remove('visible');
+                    this._resetSlideReveals(target);
+                } else {
+                    // Backward rewind: hide any shown steps so the slide
+                    // scrolls back in at the start of its stepped content.
+                    this._rewindSlide(target);
+                }
+            }
+
+            this._scrollToSlide(clamped, 'smooth');
+        }
+
+        _scrollToSlide(index, behavior) {
+            this.viewports[index]?.scrollIntoView({ behavior, block: 'start' });
+        }
+
+        _slideIndexFromHash(hash) {
+            if (!hash) return -1;
+            return this.slides.findIndex((s) => '#' + s.id === hash);
+        }
+
+        _syncHash() {
+            const slide = this.slides[this.currentSlide];
+            if (!slide || !slide.id) return;
+            const newHash = '#' + slide.id;
+            if (location.hash !== newHash) {
+                // replaceState — keeps the URL in sync without polluting history,
+                // so the browser back button exits the deck instead of stepping through slides.
+                try {
+                    history.replaceState(null, '', newHash);
+                } catch {
+                    // Sandboxed iframes (opaque origin, about:srcdoc) reject URL
+                    // mutation with a SecurityError. Hash sync is a nicety — an
+                    // unguarded throw here kills the observer callback before it
+                    // marks the slide visible and plays its reveals.
+                }
+            }
+        }
+
+        _setupHashNav() {
+            // React to external hash changes (anchor link clicks, back/forward if user uses pushState manually)
+            window.addEventListener('hashchange', () => {
+                const idx = this._slideIndexFromHash(location.hash);
+                if (idx >= 0 && idx !== this.currentSlide) this.goTo(idx);
+            });
+        }
+
+        /* ---------- Custom cursor ----------
+           Accent disc that follows the pointer, hidden after idle. */
+        _setupCursor() {
+            if (!matchMedia('(hover: hover)').matches) return;
+
+            const cursor = document.createElement('div');
+            cursor.className = 'chassis-cursor';
+            cursor.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(cursor);
+            document.body.classList.add('chassis-cursor-active');
+
+            const half = 16;  // matches width/height / 2 in CSS
+            const IDLE_MS = 2500;
+            let idleTimer = null;
+
+            const show = () => {
+                cursor.classList.add('visible');
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    cursor.classList.remove('visible');
+                }, IDLE_MS);
+            };
+            const hide = () => {
+                clearTimeout(idleTimer);
+                cursor.classList.remove('visible');
+            };
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate3d(${e.clientX - half}px, ${e.clientY - half}px, 0)`;
+                show();
+            });
+            document.addEventListener('mouseleave', hide);
+            document.addEventListener('mouseenter', show);
+        }
+
+        /* ---------- Fullscreen ---------- */
+        toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen?.().catch(() => {});
+            } else {
+                document.exitFullscreen?.();
+            }
+        }
+
+        next() { this.goTo(this.currentSlide + 1); }
+        prev() { this.goTo(this.currentSlide - 1); }
+        first() { this.goTo(0); }
+        last() { this.goTo(this.slides.length - 1); }
+
+        /* ---------- Step-aware advance / retreat ----------
+           advance() reveals the next .step on the current slide (if any),
+           otherwise advances to the next slide. retreat() hides the last
+           revealed step, otherwise goes back to the previous slide. */
+        advance() {
+            const current = this.slides[this.currentSlide];
+            const nextStep = current?.querySelector('.step:not(.step-shown)');
+            if (nextStep) {
+                nextStep.classList.add('step-shown');
+                // No stagger on click-reveal — the user's gesture is the trigger.
+                this._playReveal(nextStep, 0);
+                return;
+            }
+            this.next();
+        }
+        retreat() {
+            const current = this.slides[this.currentSlide];
+            const shown = current?.querySelectorAll('.step.step-shown');
+            if (shown && shown.length > 0) {
+                const last = shown[shown.length - 1];
+                last.classList.remove('step-shown');
+                this._cancelReveal(last);
+                this._applyHiddenStyle(last);
+                return;
+            }
+            this.prev();
+        }
+
+        /* ---------- Intersection observer ----------
+           Fire late (>= 80% in view) so reveals play on a settled slide.
+           This is the single source of truth for active-slide state.
+
+           Forward:  add .visible, play reveals. (goTo() has already reset
+                     the target to pre-reveal state if this is a re-visit,
+                     so the animation is fresh either way.)
+           Backward: add .visible, rewind to the start of the stepped
+                     content — reveals are shown instantly (no replay) and
+                     every step is hidden again so the viewer can step
+                     through it fresh. */
+        _setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const idx = this.viewports.indexOf(entry.target);
+                    if (idx < 0) return;
+                    const slide = this.slides[idx];
+
+                    if (idx === this.currentSlide) {
+                        // Same-slide re-fire (initial load, resize, fullscreen).
+                        if (!slide.classList.contains('visible')) {
+                            slide.classList.add('visible');
+                        }
+                        // Idempotent: only plays if not already marked played.
+                        this._playSlideReveals(slide);
+                        return;
+                    }
+
+                    const goingForward = idx > this.currentSlide;
+                    this.currentSlide = idx;
+                    this._updateNavDots();
+                    this._syncHash();
+
+                    slide.classList.add('visible');
+                    if (goingForward) {
+                        this._playSlideReveals(slide);
+                    } else {
+                        this._rewindSlide(slide);
+                    }
+                });
+            }, { threshold: 0.8 });
+
+            this.viewports.forEach((viewport) => observer.observe(viewport));
+        }
+
+        /* ---------- Keyboard ---------- */
+        _setupKeyboardNav() {
+            document.addEventListener('keydown', (e) => {
+                // Skip when user is editing text
+                if (e.target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+
+                switch (e.key) {
+                    // Step-aware: consume steps first, then advance slides
+                    case 'ArrowDown':
+                    case 'ArrowRight':
+                    case ' ':
+                        e.preventDefault(); this.advance(); break;
+                    case 'ArrowUp':
+                    case 'ArrowLeft':
+                        e.preventDefault(); this.retreat(); break;
+                    // Slide-level: always skip past steps
+                    case 'PageDown':
+                        e.preventDefault(); this.next(); break;
+                    case 'PageUp':
+                        e.preventDefault(); this.prev(); break;
+                    case 'Home':
+                        e.preventDefault(); this.first(); break;
+                    case 'End':
+                        e.preventDefault(); this.last(); break;
+                    case 'f':
+                    case 'F':
+                        e.preventDefault(); this.toggleFullscreen(); break;
+                    case 'r':
+                    case 'R':
+                        e.preventDefault(); this.first(); break;
+                }
+            });
+        }
+
+        /* ---------- Wheel / trackpad ----------
+           ALWAYS preventDefault — letting any native wheel scroll through
+           races against scrollIntoView + mandatory snap, and blocks macOS
+           two-finger horizontal swipes from triggering browser back/forward.
+           Whichever axis has the larger magnitude wins, so vertical scroll
+           and horizontal trackpad swipes both drive advance/retreat. Lock
+           briefly after a gesture so trackpad inertia (continuous small
+           deltas) can't spam next(). */
+        _setupWheelNav() {
+            let locked = false;
+            window.addEventListener('wheel', (e) => {
+                if (e.ctrlKey) return;                // preserve browser pinch-zoom (ctrl+wheel)
+                e.preventDefault();                   // block native scroll + horizontal back-swipe
+                if (locked) return;
+                const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+                if (Math.abs(delta) < 20) return;     // ignore tiny flicks
+                locked = true;
+                if (delta > 0) this.advance(); else this.retreat();
+                setTimeout(() => { locked = false; }, 500);
+            }, { passive: false });
+        }
+
+        /* ---------- Touch / swipe ----------
+           Horizontal swipes advance / retreat slides; left = next, right =
+           prev (matches stories / carousel conventions). Dominantly
+           vertical swipes fall through to native scroll-snap so the
+           existing top/bottom behavior keeps working. A time budget
+           rejects slow pans that were really aborted scrolls. */
+        _setupTouchNav() {
+            const MIN_DISTANCE = 50;     // px — below this is a tap or jitter
+            const MAX_TIME = 600;        // ms — slower than this is a pan, not a swipe
+            const DOMINANCE = 1.2;       // horizontal must beat vertical by this factor
+
+            let startX = 0, startY = 0, startTime = 0;
+            let tracking = false;
+
+            window.addEventListener('touchstart', (e) => {
+                if (document.body.classList.contains('artifact-editor-editing')) { tracking = false; return; }
+                if (e.touches.length !== 1) { tracking = false; return; }
+                const t = e.touches[0];
+                startX = t.clientX;
+                startY = t.clientY;
+                startTime = performance.now();
+                tracking = true;
+            }, { passive: true });
+
+            window.addEventListener('touchend', (e) => {
+                if (!tracking) return;
+                tracking = false;
+                const t = e.changedTouches[0];
+                const dx = t.clientX - startX;
+                const dy = t.clientY - startY;
+                const ax = Math.abs(dx), ay = Math.abs(dy);
+                if (ax < MIN_DISTANCE) return;
+                if (ax < ay * DOMINANCE) return;
+                if (performance.now() - startTime > MAX_TIME) return;
+                if (dx < 0) this.advance(); else this.retreat();
+            }, { passive: true });
+
+            window.addEventListener('touchcancel', () => { tracking = false; }, { passive: true });
+        }
+
+        /* ---------- Canvas scaling ----------
+           Each scaler holds a fixed 1920×1080 slide. Compute the
+           scale factor that fits it inside the viewport and apply via
+           CSS custom property. Runs on init, resize, and fullscreen. */
+        _setupCanvasScale() {
+            const CANVAS_W = 1920;
+            const CANVAS_H = 1080;
+            const scales = this.scales;
+
+            const update = () => {
+                const scale = Math.min(
+                    window.innerWidth / CANVAS_W,
+                    window.innerHeight / CANVAS_H
+                );
+                scales.forEach((el) => {
+                    el?.style.setProperty('--slide-scale', scale);
+                });
+            };
+
+            update();
+            window.addEventListener('resize', update);
+            document.addEventListener('fullscreenchange', () => {
+                requestAnimationFrame(update);
+            });
+        }
+
+        /* ---------- Viewport sync ----------
+           Resize / fullscreenchange → realign current slide. Each slide is
+           100vh, so a viewport height change leaves the existing scroll
+           position out of alignment with the slide top; scroll-snap doesn't
+           re-snap on its own. */
+        _setupViewportSync() {
+            const realign = () => {
+                requestAnimationFrame(() => {
+                    this._scrollToSlide(this.currentSlide, 'auto');
+                });
+            };
+            window.addEventListener('resize', realign);
+            document.addEventListener('fullscreenchange', realign);
+        }
+
+        /* ---------- Nav dots ---------- */
+        _buildNavDots() {
+            // Clear first — prevents duplicates when DOM is re-serialized/re-opened
+            this.navDotsContainer.innerHTML = '';
+            this.slides.forEach((slide, idx) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+                if (idx === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => this.goTo(idx));
+                this.navDotsContainer.appendChild(dot);
+            });
+        }
+
+        _updateNavDots() {
+            const dots = this.navDotsContainer.querySelectorAll('button');
+            dots.forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === this.currentSlide);
+            });
+        }
+    }
+
+    /* ---------- Auto-init ---------- */
+    function init() {
+        // Each slide canvas is its own editable host for the inline editor.
+        document.querySelectorAll('.slide').forEach(function (el) {
+            el.classList.add('artifact-editable');
+        });
+        window.slides = new SlidePresentation();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chassis -->
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>COGNATES 6 · Week 7 · Session 11 – Big Data Fundamentals</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"/>
+<style>
+:root{--background:#1a0a0a;--foreground:#f5e6d3;--accent:#ff4444;--accent-gold:#ffd700;--card:#2a1215;--border:rgba(255,68,68,0.2);--font-display:'Archivo Black',sans-serif;--font-body:'Space Grotesk',sans-serif;--nav-dot-color:rgba(255,68,68,0.4);--nav-dot-active-color:#ff4444}
+body{background:var(--background)}h1,h2,h3{font-family:var(--font-display);color:var(--foreground);margin:0}p,li,td,th,span,div{font-family:var(--font-body)}
+.slide{background:var(--background);padding:80px;display:flex;flex-direction:column;justify-content:center}
+.slide.title-slide{background:radial-gradient(ellipse at 70% 30%,rgba(255,68,68,0.15) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(255,215,0,0.08) 0%,transparent 50%),var(--background)}
+.slide.title-slide h1{font-size:140px;line-height:1.05}.accent-word{color:var(--accent)}.gold-word{color:var(--accent-gold)}
+.subtitle{font-size:32px;color:rgba(245,230,211,0.7);margin-top:24px;max-width:900px;line-height:1.4}
+.meta{font-size:22px;color:rgba(245,230,211,0.5);margin-top:40px}
+.slide.section-divider{background:radial-gradient(ellipse at 50% 50%,rgba(255,68,68,0.12) 0%,transparent 70%),var(--background);align-items:flex-start}
+.section-number{font-family:var(--font-display);font-size:180px;color:var(--accent);opacity:0.3;position:absolute;top:60px;right:80px}
+.slide.section-divider h2{font-size:72px;line-height:1.1}.section-sub{font-size:32px;color:rgba(245,230,211,0.6);margin-top:16px}
+.slide.content-slide h2{font-size:72px;margin-bottom:40px;line-height:1.1}
+.slide.content-slide h3{font-size:52px;margin-bottom:30px;color:var(--accent-gold)}
+.slide.content-slide p{font-size:40px;color:rgba(245,230,211,0.85);line-height:1.5;max-width:1400px}
+.slide.content-slide ul{list-style:none;padding:0;margin:0}
+.slide.content-slide ul li{font-size:40px;color:rgba(245,230,211,0.85);padding:12px 0;padding-left:40px;position:relative;line-height:1.4}
+.slide.content-slide ul li::before{content:'→';position:absolute;left:0;color:var(--accent)}
+.slide.stat-slide{align-items:center;text-align:center}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:60px;margin-top:40px}
+.stat-item .stat-number{font-family:var(--font-display);font-size:120px;color:var(--accent-gold);line-height:1}
+.stat-item .stat-label{font-size:28px;color:rgba(245,230,211,0.6);margin-top:12px}
+.slide table{width:100%;border-collapse:collapse;margin-top:30px}
+.slide table th{font-family:var(--font-body);font-size:28px;font-weight:700;text-align:left;padding:16px 20px;background:rgba(255,68,68,0.15);color:var(--accent-gold);border-bottom:2px solid var(--accent)}
+.slide table td{font-size:32px;padding:14px 20px;color:rgba(245,230,211,0.85);border-bottom:1px solid rgba(255,68,68,0.1);vertical-align:top}
+.slide.pause-slide{background:radial-gradient(ellipse at 50% 50%,rgba(255,215,0,0.1) 0%,transparent 60%),var(--background);align-items:center;text-align:center}
+.pause-icon{font-size:80px;margin-bottom:30px}
+.slide.pause-slide h2{font-size:64px;color:var(--accent-gold);margin-bottom:20px}
+.slide.pause-slide p{font-size:36px;color:rgba(245,230,211,0.7);max-width:900px;text-align:center}
+.def-box{background:var(--card);border-left:4px solid var(--accent);padding:40px;border-radius:8px;margin-top:30px}
+.def-box p{font-size:36px;color:rgba(245,230,211,0.9);line-height:1.5;margin:0}
+.def-box .def-term{font-family:var(--font-display);font-size:44px;color:var(--accent-gold);margin-bottom:16px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:30px}
+.col-card{background:var(--card);padding:36px;border-radius:12px;border:1px solid var(--border)}
+.col-card h3{font-size:36px;color:var(--accent-gold);margin-bottom:16px}
+.col-card p,.col-card li{font-size:28px;color:rgba(245,230,211,0.8);line-height:1.4}
+.col-card ul{list-style:none;padding:0}.col-card ul li{padding:6px 0;padding-left:24px;position:relative}
+.col-card ul li::before{content:'•';position:absolute;left:0;color:var(--accent)}
+.eyebrow{font-size:24px;color:var(--accent);text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;font-weight:600}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.3}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<section class="slide title-slide">
+  <span class="eyebrow reveal d1">COGNATES 6 · Week 7 · Session 11</span>
+  <h1 class="reveal d2"><span class="accent-word">Big</span><br>Data</h1>
+  <p class="subtitle reveal d3">Volume, Velocity, Variety: understanding data too large for traditional tools</p>
+  <p class="meta reveal d4">Instructor: Carvin Paul G. Tampos · Cronasia Foundation College, Inc.</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">02</span>
+  <h2 class="reveal d2">Session 11 Goals</h2>
+  <ul>
+    <li class="step">Define Big Data and explain why "big" matters</li>
+    <li class="step">Describe the 5 V's of Big Data</li>
+    <li class="step">Differentiate structured, unstructured, and semi-structured data</li>
+    <li class="step">Identify sources that generate Big Data</li>
+    <li class="step">Explain key Big Data technologies and their roles</li>
+  </ul>
+</section>
+
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">03</span>
+  <p class="pause-icon reveal d2">📊</p>
+  <h2 class="reveal d3">Data Explosion</h2>
+  <p class="reveal d4">Every minute: 500 hours of YouTube uploaded, 6M Google searches, 231M emails sent, 1.7M TikTok videos viewed. How do you make sense of THAT?</p>
+</section>
+
+<section class="slide stat-slide">
+  <span class="eyebrow reveal d1">04</span>
+  <h2 class="reveal d2" style="font-size:64px;">Daily Data Created</h2>
+  <div class="stat-grid reveal d3">
+    <div class="stat-item">
+      <div class="stat-number">402M</div>
+      <div class="stat-label">Terabytes created DAILY</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">90%</div>
+      <div class="stat-label">of world's data created in last 2 years</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">181ZB</div>
+      <div class="stat-label">Total data by 2025 (zettabytes)</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">05</span>
+  <h2 class="reveal d2">What Is Big Data?</h2>
+  <div class="def-box reveal d3">
+    <div class="def-term">Big Data</div>
+    <p>Datasets so large, fast-moving, or complex that traditional data processing tools (Excel, basic databases) cannot store, manage, or analyze them effectively. Requires specialized technologies and approaches.</p>
+  </div>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">06</span>
+  <h2 class="reveal d2">Not Just "Lots of Data"</h2>
+  <p class="reveal d3" style="font-size:44px; color:var(--accent-gold);">Big Data isn't just about SIZE. It's about data that is too big, too fast, or too varied for normal tools.</p>
+  <p class="reveal d4" style="margin-top:30px;">Your class attendance sheet? Not Big Data (Excel handles it fine).<br>All Facebook posts from 3 billion users in real-time? THAT's Big Data.</p>
+</section>
+
+<section class="slide section-divider">
+  <span class="section-number reveal d1">01</span>
+  <span class="eyebrow reveal d2">Part 1</span>
+  <h2 class="reveal d3">The 5 V's</h2>
+  <p class="section-sub reveal d4">The defining characteristics of Big Data</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">08</span>
+  <h2 class="reveal d2">5 V's Overview</h2>
+  <table class="reveal d3">
+    <tr><th>V</th><th>Meaning</th><th>Question It Answers</th></tr>
+    <tr><td>Volume</td><td>Amount of data</td><td>How MUCH data?</td></tr>
+    <tr><td>Velocity</td><td>Speed of data</td><td>How FAST does it arrive?</td></tr>
+    <tr><td>Variety</td><td>Types of data</td><td>How DIFFERENT are the formats?</td></tr>
+    <tr><td>Veracity</td><td>Quality/trustworthiness</td><td>How ACCURATE is it?</td></tr>
+    <tr><td>Value</td><td>Usefulness</td><td>What INSIGHTS can we extract?</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">09</span>
+  <h3 class="reveal d2">1. Volume</h3>
+  <p class="reveal d3">The AMOUNT of data generated. We're talking petabytes and exabytes, not gigabytes.</p>
+  <table class="reveal d4">
+    <tr><th>Source</th><th>Data Generated</th></tr>
+    <tr><td>Facebook</td><td>4 petabytes/day (4,000 terabytes)</td></tr>
+    <tr><td>YouTube</td><td>500 hours video uploaded per minute</td></tr>
+    <tr><td>Walmart</td><td>2.5 petabytes customer data/hour</td></tr>
+    <tr><td>Large Hadron Collider</td><td>1 petabyte/second during experiments</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">10</span>
+  <h3 class="reveal d2">2. Velocity</h3>
+  <p class="reveal d3">How FAST data is generated and needs to be processed. Some data is useless if not analyzed in real-time.</p>
+  <table class="reveal d4">
+    <tr><th>Speed Level</th><th>Example</th><th>Why Speed Matters</th></tr>
+    <tr><td>Batch (hours/days)</td><td>Monthly sales report</td><td>Historical analysis OK</td></tr>
+    <tr><td>Near real-time (minutes)</td><td>Social media trending</td><td>Need to react quickly</td></tr>
+    <tr><td>Real-time (milliseconds)</td><td>Stock trading, fraud detection</td><td>Delay = money lost</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">11</span>
+  <h3 class="reveal d2">3. Variety</h3>
+  <p class="reveal d3">Data comes in MANY different formats. Not just neat rows and columns.</p>
+  <table class="reveal d4">
+    <tr><th>Type</th><th>Description</th><th>Examples</th></tr>
+    <tr><td>Structured</td><td>Organized in rows/columns</td><td>Databases, spreadsheets, CSV</td></tr>
+    <tr><td>Unstructured</td><td>No predefined format</td><td>Videos, images, social posts, emails</td></tr>
+    <tr><td>Semi-structured</td><td>Some organization, flexible</td><td>JSON, XML, HTML, log files</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">12</span>
+  <h3 class="reveal d2">4. Veracity</h3>
+  <p class="reveal d3">How TRUSTWORTHY is the data? Dirty data leads to wrong decisions.</p>
+  <ul>
+    <li class="step">Incomplete records (missing fields)</li>
+    <li class="step">Inconsistent formats (dates: 07/10/2026 vs July 10, 2026)</li>
+    <li class="step">Duplicates (same customer counted twice)</li>
+    <li class="step">Outdated information (old addresses, dead emails)</li>
+    <li class="step">Fake data (bots, spam, manipulated reviews)</li>
+  </ul>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">13</span>
+  <h3 class="reveal d2">5. Value</h3>
+  <p class="reveal d3" style="font-size:44px; color:var(--accent-gold);">Data is worthless until you extract INSIGHTS from it.</p>
+  <p class="reveal d4" style="margin-top:30px;">Having 1 billion customer records means nothing if you can't answer: "Which customers are about to leave?" or "What product should we launch next?"</p>
+</section>
+
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">14</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Identify the V</h2>
+  <p class="reveal d4">GCash processes millions of transactions per second during payday. Which V is the main challenge here? (Velocity!)</p>
+</section>
+
+<section class="slide section-divider">
+  <span class="section-number reveal d1">02</span>
+  <span class="eyebrow reveal d2">Part 2</span>
+  <h2 class="reveal d3">Data Types</h2>
+  <p class="section-sub reveal d4">Structured vs. Unstructured vs. Semi-structured</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">16</span>
+  <h2 class="reveal d2">Structured Data</h2>
+  <div class="two-col reveal d3">
+    <div class="col-card">
+      <h3>Characteristics</h3>
+      <ul>
+        <li>Organized in tables (rows & columns)</li>
+        <li>Fixed schema (predefined format)</li>
+        <li>Easy to search and query (SQL)</li>
+        <li>Only ~20% of all data</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h3>Examples</h3>
+      <ul>
+        <li>Student grades database</li>
+        <li>Bank transaction records</li>
+        <li>Employee payroll</li>
+        <li>Inventory spreadsheets</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">17</span>
+  <h2 class="reveal d2">Unstructured Data</h2>
+  <div class="two-col reveal d3">
+    <div class="col-card">
+      <h3>Characteristics</h3>
+      <ul>
+        <li>No predefined organization</li>
+        <li>Can't fit in traditional database</li>
+        <li>Hard to search/query directly</li>
+        <li>~80% of ALL data is unstructured!</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h3>Examples</h3>
+      <ul>
+        <li>Videos and images</li>
+        <li>Social media posts</li>
+        <li>Emails and chat messages</li>
+        <li>Audio recordings, PDFs</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">18</span>
+  <h2 class="reveal d2">Semi-Structured Data</h2>
+  <div class="two-col reveal d3">
+    <div class="col-card">
+      <h3>Characteristics</h3>
+      <ul>
+        <li>Has some organization (tags, keys)</li>
+        <li>Doesn't fit strict table format</li>
+        <li>Flexible schema</li>
+        <li>Common in web/apps</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h3>Examples</h3>
+      <ul>
+        <li>JSON (API responses)</li>
+        <li>XML documents</li>
+        <li>HTML web pages</li>
+        <li>Server log files</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">19</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Classify These</h2>
+  <p class="reveal d4">Student enrollment form (database) = ? | TikTok video = ? | JSON API response = ? | Your selfie = ?</p>
+</section>
+
+<section class="slide section-divider">
+  <span class="section-number reveal d1">03</span>
+  <span class="eyebrow reveal d2">Part 3</span>
+  <h2 class="reveal d3">Big Data<br>Sources</h2>
+  <p class="section-sub reveal d4">Where does all this data come from?</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">21</span>
+  <h2 class="reveal d2">Data Sources</h2>
+  <table class="reveal d3">
+    <tr><th>Source</th><th>Type of Data</th><th>Volume</th></tr>
+    <tr><td>Social media</td><td>Posts, likes, shares, comments</td><td>Billions of interactions/day</td></tr>
+    <tr><td>IoT sensors</td><td>Temperature, location, motion</td><td>Trillions of readings/day</td></tr>
+    <tr><td>E-commerce</td><td>Purchases, clicks, browsing</td><td>Millions of transactions/hour</td></tr>
+    <tr><td>Healthcare</td><td>Patient records, scans, genomics</td><td>Petabytes globally</td></tr>
+    <tr><td>Financial</td><td>Transactions, market data, trades</td><td>Real-time, millisecond level</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">22</span>
+  <h2 class="reveal d2">Your Personal Data Trail</h2>
+  <table class="reveal d3">
+    <tr><th>Activity</th><th>Data Generated</th></tr>
+    <tr><td>Scroll Facebook for 30 min</td><td>Likes, time spent per post, scroll speed, ad clicks</td></tr>
+    <tr><td>Use Google Maps</td><td>Location every few seconds, speed, routes, stops</td></tr>
+    <tr><td>Shop on Shopee</td><td>Browsing history, cart adds, purchase, payment method</td></tr>
+    <tr><td>Watch YouTube</td><td>Watch time, skip points, replays, search queries</td></tr>
+    <tr><td>Use GCash</td><td>Transaction amounts, frequency, recipients, location</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">23</span>
+  <h2 class="reveal d2">Why Companies Want Your Data</h2>
+  <ul>
+    <li class="step">Personalization: show you products you're likely to buy</li>
+    <li class="step">Prediction: anticipate what you'll do next</li>
+    <li class="step">Advertising: sell targeted ads (Facebook's business model)</li>
+    <li class="step">Product improvement: fix what users struggle with</li>
+    <li class="step">Pricing: dynamic pricing based on demand (Grab surge)</li>
+  </ul>
+</section>
+
+<section class="slide section-divider">
+  <span class="section-number reveal d1">04</span>
+  <span class="eyebrow reveal d2">Part 4</span>
+  <h2 class="reveal d3">Big Data<br>Technologies</h2>
+  <p class="section-sub reveal d4">Tools that handle massive datasets</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">25</span>
+  <h2 class="reveal d2">Key Technologies</h2>
+  <table class="reveal d3">
+    <tr><th>Technology</th><th>Purpose</th><th>Analogy</th></tr>
+    <tr><td>Hadoop</td><td>Distributed storage & processing</td><td>Many computers working together</td></tr>
+    <tr><td>Spark</td><td>Fast in-memory data processing</td><td>Hadoop but 100x faster</td></tr>
+    <tr><td>Kafka</td><td>Real-time data streaming</td><td>Firehose of live data</td></tr>
+    <tr><td>NoSQL (MongoDB)</td><td>Flexible database for varied data</td><td>Filing cabinet with no fixed folders</td></tr>
+    <tr><td>Data Lake</td><td>Store everything raw, analyze later</td><td>Dump all data in a "lake"</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">26</span>
+  <h3 class="reveal d2">Hadoop: The Pioneer</h3>
+  <p class="reveal d3">Problem: one computer can't process petabytes. Solution: split the work across THOUSANDS of computers working in parallel.</p>
+  <div class="def-box reveal d4">
+    <p><strong>Analogy:</strong> You have 1 million books to read. One person? Takes 100 years. 1000 people each reading 1000 books? Done in weeks. Hadoop splits data across many machines the same way.</p>
+  </div>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">27</span>
+  <h3 class="reveal d2">Data Lake vs Data Warehouse</h3>
+  <div class="two-col reveal d3">
+    <div class="col-card">
+      <h3>Data Lake</h3>
+      <ul>
+        <li>Store RAW data (any format)</li>
+        <li>Schema-on-read (decide structure later)</li>
+        <li>Cheap storage</li>
+        <li>For data scientists/explorers</li>
+        <li>Like a real lake: everything flows in</li>
+      </ul>
+    </div>
+    <div class="col-card">
+      <h3>Data Warehouse</h3>
+      <ul>
+        <li>Store PROCESSED, structured data</li>
+        <li>Schema-on-write (structured before storing)</li>
+        <li>Expensive, optimized for queries</li>
+        <li>For business analysts/reports</li>
+        <li>Like a library: organized and catalogued</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">28</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Analogy Check</h2>
+  <p class="reveal d4">If Hadoop is "many computers working together," what happens if one computer in the cluster dies? (Answer: data is replicated, work continues on other machines. No single point of failure!)</p>
+</section>
+
+<section class="slide section-divider">
+  <span class="section-number reveal d1">05</span>
+  <span class="eyebrow reveal d2">Part 5</span>
+  <h2 class="reveal d3">Big Data<br>in Action</h2>
+  <p class="section-sub reveal d4">Real-world applications you use daily</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">30</span>
+  <h2 class="reveal d2">How Netflix Uses Big Data</h2>
+  <ul>
+    <li class="step">Analyzes viewing habits of 260M+ subscribers</li>
+    <li class="step">Tracks: what you watch, when you pause, where you stop</li>
+    <li class="step">Recommends shows (80% of views come from recommendations)</li>
+    <li class="step">Decides which shows to PRODUCE (House of Cards was data-driven)</li>
+    <li class="step">Even personalizes the THUMBNAIL image shown to you</li>
+  </ul>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">31</span>
+  <h2 class="reveal d2">Grab & Big Data</h2>
+  <table class="reveal d3">
+    <tr><th>Use Case</th><th>How Big Data Helps</th></tr>
+    <tr><td>Surge pricing</td><td>Real-time demand analysis: high demand → higher price</td></tr>
+    <tr><td>Route optimization</td><td>Traffic patterns predict fastest route</td></tr>
+    <tr><td>Driver allocation</td><td>Predict where demand will be in 15 minutes</td></tr>
+    <tr><td>Fraud detection</td><td>Spot unusual patterns (stolen accounts)</td></tr>
+    <tr><td>Food recommendations</td><td>Order history + location + time = suggestions</td></tr>
+  </table>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">32</span>
+  <h2 class="reveal d2">Big Data in Philippines</h2>
+  <ul>
+    <li class="step">Globe Telecom: network optimization using call/data patterns</li>
+    <li class="step">GCash: fraud detection, credit scoring for loans</li>
+    <li class="step">DOST-PAGASA: weather prediction from sensor data</li>
+    <li class="step">DOH: COVID-19 tracking and hotspot identification</li>
+    <li class="step">Shopee PH: personalized product recommendations</li>
+  </ul>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">33</span>
+  <h2 class="reveal d2">DIKW Pyramid Revisited</h2>
+  <table class="reveal d3">
+    <tr><th>Level</th><th>Big Data Context</th><th>Example</th></tr>
+    <tr><td>Data</td><td>Raw records (clicks, transactions)</td><td>1M purchase records</td></tr>
+    <tr><td>Information</td><td>Organized patterns</td><td>"Sales peak every Friday"</td></tr>
+    <tr><td>Knowledge</td><td>Insights for decisions</td><td>"Stock more on Thursdays"</td></tr>
+    <tr><td>Wisdom</td><td>Strategic vision</td><td>"Expand Friday-focused promotions"</td></tr>
+  </table>
+</section>
+
+<section class="slide pause-slide">
+  <span class="eyebrow reveal d1">34</span>
+  <p class="pause-icon reveal d2">⏸</p>
+  <h2 class="reveal d3">Your Data Value</h2>
+  <p class="reveal d4">If Shopee analyzes your browsing history and shows you products you end up buying, who benefits more: you or Shopee? Discuss.</p>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">35</span>
+  <h2 class="reveal d2">Activity: Data Audit</h2>
+  <div class="def-box reveal d3">
+    <div class="def-term">Your Digital Footprint</div>
+    <p>Pick ONE app you use daily (TikTok, Shopee, Grab, etc). Answer:<br><br>
+    1. What data does it collect about you? (List 5+ data points)<br>
+    2. Which of the 5 V's is most relevant for that app?<br>
+    3. Is your data structured, unstructured, or semi-structured?<br>
+    4. How does the company USE your data to make money?<br>
+    5. Are you comfortable with this? Why or why not?</p>
+  </div>
+</section>
+
+<section class="slide content-slide">
+  <span class="eyebrow reveal d1">36</span>
+  <h2 class="reveal d2">Key Takeaways</h2>
+  <ul>
+    <li class="step">Big Data = too big, too fast, too varied for normal tools</li>
+    <li class="step">5 V's: Volume, Velocity, Variety, Veracity, Value</li>
+    <li class="step">80% of data is unstructured (videos, images, text)</li>
+    <li class="step">Technologies: Hadoop, Spark, Kafka, NoSQL, Data Lakes</li>
+    <li class="step">Every app you use generates and analyzes Big Data about YOU</li>
+  </ul>
+</section>
+
+<section class="slide title-slide">
+  <span class="eyebrow reveal d1">Next Session</span>
+  <h1 class="reveal d2" style="font-size:100px;">Data<br><span class="accent-word">Analytics</span></h1>
+  <p class="subtitle reveal d3">Types of analytics, data science process, visualization, and ethical concerns in Big Data</p>
+  <p class="meta reveal d4">Session 12: Big Data Analytics & Applications</p>
+</section>
+
+<script>
+const canvas=document.getElementById('bg-canvas');const ctx=canvas.getContext('2d');let particles=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}resize();window.addEventListener('resize',resize);
+for(let i=0;i<55;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,size:Math.random()*2+0.8,alpha:Math.random()*0.2+0.05,color:Math.random()>0.5?'255,68,68':'255,215,0'})}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle=`rgba(${p.color},${p.alpha})`;ctx.fill()});requestAnimationFrame(animate)}animate();
+
+const scriptContent=`<html><head><title>Teacher Script - Session 11</title><style>body{font-family:'Space Grotesk',sans-serif;background:#1a1a2e;color:#e0e0e0;padding:40px;max-width:900px;margin:0 auto;line-height:1.7}h1{color:#ff4444;font-size:28px;border-bottom:2px solid #ff4444;padding-bottom:10px}h2{color:#ffd700;font-size:22px;margin-top:40px}.bisaya{background:#2a2a4a;padding:12px 16px;border-left:3px solid #ffd700;margin:10px 0;border-radius:4px;font-style:italic}.stage{color:#4ecdc4;font-weight:bold}.timing{color:#ff9f43;font-size:14px}.interaction{background:#1e3a2e;padding:10px 16px;border-left:3px solid #4ecdc4;margin:10px 0;border-radius:4px}p{margin:10px 0}</style></head><body>
+<h1>🎤 Teacher Script: Session 11 - Big Data Fundamentals</h1>
+<p class="timing">Total Duration: 1 to 1.5 hours</p>
+
+<h2>SLIDE 1: Title</h2>
+<p class="timing">⏱ 2 min</p>
+<p>Today we tackle BIG DATA. This is one of the hottest topics in tech right now, and it connects directly to everything we've learned: cloud computing STORES Big Data, AI/ML ANALYZES Big Data, and IoT GENERATES Big Data. It all connects.</p>
+<div class="bisaya">Bisaya: "Big Data! Mao ni ang connected sa tanan na-learn nato. Cloud mag-store, AI mag-analyze, IoT mag-generate. Tanan connected. Ug karon, ma-understand na nato ang Big Data mismo."</div>
+
+<h2>SLIDE 3: Data Explosion</h2>
+<p class="timing">⏱ 3 min</p>
+<p class="stage">[Let the numbers shock them]</p>
+<p>Every single MINUTE: 500 hours of video uploaded to YouTube. 6 million Google searches. 231 million emails sent. 1.7 million TikTok videos viewed. That's every MINUTE! The amount of data humans create is absolutely INSANE. And someone has to make sense of all of it. That "someone" could be YOU as an IS professional.</p>
+<div class="bisaya">Bisaya: "Every MINUTE: 500 hours video sa YouTube, 6 million Google searches, 1.7 million TikTok views. Per MINUTE! Grabe ka-dako. Ug kinsa mag-make sense ani tanan? IS professionals like YOU. Mao na ang Big Data career."</div>
+
+<h2>SLIDE 4: Stats</h2>
+<p class="timing">⏱ 2 min</p>
+<p>402 million terabytes created every day. And here's the mind-blowing stat: 90% of ALL the data that exists in the world was created in just the last 2 years. Data is growing EXPONENTIALLY. By 2025, 181 zettabytes. A zettabyte is a trillion gigabytes. Your phone has what, 64-128 GB? Imagine a TRILLION of those.</p>
+<div class="bisaya">Bisaya: "90% sa TANAN data sa kalibutan, na-create lang sa last 2 years! Exponential ang growth. 181 zettabytes by 2025. Usa ka zettabyte = 1 trillion gigabytes. Ang phone nimo 128GB lang. Imagine 1 TRILLION ana!"</div>
+
+<h2>SLIDE 5-6: Definition</h2>
+<p class="timing">⏱ 4 min</p>
+<p>Big Data isn't just "a lot of data." It's specifically data that is too big, too fast, or too varied for traditional tools like Excel or MySQL to handle. If you can open it in Excel and it works fine? Not Big Data. If you need specialized distributed systems across hundreds of computers? THAT's Big Data.</p>
+<p>Your class attendance: 40 students, 20 weeks, fits in one Excel file. NOT Big Data. Facebook's 3 billion users posting, liking, sharing simultaneously? That's Big Data.</p>
+<div class="bisaya">Bisaya: "Big Data = dili lang daghan. Specifically, TOO big, TOO fast, or TOO varied for normal tools. Kung ma-open sa Excel? Dili Big Data. Kung kinahanglan hundreds of computers mag-process? THAT's Big Data. Attendance sheet? Not Big Data. Facebook data sa 3 billion users? THAT's Big Data."</div>
+
+<h2>SLIDE 8-13: The 5 V's</h2>
+<p class="timing">⏱ 12 min total (about 2-3 min each)</p>
+<p class="stage">[These are CORE CONCEPTS. Make each V memorable with examples.]</p>
+<p><strong>Volume:</strong> How much data. Facebook generates 4 petabytes daily. One petabyte = 1000 terabytes. Your laptop might have 1 terabyte. Facebook generates 4000x that EVERY DAY.</p>
+<p><strong>Velocity:</strong> How fast. Stock markets need millisecond analysis. Credit card fraud detection: if you can't detect fraud in 2 seconds, the thief already bought something. Real-time processing is critical.</p>
+<p><strong>Variety:</strong> How different. Not just neat databases. 80% of data is unstructured: videos, images, voice recordings, social media posts. You can't put a TikTok video in an Excel spreadsheet.</p>
+<p><strong>Veracity:</strong> How trustworthy. Garbage in = garbage out. If your data is wrong, your decisions will be wrong. Fake reviews, bot accounts, typos in forms, all corrupt your analysis.</p>
+<p><strong>Value:</strong> Why does it matter. Raw data is worthless. The VALUE comes from insights. Netflix analyzing viewing data to recommend shows THAT is value extraction.</p>
+<div class="bisaya">Bisaya: "Volume = PILA ka dako. Velocity = UNSA ka paspas. Variety = PILA ka lahi-lahi ang format. Veracity = PILA ka reliable. Value = UNSA ang ma-kuha nga insight. Memorize ni ha, exam-worthy!"</div>
+
+<h2>SLIDE 14: Pause - GCash</h2>
+<p class="timing">⏱ 2 min</p>
+<div class="interaction">Answer: VELOCITY. Millions of transactions per second during payday. Need real-time processing for fraud detection. Can't wait hours to process. Ask a student to explain why.</div>
+
+<h2>SLIDE 16-18: Data Types</h2>
+<p class="timing">⏱ 6 min</p>
+<p>Three types. Structured: neat tables, rows, columns. Think databases, spreadsheets. Only 20% of all data! Unstructured: no format. Videos, photos, emails, social media posts. 80% of all data! Semi-structured: has some tags/organization but flexible. JSON, XML, log files.</p>
+<p>The challenge: traditional databases (SQL) handle structured data great. But 80% of data is UNSTRUCTURED. That's why we need new tools like NoSQL databases, data lakes, and AI to process the messy stuff.</p>
+<div class="bisaya">Bisaya: "20% lang sa data structured (tables, spreadsheets). 80% UNSTRUCTURED (videos, images, social media)! Mao na ang challenge. Ang traditional database handles 20% lang. Para sa 80%, kinahanglan new tools. Mao na ang importance sa Big Data technologies."</div>
+
+<h2>SLIDE 19: Pause - Classify</h2>
+<p class="timing">⏱ 2 min</p>
+<div class="interaction">Enrollment form/database = Structured. TikTok video = Unstructured. JSON API response = Semi-structured. Selfie = Unstructured. Call on students for each.</div>
+
+<h2>SLIDE 21-23: Sources & Data Trail</h2>
+<p class="timing">⏱ 5 min</p>
+<p class="stage">[Make it personal, slightly uncomfortable]</p>
+<p>Let's get personal. Look at your own data trail. When you scroll Facebook for 30 minutes, they track: every post you stopped on, how long you looked, what you liked, what you scrolled past, what ads you clicked. Google Maps? Your location every few seconds. They know where you live, where you study, your favorite food places, how fast you travel.</p>
+<p>This is the REALITY of Big Data. You are both a consumer AND a product. Companies collect your data to sell you things and sell access to YOU to advertisers.</p>
+<div class="bisaya">Bisaya: "Mag-scroll ka Facebook 30 minutes? Kabalo na sila: unsa ang gi-stop nimo, unsa ka dugay, unsa ang gi-like, gi-skip. Google Maps? Kabalo sila asa ka nag-puyo, asa ka nag-eskwela, asa ka permi mag-kaon. YOU are the product. Ang data nimo, gi-sell nila sa advertisers."</div>
+
+<h2>SLIDE 25-27: Technologies</h2>
+<p class="timing">⏱ 6 min</p>
+<p>Key technologies to know: Hadoop splits work across many computers. Instead of one super-expensive computer, use thousands of cheap ones working together. Spark does the same but 100x faster because it processes in memory. Kafka streams real-time data. NoSQL databases handle unstructured data. Data Lakes store EVERYTHING raw.</p>
+<p>Data Lake vs Data Warehouse: Lake = dump everything in, figure out later (messy but flexible). Warehouse = organize carefully before storing (neat but rigid). Like throwing clothes in a pile vs folding them in a closet.</p>
+<div class="bisaya">Bisaya: "Hadoop: instead of 1 super computer, gamiton ang 1000 ka cheap computers working together. Spark: same concept pero 100x faster. Data Lake: i-dump tanan data, analyze later. Data Warehouse: organize first before storing. Lake = basurahan (pero sa good way). Warehouse = organized closet."</div>
+
+<h2>SLIDE 30-32: Real Applications</h2>
+<p class="timing">⏱ 5 min</p>
+<p>Netflix: 80% of what people watch comes from RECOMMENDATIONS, not searching. The algorithm knows you better than you know yourself. It even tests different thumbnail images: you might see a different poster for the same movie than your classmate, because the algorithm knows what image will make YOU click.</p>
+<p>Grab in Philippines: surge pricing is pure Big Data. Real-time demand analysis. Too many riders, not enough drivers? Price goes up to attract more drivers and reduce demand. All calculated in milliseconds.</p>
+<div class="bisaya">Bisaya: "Netflix: 80% sa gi-watch sa tao, gikan sa recommendations! Ang algorithm kabalo sa gusto nimo more than ikaw mismo. Grab: surge pricing? Real-time demand analysis. Daghan passengers, gamay drivers? Taas presyo. All calculated in milliseconds. Mao na ang power sa Big Data."</div>
+
+<h2>SLIDE 34: Pause - Shopee</h2>
+<p class="timing">⏱ 3 min</p>
+<div class="interaction">Let students discuss. Both sides valid: User benefits (convenience, discovery). Shopee benefits more (sales, data for advertisers, competitive advantage). Point: It's a TRADE. You give data, you get convenience. Is it fair? No right answer, but be AWARE of the trade.</div>
+
+<h2>SLIDE 35: Activity</h2>
+<p class="timing">⏱ 10 min</p>
+<p class="stage">[Individual reflection then group share]</p>
+<p>Pick one app. Deep dive into what data it collects. This makes the abstract concept of Big Data very PERSONAL and concrete. Most students will be surprised how much data they generate.</p>
+<div class="bisaya">Bisaya: "Pick one app. List tanan data na gi-collect niya about you. Ma-shock mo sa ka-daghan. Mao ni ang reality sa Big Data: IKAW ang data source."</div>
+
+<h2>SLIDE 36: Summary</h2>
+<p class="timing">⏱ 2 min</p>
+<p>Five takeaways: Big Data = too big/fast/varied for normal tools. 5 V's define it. 80% is unstructured. Specialized tech needed. And you personally generate Big Data every day. Next session: how we ANALYZE all this data to make decisions.</p>
+<div class="bisaya">Bisaya: "Recap: Big Data defined by 5 V's. 80% unstructured. Need special tools. Ug ikaw mismo, data generator. Next session: ANALYTICS. How to turn raw data into DECISIONS."</div>
+
+</body></html>`;
+
+document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
+</script>
+</body>
+</html>

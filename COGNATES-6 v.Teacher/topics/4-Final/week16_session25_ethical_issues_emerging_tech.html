@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en" data-teacher-version>
+<head>
+<script src="../../../assets/js/teacher-gate.js"></script>
+<script>document.documentElement.classList.add('teacher-checking');</script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../../../cronasia-icon.png">
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<!-- skill:libraries -->
+<script src="https://cdn.jsdelivr.net/npm/mathjs@15.2.0/lib/browser/math.min.js" integrity="sha384-CxR1K3HZUkOaVgBmRwqkpngEKdsI4pZVJqItEffLpTGqVE6C/4X9MYaLZcoZH7Nx" crossorigin="anonymous"></script>
+<!-- /skill:libraries -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 25: Ethical Issues in Emerging Technologies</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;
+--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;
+--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+--slide-w:1920px;--slide-h:1080px;
+}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
+body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.slide-scale{width:var(--slide-w);height:var(--slide-h);position:relative;transform-origin:center center}
+.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:36px;position:relative;overflow:hidden}
+
+h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}
+h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}
+h3{font-size:48px;font-weight:700;line-height:1.2}
+h4{font-size:38px;font-weight:600;line-height:1.3}
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.subtitle{font-size:32px;color:var(--muted);font-weight:400}
+p{font-size:36px;line-height:1.6}
+.small{font-size:28px}
+.tiny{font-size:22px;color:var(--muted)}
+strong{color:var(--accent)}
+em{color:var(--accent2)}
+
+ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:20px}
+li{font-size:34px;line-height:1.5}
+li::marker{color:var(--accent)}
+
+table{width:100%;border-collapse:collapse;font-size:30px}
+th{background:var(--accent);color:#fff;padding:16px 20px;text-align:left;font-weight:600;font-size:26px}
+td{padding:14px 20px;border-bottom:1px solid var(--border);font-size:28px}
+tr:nth-child(even) td{background:var(--card)}
+tr:hover td{background:var(--card2)}
+
+.box{background:var(--card);border-radius:16px;padding:36px;border:1px solid var(--border)}
+.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:32px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+.flex-col{display:flex;flex-direction:column;gap:16px}
+
+.stat-big{font-size:80px;font-weight:900;color:var(--accent);line-height:1}
+.stat-label{font-size:24px;color:var(--muted);margin-top:8px}
+.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}
+.tag-green{background:var(--accent3)}
+.tag-orange{background:var(--accent2);color:#111}
+.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:12px 0}
+
+.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:48px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+.qa-pause h3{color:var(--accent3)}
+
+.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 28px;transition:background .2s}
+.quiz-choice:hover{background:var(--card2)}
+
+.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:100}
+.nav-dots button{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}
+.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}
+.nav-dots button:hover{opacity:0.8}
+
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}
+.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}
+
+@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:52px}h3{font-size:40px}p{font-size:32px}li{font-size:30px}td,th{font-size:24px;padding:10px 14px}.grid-2{grid-template-columns:1fr}}
+@media(max-width:768px){body{font-size:28px}h1{font-size:52px}h2{font-size:40px}h3{font-size:32px}p{font-size:26px}li{font-size:24px}td,th{font-size:20px;padding:8px 10px}.slide{padding:32px 24px;gap:20px}.grid-2,.grid-3{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Okay class, good morning everyone! Maayong buntag sa tanan! So karon, mag-start na ta sa atong Finals period. Very exciting kay this is where everything comes together. Ang atong topic karon is about ETHICS in emerging technologies. Nganong importante ni? Kay ang technology dili neutral, guys. Every system we build has values embedded. So as future BSIS professionals, you need to think about WHO benefits and WHO gets harmed. Let's go!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 16</div>
+<h1 style="margin-top:20px">Ethical Issues in<br><span style="color:var(--accent)">Emerging Technologies</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 25 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">AI Ethics</span><span class="tag-orange tag">Deepfakes</span><span class="tag-green tag">Privacy</span><span class="tag">Surveillance</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- SLIDE 2: Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Alright, here are our learning objectives for today. Lima ka objectives. By the end of this session, kabalo na mo mag-identify sa ethical dilemmas created by emerging tech. Kabalo na mo mag-analyze sa AI bias, deepfakes, ug surveillance ethics. Kabalo na mo explain ang trolley problem for self-driving cars. Then we'll cover ethical frameworks, and finally, evaluate technology's impact on society. Ethics is not just a 'nice to have'. For IS professionals, it's CORE to your job. You are the gatekeepers.">
+<div class="eyebrow">Session Objectives</div>
+<h2>Learning Objectives</h2>
+<div class="divider"></div>
+<ol style="gap:28px;margin-top:12px">
+<li><strong>Identify</strong> ethical dilemmas created by emerging technologies</li>
+<li><strong>Analyze</strong> AI bias, deepfakes, and surveillance ethics</li>
+<li><strong>Explain</strong> the trolley problem as applied to autonomous vehicles</li>
+<li><strong>Describe</strong> ethical frameworks for technology decision-making</li>
+<li><strong>Evaluate</strong> technology's impact on society, privacy, and autonomy</li>
+</ol>
+</div></div></div>
+
+<!-- SLIDE 3: Why Ethics -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="So let's start: WHY does ethics matter in tech? Technology is NEVER neutral. Repeat after me: technology is never neutral. Every system you build, every app you design, every algorithm you deploy, naa nay values nga naka-embed. You make choices about who benefits and who's excluded. Kung mag-design ka ug enrollment system, the way you design it determines who can easily enroll and who struggles. You are making ETHICAL choices whether you realize it or not. Mao na importante kaayo ni nga topic.">
+<h2>Why Ethics in Tech Matters</h2>
+<div class="divider"></div>
+<div class="highlight-box" style="margin-top:16px"><h3 style="color:var(--accent);margin-bottom:16px">🔑 Core Principle</h3><p style="font-size:42px;font-weight:600">Technology is <strong>NEVER</strong> neutral.</p><p style="margin-top:12px">Every system embeds values, makes assumptions, creates winners and losers.</p></div>
+<div class="grid-2" style="margin-top:28px">
+<div class="box"><h4>The Builder's Power</h4><p class="small">The engineer who builds the system makes ethical choices about who benefits and who's excluded.</p></div>
+<div class="box"><h4>The Stakes</h4><p class="small">Technology now affects hiring, lending, policing, healthcare, education, and life-or-death decisions.</p></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 4: Real Impact -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Real examples. Amazon hiring AI gi-train sa 10 years of data na mostly lalaki. AI learned to reject women. Facebook algorithm designed to maximize engagement amplified divisive content. Cambridge Analytica harvested 87 million users' data to manipulate elections. These already happened. As future IS professionals, basin IKAW ang mag-build sa next system nga mag-affect sa millions.">
+<h2>Technology Ethics: Real Impact</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Case</th><th>What Happened</th><th>Ethical Failure</th></tr>
+<tr><td><strong>Amazon Hiring AI</strong></td><td>AI rejected female applicants systematically</td><td>Biased training data, no audit</td></tr>
+<tr><td><strong>Facebook Algorithm</strong></td><td>Amplified divisive content for engagement</td><td>Profit over social harm</td></tr>
+<tr><td><strong>Cambridge Analytica</strong></td><td>87M users' data harvested without consent</td><td>No consent, manipulation</td></tr>
+<tr><td><strong>China Social Credit</strong></td><td>Mass surveillance scoring citizens</td><td>State control over freedom</td></tr>
+<tr><td><strong>Uber Greyball</strong></td><td>Software to deceive regulators</td><td>Intentional deception</td></tr>
+</table>
+</div></div></div>
+
+<!-- SLIDE 5: Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Pause! Quick check. Have you ever felt that technology treated you unfairly? Maybe na-reject ka, na-show irrelevant ads, or na-flag ang post nimo for no reason? Share one experience with your seatmate. 2 minutes. Go!">
+<div class="qa-pause"><h3>⏸️ Quick Check</h3><p style="font-size:38px;font-weight:600">Have you ever felt technology treated you <em>unfairly</em>?</p><p class="small" style="max-width:800px">Think about: app rejections, irrelevant recommendations, content flagged, services unavailable in your area.</p><p class="tiny" style="margin-top:16px">💬 Share with seatmate (2 minutes)</p></div>
+</div></div></div>
+
+<!-- SLIDE 6: AI Issues -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Six major AI ethical issues. One: Algorithmic Bias, AI discriminates. Two: Black Box, unexplainable decisions. Three: Deepfakes, AI-generated fakes. Four: Autonomous weapons. Five: Surveillance. Six: Job displacement. Each one is massive.">
+<h2>AI Ethical Issues <span style="color:var(--muted);font-size:40px">(6 Categories)</span></h2>
+<div class="divider"></div>
+<div class="grid-3" style="margin-top:12px">
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">⚖️</div><h4 style="font-size:28px">Algorithmic Bias</h4><p class="small">AI discriminates against groups</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">🔲</div><h4 style="font-size:28px">Black Box</h4><p class="small">Unexplainable decisions</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">🎭</div><h4 style="font-size:28px">Deepfakes</h4><p class="small">AI-generated fake media</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">🤖</div><h4 style="font-size:28px">Autonomous Weapons</h4><p class="small">AI decides who to kill</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">👁️</div><h4 style="font-size:28px">Surveillance</h4><p class="small">Mass monitoring</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:48px;margin-bottom:8px">💼</div><h4 style="font-size:28px">Job Displacement</h4><p class="small">Automation without support</p></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 7: Algorithmic Bias -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Algorithmic Bias. AI learns from data. Biased data equals biased AI. The danger: AI SCALES bias. Before, one biased manager affects 100 people. AI hiring system? MILLIONS. Consistently. The Amazon example: penalized resumes containing 'women's' like 'women's chess club.' Math trained on biased data produces biased math.">
+<h2>Algorithmic Bias</h2>
+<div class="divider"></div>
+<div class="highlight-box"><p style="font-size:36px"><strong>Definition:</strong> AI systems systematically produce unfair outcomes that discriminate against certain groups, usually because of biased training data.</p></div>
+<div class="grid-2" style="margin-top:24px">
+<div class="flex-col"><h4>Why It Happens</h4><ul><li>Training data reflects historical discrimination</li><li>Developers don't test across diverse groups</li><li>Feedback loops amplify initial bias</li><li>Proxy variables correlate with protected attributes</li></ul></div>
+<div class="flex-col"><h4>Why It's Dangerous</h4><ul><li>AI <strong>SCALES</strong> bias to millions instantly</li><li>Decisions appear "objective"</li><li>Difficult to detect without auditing</li><li>Affects hiring, lending, policing, healthcare</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 8: Bias Cases -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Specific cases. Amazon: penalized female keywords. Facial recognition: 34% error for dark-skinned women versus 0.8% light-skinned men, Joy Buolamwini MIT research. COMPAS courts: Black defendants rated higher risk even when they didn't re-offend. Loan algorithms: ZIP codes as proxy for race. Healthcare AI: cost as proxy for health need, deprioritized Black patients. Real consequences, real people.">
+<h2>Real Cases of AI Bias</h2>
+<div class="divider"></div>
+<table>
+<tr><th>System</th><th>Bias Found</th><th>Impact</th></tr>
+<tr><td><strong>Amazon Hiring AI</strong></td><td>Penalized female-associated keywords</td><td>Women systematically rejected</td></tr>
+<tr><td><strong>Facial Recognition</strong></td><td>34% error dark-skinned women vs 0.8% light-skinned men</td><td>Wrongful arrests</td></tr>
+<tr><td><strong>COMPAS (Courts)</strong></td><td>Higher risk scores for Black defendants</td><td>Longer sentences</td></tr>
+<tr><td><strong>Loan Algorithms</strong></td><td>ZIP code as proxy for race</td><td>Minorities denied loans</td></tr>
+<tr><td><strong>Healthcare AI</strong></td><td>Cost as proxy for health need</td><td>Black patients deprioritized</td></tr>
+</table>
+<p class="tiny" style="margin-top:16px">Sources: Reuters 2018, MIT Media Lab 2018, ProPublica 2016, Berkeley 2019</p>
+</div></div></div>
+
+<!-- SLIDE 9: Deepfakes -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Deepfakes. AI creates REALISTIC fake videos or audio of anyone. CEO voice clones stole 243 thousand dollars. 96% of deepfakes are non-consensual intimate images. 500% increase from 2023 to 2024. The core danger: erodes trust in ALL media. If any video can be faked, you can't trust ANY video. Creates 'liar's dividend' where guilty people claim real evidence is fake.">
+<h2>Deepfakes 🎭</h2>
+<div class="divider"></div>
+<div class="highlight-box"><p style="font-size:34px"><strong>Deepfakes:</strong> AI-generated realistic fake videos, audio, or images of anyone, increasingly indistinguishable from real content.</p></div>
+<div class="grid-2" style="margin-top:20px">
+<div class="flex-col"><h4 style="color:var(--accent)">Dangerous Uses</h4><ul><li>CEO voice clone ($243K stolen 2019)</li><li>Political manipulation during elections</li><li>Non-consensual content (96% of deepfakes)</li><li>Scam calls impersonating family</li><li>Fake celebrity endorsements</li></ul></div>
+<div class="flex-col"><h4 style="color:var(--accent3)">Core Danger</h4><div class="box" style="margin-top:8px"><p class="small" style="font-weight:600">Erodes trust in ALL media.</p><p class="small" style="margin-top:8px">"Liar's dividend": guilty claim real evidence is fake.</p></div><div class="box" style="margin-top:12px;text-align:center;padding:20px"><div class="stat-big" style="font-size:56px">500%</div><p class="stat-label">increase 2023-2024</p></div></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 10: Trolley Problem -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Trolley Problem for self-driving cars. Unavoidable accident. Car must CHOOSE: swerve and hit pedestrian, or hit wall and harm passengers. WHO decides? Programmer? Owner? Government? There is NO neutral position. Someone HAS to decide. That someone is the engineer. That's YOU someday.">
+<h2>The Trolley Problem<br><span style="font-size:40px;color:var(--muted)">Self-Driving Cars Edition</span></h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="flex-col" style="gap:24px">
+<div class="box"><h4 style="color:var(--accent)">The Scenario</h4><p class="small">Self-driving car, <strong>unavoidable accident</strong>:</p><ul style="margin-top:12px;gap:12px"><li style="font-size:28px"><strong>A:</strong> Swerve → Save passengers, hit pedestrian</li><li style="font-size:28px"><strong>B:</strong> Stay → Hit obstacle, harm passengers</li></ul></div>
+<div class="box"><h4 style="color:var(--accent2)">Who Decides?</h4><ul style="gap:10px"><li style="font-size:28px">The programmer?</li><li style="font-size:28px">The manufacturer?</li><li style="font-size:28px">The owner?</li><li style="font-size:28px">Government regulation?</li></ul></div>
+</div>
+<div class="highlight-box" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center"><p style="font-size:56px;font-weight:800;color:var(--accent)">No neutral<br>position exists.</p><p style="margin-top:16px;font-size:28px">Someone MUST decide.</p><p style="margin-top:8px;font-size:28px;color:var(--accent2)">That's <strong>YOU</strong> someday.</p></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 11: Q&A 2 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick poll! If YOU were programming the self-driving car: A protect passengers always, B minimize total harm, C random, D let owner decide. No right answer but you MUST have a position. 3 volunteers to defend their choice.">
+<div class="qa-pause"><h3>⏸️ Class Poll</h3><p style="font-size:36px;font-weight:600">If YOU programmed the self-driving car...</p>
+<div class="grid-2" style="margin-top:24px;width:100%;max-width:1000px">
+<div class="box" style="text-align:center"><p class="small"><strong>A.</strong> Protect passengers always</p></div>
+<div class="box" style="text-align:center"><p class="small"><strong>B.</strong> Minimize total harm</p></div>
+<div class="box" style="text-align:center"><p class="small"><strong>C.</strong> Random / fate</p></div>
+<div class="box" style="text-align:center"><p class="small"><strong>D.</strong> Let owner decide</p></div>
+</div><p class="tiny" style="margin-top:20px">💬 3 volunteers</p></div>
+</div></div></div>
+
+<!-- SLIDE 12: Surveillance -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Surveillance technologies. We are being watched more than any generation. Phone tracks 24/7. CCTV everywhere. Facial recognition in airports. Smart speakers always listening. Workplace monitoring every keystroke. The question: what LIMITS, and WHO decides? Sa GenSan, CCTV everywhere na. Acceptable ba? Or naay boundary na gi-cross?">
+<h2>Surveillance Technologies</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Technology</th><th>Capability</th><th>Ethical Concern</th></tr>
+<tr><td>🎯 <strong>Facial Recognition</strong></td><td>Identify anyone in public</td><td>Mass surveillance without consent</td></tr>
+<tr><td>📍 <strong>Location Tracking</strong></td><td>Phone tracks 24/7</td><td>Reveals private life patterns</td></tr>
+<tr><td>💻 <strong>Workplace Monitoring</strong></td><td>Keystrokes, webcam, screen</td><td>Erodes trust, mental health</td></tr>
+<tr><td>🏠 <strong>Smart Home Devices</strong></td><td>Always-listening mics</td><td>Private conversations recorded</td></tr>
+<tr><td>📱 <strong>Social Media</strong></td><td>Behavioral prediction</td><td>Manipulation of decisions</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:16px;text-align:center"><p style="font-size:30px">What <strong>LIMITS</strong> should exist, and <strong>WHO</strong> decides?</p></div>
+</div></div></div>
+
+<!-- SLIDE 13: Privacy Paradox -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="The Privacy Paradox. People SAY they value privacy pero actions opposite. How many read Terms and Conditions? Zero. We give away data for FREE for convenience. If the product is free, YOU are the product. 150+ privacy policies accepted per year without reading.">
+<h2>The Privacy Paradox</h2>
+<div class="divider"></div>
+<div class="highlight-box" style="text-align:center;margin-bottom:20px"><p style="font-size:38px;font-weight:700">People <strong>SAY</strong> privacy matters but <strong>ACT</strong> as if it doesn't.</p></div>
+<div class="grid-2">
+<div class="box"><h4>What We Say</h4><ul style="gap:12px"><li style="font-size:26px">"Privacy is important to me"</li><li style="font-size:26px">"Companies shouldn't collect my data"</li><li style="font-size:26px">"I'm concerned about surveillance"</li></ul></div>
+<div class="box"><h4>What We Do</h4><ul style="gap:12px"><li style="font-size:26px">Accept terms without reading (150+/year)</li><li style="font-size:26px">Share freely on social media</li><li style="font-size:26px">Use "free" services (you ARE the product)</li><li style="font-size:26px">Install apps with excessive permissions</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 14: Ethical Frameworks -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Ethical frameworks. Five major ones. Utilitarianism: greatest good for greatest number. Deontology: is the action itself right? Rights-based: does it violate human rights? Virtue ethics: what would a virtuous person do? Care ethics: who is most vulnerable? Each gives different insights. Systematic thinking, not just emotions.">
+<h2>Ethical Frameworks</h2>
+<div class="divider"></div>
+<table style="margin-top:16px">
+<tr><th>Framework</th><th>Core Question</th><th>Tech Example</th></tr>
+<tr><td><strong>Utilitarianism</strong></td><td>Greatest good for greatest number?</td><td>Self-driving car: minimize deaths</td></tr>
+<tr><td><strong>Deontology</strong></td><td>Is the action itself right?</td><td>"Never deceive users"</td></tr>
+<tr><td><strong>Rights-based</strong></td><td>Violate human rights?</td><td>Facial recognition vs privacy</td></tr>
+<tr><td><strong>Virtue Ethics</strong></td><td>What would a virtuous person do?</td><td>Would a good engineer ship this?</td></tr>
+<tr><td><strong>Care Ethics</strong></td><td>Who is most vulnerable?</td><td>Impact on children, elderly?</td></tr>
+</table>
+</div></div></div>
+
+<!-- SLIDE 15: Ethics Checklist -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Practical tool: Technology Ethics Checklist. Six questions for EVERY system. One: WHO benefits, who harmed? Two: CONSENT obtained? Three: TRANSPARENT? Four: ACCOUNTABILITY? Five: FAIR to all groups? Six: WORST-CASE scenarios? Memorize this. This is your ethical GPS as IS professionals.">
+<h2>Technology Ethics Checklist ✅</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:18px;margin-top:16px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:40px;font-weight:900;color:var(--accent);min-width:50px">1</span><div><strong>WHO</strong> benefits and who is harmed?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:40px;font-weight:900;color:var(--accent);min-width:50px">2</span><div>Was <strong>CONSENT</strong> obtained?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:40px;font-weight:900;color:var(--accent);min-width:50px">3</span><div>Is the system <strong>TRANSPARENT</strong>?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:40px;font-weight:900;color:var(--accent);min-width:50px">4</span><div>Is there <strong>ACCOUNTABILITY</strong>?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:40px;font-weight:900;color:var(--accent);min-width:50px">5</span><div>Does it treat all groups <strong>FAIRLY</strong>?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:40px;font-weight:900;color:var(--accent);min-width:50px">6</span><div>What are <strong>WORST-CASE</strong> scenarios?</div></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 16: Q&A 3 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Apply the checklist! Scenario: CFCI installs facial recognition in ALL classrooms for auto-attendance. Go through all 6 questions with your pair. 3 minutes then share.">
+<div class="qa-pause"><h3>⏸️ Apply the Checklist</h3><p style="font-size:34px;font-weight:600">CFCI installs facial recognition in ALL classrooms for auto-attendance.</p>
+<div class="grid-3" style="margin-top:20px;width:100%">
+<div class="box" style="text-align:center;padding:18px"><p style="font-size:22px"><strong>Q1:</strong> Who benefits/harmed?</p></div>
+<div class="box" style="text-align:center;padding:18px"><p style="font-size:22px"><strong>Q2:</strong> Consent?</p></div>
+<div class="box" style="text-align:center;padding:18px"><p style="font-size:22px"><strong>Q3:</strong> Transparent?</p></div>
+<div class="box" style="text-align:center;padding:18px"><p style="font-size:22px"><strong>Q4:</strong> Accountable?</p></div>
+<div class="box" style="text-align:center;padding:18px"><p style="font-size:22px"><strong>Q5:</strong> Fair?</p></div>
+<div class="box" style="text-align:center;padding:18px"><p style="font-size:22px"><strong>Q6:</strong> Worst-case?</p></div>
+</div><p class="tiny" style="margin-top:16px">💬 Pair discussion (3 min)</p></div>
+</div></div></div>
+
+<!-- SLIDE 17: PH Context -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Philippine context. RA 10173 Data Privacy, enforcement growing. RA 10175 cyberlibel, critics say silences press freedom. Content moderation trauma for Filipino BPO workers causing PTSD. Political deepfakes during elections. AI in BPO hiring with potential bias. These are OUR issues.">
+<h2>Philippine Ethical Tech Issues</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+<div class="box" style="display:flex;gap:20px;align-items:center;padding:22px"><span class="tag">Law</span><div><strong>RA 10173</strong> – Data Privacy Act, NPC enforcement growing</div></div>
+<div class="box" style="display:flex;gap:20px;align-items:center;padding:22px"><span class="tag" style="background:var(--accent2);color:#111">Controversy</span><div><strong>RA 10175 Cyberlibel</strong> – Critics: silences press freedom</div></div>
+<div class="box" style="display:flex;gap:20px;align-items:center;padding:22px"><span class="tag" style="background:var(--accent3)">Labor</span><div><strong>Content Moderation</strong> – BPO workers → PTSD</div></div>
+<div class="box" style="display:flex;gap:20px;align-items:center;padding:22px"><span class="tag">Election</span><div><strong>Political Deepfakes</strong> – Fake videos targeting candidates</div></div>
+<div class="box" style="display:flex;gap:20px;align-items:center;padding:22px"><span class="tag" style="background:var(--accent2);color:#111">AI</span><div><strong>AI in BPO Hiring</strong> – Potential bias in automated screening</div></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 18: Responsible Innovation -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Solution: Responsible Innovation. Six principles. Anticipate before building. Include diverse perspectives. Reflect on assumptions. Respond when harm found. Transparency about limits. Accountability when things go wrong. 'The algorithm did it' is NOT acceptable.">
+<h2>Responsible Innovation Principles</h2>
+<div class="divider"></div>
+<div class="grid-3" style="margin-top:16px">
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:40px;margin-bottom:8px">🔮</div><h4 style="font-size:26px">1. Anticipate</h4><p style="font-size:22px;color:var(--muted)">Before building</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:40px;margin-bottom:8px">🌍</div><h4 style="font-size:26px">2. Include</h4><p style="font-size:22px;color:var(--muted)">Diverse perspectives</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:40px;margin-bottom:8px">🪞</div><h4 style="font-size:26px">3. Reflect</h4><p style="font-size:22px;color:var(--muted)">Challenge assumptions</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:40px;margin-bottom:8px">🚨</div><h4 style="font-size:26px">4. Respond</h4><p style="font-size:22px;color:var(--muted)">Act on harm found</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:40px;margin-bottom:8px">🔍</div><h4 style="font-size:26px">5. Transparency</h4><p style="font-size:22px;color:var(--muted)">Honest about limits</p></div>
+<div class="box" style="text-align:center;padding:28px"><div style="font-size:40px;margin-bottom:8px">🎯</div><h4 style="font-size:26px">6. Accountability</h4><p style="font-size:22px;color:var(--muted)">"Algorithm did it" ≠ okay</p></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 19: Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways. Technology NEVER neutral. AI bias scales to millions. Deepfakes erode trust. Surveillance without limits equals social control. Privacy paradox means structural protections needed. Ethical frameworks are systematic tools. YOU are the gatekeepers.">
+<h2>Key Takeaways</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">1.</span><p class="small">Technology is <strong>NEVER neutral</strong>.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">2.</span><p class="small">AI bias <strong>scales discrimination</strong> to millions.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">3.</span><p class="small">Deepfakes <strong>erode trust</strong> in all media.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">4.</span><p class="small">Surveillance without limits → social control.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">5.</span><p class="small">Need <strong>structural protections</strong>, not just individual choices.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">6.</span><p class="small">Ethical frameworks = systematic tools.</p></div>
+<div style="display:flex;gap:16px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:28px;min-width:30px">7.</span><p class="small"><strong>YOU are the gatekeepers.</strong></p></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 20: Assignment -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center" data-script="Assignment! Position Paper, graded, due next session. Choose ONE topic. 300-500 words. Use at least one ethical framework. Now let's do our quiz!">
+<div class="eyebrow" style="color:var(--accent3)">Graded • Due Next Session</div>
+<h2 style="margin-top:16px">Position Paper Assignment</h2>
+<div class="divider" style="margin:16px auto;width:200px"></div>
+<p class="small" style="margin-bottom:24px">Choose ONE. 300-500 words. Defend with ethical framework.</p>
+<div class="grid-2" style="max-width:1200px;margin:0 auto;text-align:left">
+<div class="box" style="padding:28px"><p class="small"><strong>A.</strong> Facial recognition should be <em>banned</em> in PH</p></div>
+<div class="box" style="padding:28px"><p class="small"><strong>B.</strong> Deepfake creation should be <em>criminalized</em></p></div>
+<div class="box" style="padding:28px"><p class="small"><strong>C.</strong> Companies should <em>pay users</em> for data</p></div>
+<div class="box" style="padding:28px"><p class="small"><strong>D.</strong> Algorithm echo chambers should be <em>regulated</em></p></div>
+</div>
+</div></div></div>
+
+<!-- SLIDE 21: Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Quiz time! 15 items, multiple choice. Get your answer sheets ready.">
+<div class="eyebrow">Session 25</div>
+<h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1>
+<p class="subtitle">15 Items • Multiple Choice</p>
+<p class="tiny" style="margin-top:32px">Get your answer sheets ready</p>
+</div></div></div>
+
+<!-- QUIZ SLIDES (15 items, NO answers shown) -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1. The privacy paradox refers to blank. Read the choices to the class.">
+<h3>Q1. The privacy paradox refers to ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Privacy doesn't exist</p></div><div class="quiz-choice"><p class="small">B. People say they value privacy but act as if they don't</p></div><div class="quiz-choice"><p class="small">C. Privacy is too expensive</p></div><div class="quiz-choice"><p class="small">D. Only companies have privacy</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2. Deepfakes are dangerous because blank.">
+<h3>Q2. Deepfakes are dangerous because ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. They improve video quality</p></div><div class="quiz-choice"><p class="small">B. They create realistic fake media that erodes trust in ALL content</p></div><div class="quiz-choice"><p class="small">C. They are always easy to detect</p></div><div class="quiz-choice"><p class="small">D. They only affect celebrities</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3. The self-driving car trolley problem illustrates blank.">
+<h3>Q3. The trolley problem illustrates ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Cars should never brake</p></div><div class="quiz-choice"><p class="small">B. Ethical choices MUST be programmed into AI systems</p></div><div class="quiz-choice"><p class="small">C. Only humans should drive</p></div><div class="quiz-choice"><p class="small">D. Technology has no ethical dimensions</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4. Greenwashing in tech refers to blank.">
+<h3>Q4. Greenwashing in tech refers to ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Environmentally responsible practices</p></div><div class="quiz-choice"><p class="small">B. Misleading sustainability claims without real action</p></div><div class="quiz-choice"><p class="small">C. Painting devices green</p></div><div class="quiz-choice"><p class="small">D. Proper recycling</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5. As BSIS graduates, your ethical role is to blank.">
+<h3>Q5. As BSIS graduates, your ethical role is to ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Ignore ethics and focus only on profit</p></div><div class="quiz-choice"><p class="small">B. Design systems considering who benefits, fairness, and accountability</p></div><div class="quiz-choice"><p class="small">C. Let someone else handle ethics</p></div><div class="quiz-choice"><p class="small">D. Only follow instructions without questioning</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6. Amazon's hiring AI rejected female applicants because blank.">
+<h3>Q6. Amazon's AI rejected women because ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Women applied less frequently</p></div><div class="quiz-choice"><p class="small">B. Trained on 10 years of male-dominated hiring data</p></div><div class="quiz-choice"><p class="small">C. Intentionally programmed to discriminate</p></div><div class="quiz-choice"><p class="small">D. Random software error</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7. Who owns AI-generated content?">
+<h3>Q7. Who owns content generated by AI?</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. The AI itself</p></div><div class="quiz-choice"><p class="small">B. The user who prompted it</p></div><div class="quiz-choice"><p class="small">C. Currently unresolved legally in most jurisdictions</p></div><div class="quiz-choice"><p class="small">D. Always the training data creators</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8. Privacy by design means blank.">
+<h3>Q8. "Privacy by design" means ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Adding privacy after product is finished</p></div><div class="quiz-choice"><p class="small">B. Embedding privacy into system design from the START</p></div><div class="quiz-choice"><p class="small">C. Removing all privacy features</p></div><div class="quiz-choice"><p class="small">D. Making privacy optional</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9. What percentage of cyberattacks begin with phishing?">
+<h3>Q9. Approximately what % of cyberattacks begin with phishing?</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. 10%</p></div><div class="quiz-choice"><p class="small">B. 30%</p></div><div class="quiz-choice"><p class="small">C. 60%</p></div><div class="quiz-choice"><p class="small">D. 90%</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10. A digital twin is blank.">
+<h3>Q10. A digital twin is ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. A copy of a person's online identity</p></div><div class="quiz-choice"><p class="small">B. A real-time virtual replica synced with the physical system</p></div><div class="quiz-choice"><p class="small">C. A twin monitor setup</p></div><div class="quiz-choice"><p class="small">D. A backup hard drive</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11. Cambridge Analytica harvested data from how many users?">
+<h3>Q11. Cambridge Analytica harvested ____ Facebook users' data.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. 1 million</p></div><div class="quiz-choice"><p class="small">B. 10 million</p></div><div class="quiz-choice"><p class="small">C. 87 million</p></div><div class="quiz-choice"><p class="small">D. 500 million</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12. The main cause of algorithmic bias is blank.">
+<h3>Q12. The main cause of algorithmic bias is ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. AI systems are programmed to be evil</p></div><div class="quiz-choice"><p class="small">B. Biased training data reflecting historical discrimination</p></div><div class="quiz-choice"><p class="small">C. Hardware malfunction</p></div><div class="quiz-choice"><p class="small">D. Internet connection issues</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13. Responsible innovation principles include blank.">
+<h3>Q13. Responsible innovation principles include ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Build fast, ignore consequences</p></div><div class="quiz-choice"><p class="small">B. Anticipate, Include, Reflect, Respond, Transparency, Accountability</p></div><div class="quiz-choice"><p class="small">C. Only focus on profit</p></div><div class="quiz-choice"><p class="small">D. Copy competitors without thinking</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14. Surveillance raises concerns primarily about blank.">
+<h3>Q14. Surveillance raises concerns primarily about ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Device color and design</p></div><div class="quiz-choice"><p class="small">B. Mass monitoring without consent and revealing private patterns</p></div><div class="quiz-choice"><p class="small">C. Internet speed</p></div><div class="quiz-choice"><p class="small">D. Battery life of cameras</p></div></div>
+</div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15. The BSIS advantage in technology ethics is blank. And that's our quiz!">
+<h3>Q15. The BSIS advantage in technology ethics is ____.</h3>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:16px"><div class="quiz-choice"><p class="small">A. Only knowing one programming language</p></div><div class="quiz-choice"><p class="small">B. Being ethical gatekeepers bridging business and technology</p></div><div class="quiz-choice"><p class="small">C. Avoiding all technology decisions</p></div><div class="quiz-choice"><p class="small">D. Only following orders from management</p></div></div>
+</div></div></div>
+
+<!-- End Slide -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's it! Great job everyone. Technology is never neutral, YOU are the gatekeepers. Next session: Data Privacy and Intellectual Property. Don't forget position papers! Bye, ingat mo!">
+<div class="eyebrow">End of Session 25</div>
+<h1 style="margin-top:20px">Thank You! 🎓</h1>
+<p class="subtitle" style="margin-top:12px">Next: Data Privacy & Intellectual Property</p>
+<div class="divider" style="margin:24px auto;width:200px"></div>
+<p class="small">📝 Position Paper due next session</p>
+<p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide'));
+const viewports=Array.from(document.querySelectorAll('.slide-viewport'));
+const navDots=document.getElementById('navDots');
+const progressBar=document.getElementById('progressBar');
+const slideCounter=document.getElementById('slideCounter');
+let currentSlide=0;
+let scriptWindow=null;
+let answerWindow=null;
+
+slides.forEach((_,i)=>{const btn=document.createElement('button');btn.setAttribute('aria-label',`Slide ${i+1}`);btn.addEventListener('click',()=>goToSlide(i));navDots.appendChild(btn);});
+
+function scaleSlides(){viewports.forEach(vp=>{const scale=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${scale})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+
+const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const idx=viewports.indexOf(entry.target);if(idx>=0){currentSlide=idx;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>observer.observe(vp));
+
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+
+function updateUI(){
+const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
+progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';
+slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;
+syncScript();
+}
+
+document.addEventListener('keydown',e=>{
+// Ctrl+Shift+A → open answer key in new window
+if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}
+if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}
+else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}
+else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
+else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
+else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+});
+
+let touchStartY=0;
+document.addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY;});
+document.addEventListener('touchend',e=>{const diff=touchStartY-e.changedTouches[0].clientY;if(Math.abs(diff)>50){diff>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+
+// ===== TEACHER SCRIPT (T key) =====
+function openTeacherScript(){
+if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}
+scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');
+syncScript();
+}
+
+function syncScript(){
+if(!scriptWindow||scriptWindow.closed)return;
+const slide=slides[currentSlide];
+const script=slide.getAttribute('data-script')||'(No script for this slide)';
+const title=slide.querySelector('h1,h2,h3');
+const titleText=title?title.textContent:'Slide '+(currentSlide+1);
+scriptWindow.document.open();
+scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px;font-weight:600}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;color:#e8e6e3;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body>
+<div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div>
+<div class="slide-title">${titleText}</div>
+<div class="script-text">${script}</div>
+<div class="tip">💡 Auto-updates as you navigate slides.</div>
+</body></html>`);
+scriptWindow.document.close();
+}
+
+// ===== ANSWER KEY (Ctrl+Shift+A) =====
+function openAnswerKey(){
+if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}
+answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');
+const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}
+.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}
+.header h2{font-size:20px;font-weight:700}
+.header p{font-size:13px;opacity:0.8;margin-top:4px}
+.item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid #2a2a3a}
+.item:last-child{border-bottom:none}
+.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}
+.answer{color:#2a9d8f;font-weight:700;font-size:18px;min-width:24px}
+.rationale{color:#8a8a9a;font-size:15px;margin-top:4px}
+.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}
+</style></head><body>
+<div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 25 Quiz • Teacher Only</p></div>
+<div class="item"><span class="num">1.</span><div><span class="answer">B</span> – People claim to value privacy but freely share data for convenience.<div class="rationale">The paradox is the gap between stated values and actual behavior.</div></div></div>
+<div class="item"><span class="num">2.</span><div><span class="answer">B</span> – Create realistic fake media that erodes trust in ALL content.<div class="rationale">If any video can be faked, trust in all video collapses.</div></div></div>
+<div class="item"><span class="num">3.</span><div><span class="answer">B</span> – Ethical choices MUST be programmed into AI systems.<div class="rationale">No neutral position exists; someone must encode the decision.</div></div></div>
+<div class="item"><span class="num">4.</span><div><span class="answer">B</span> – Misleading sustainability claims without real action.<div class="rationale">Greenwashing = marketing without genuine environmental commitment.</div></div></div>
+<div class="item"><span class="num">5.</span><div><span class="answer">B</span> – Design systems considering who benefits, fairness, accountability.<div class="rationale">IS professionals are ethical gatekeepers for technology.</div></div></div>
+<div class="item"><span class="num">6.</span><div><span class="answer">B</span> – Trained on 10 years of male-dominated hiring data.<div class="rationale">AI learned historical bias from data, not intentional programming.</div></div></div>
+<div class="item"><span class="num">7.</span><div><span class="answer">C</span> – Currently unresolved legally in most jurisdictions.<div class="rationale">No country has definitively settled AI content ownership.</div></div></div>
+<div class="item"><span class="num">8.</span><div><span class="answer">B</span> – Embedding privacy into system design from the START.<div class="rationale">Proactive, not reactive. Built-in, not bolted-on.</div></div></div>
+<div class="item"><span class="num">9.</span><div><span class="answer">D</span> – 90%.<div class="rationale">Human weakness (clicking links) is the primary attack vector.</div></div></div>
+<div class="item"><span class="num">10.</span><div><span class="answer">B</span> – Real-time virtual replica synced with physical system.<div class="rationale">Digital twin mirrors and updates from the physical world.</div></div></div>
+<div class="item"><span class="num">11.</span><div><span class="answer">C</span> – 87 million.<div class="rationale">Data harvested for political psychological profiling.</div></div></div>
+<div class="item"><span class="num">12.</span><div><span class="answer">B</span> – Biased training data reflecting historical discrimination.<div class="rationale">Garbage in, garbage out. Data reflects society's existing biases.</div></div></div>
+<div class="item"><span class="num">13.</span><div><span class="answer">B</span> – Anticipate, Include, Reflect, Respond, Transparency, Accountability.<div class="rationale">Six principles of responsible innovation framework.</div></div></div>
+<div class="item"><span class="num">14.</span><div><span class="answer">B</span> – Mass monitoring without consent, revealing private patterns.<div class="rationale">Core privacy concern: data collected without knowledge or consent.</div></div></div>
+<div class="item"><span class="num">15.</span><div><span class="answer">B</span> – Being ethical gatekeepers bridging business and technology.<div class="rationale">BSIS unique: understand both business impact and technical implementation.</div></div></div>
+<div class="warn">⚠️ TEACHER ONLY – Do not display to students</div>
+</body></html>`;
+answerWindow.document.open();
+answerWindow.document.write(html);
+answerWindow.document.close();
+}
+
+updateUI();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-teacher-version>
+<head>
+<script src="../../../assets/js/teacher-gate.js"></script>
+<script>document.documentElement.classList.add('teacher-checking');</script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../../../cronasia-icon.png">
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 28: Design Thinking Application & Prototyping</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}html::-webkit-scrollbar{display:none}
+body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.slide-scale{width:1920px;height:1080px;position:relative;transform-origin:center center}
+.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:32px;position:relative;overflow:hidden}
+h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}h3{font-size:48px;font-weight:700;line-height:1.2}h4{font-size:36px;font-weight:600;line-height:1.3}
+.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.subtitle{font-size:32px;color:var(--muted);font-weight:400}p{font-size:36px;line-height:1.6}.small{font-size:28px}.tiny{font-size:22px;color:var(--muted)}strong{color:var(--accent)}em{color:var(--accent2)}
+ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:18px}li{font-size:32px;line-height:1.5}li::marker{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:28px}th{background:var(--accent);color:#fff;padding:14px 18px;text-align:left;font-weight:600;font-size:24px}td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:26px}tr:nth-child(even) td{background:var(--card)}tr:hover td{background:var(--card2)}
+.box{background:var(--card);border-radius:16px;padding:32px;border:1px solid var(--border)}.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:28px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}.flex-col{display:flex;flex-direction:column;gap:14px}
+.stat-big{font-size:72px;font-weight:900;color:var(--accent);line-height:1}.stat-label{font-size:22px;color:var(--muted);margin-top:6px}
+.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:10px 0}
+.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}.qa-pause h3{color:var(--accent3)}
+.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 24px;transition:background .2s}.quiz-choice:hover{background:var(--card2)}
+.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:100}.nav-dots button{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}
+@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:50px}h3{font-size:38px}p{font-size:30px}li{font-size:28px}td,th{font-size:22px}.grid-2{grid-template-columns:1fr}}
+@media(max-width:768px){body{font-size:28px}h1{font-size:48px}h2{font-size:38px}h3{font-size:30px}p{font-size:24px}li{font-size:22px}.slide{padding:28px 20px;gap:16px}.grid-2,.grid-3{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- S1 Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Good morning class! Okay so last session nag-learn ta sa first three stages sa Design Thinking: Empathize, Define, Ideate. Karon, we'll tackle the final two stages: PROTOTYPE and TEST. This is where ideas become REAL. Where you stop talking and start MAKING. After today, you'll know how to build a quick prototype in 15 minutes and test it with actual users. This connects directly to your final project. You'll also practice iteration, meaning improving based on feedback. Bring your ideas from last session's activity! Let's build stuff!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 17</div>
+<h1 style="margin-top:20px">Prototyping &<br><span style="color:var(--accent)">Testing</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 28 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">Stage 4</span><span class="tag" style="background:var(--accent2);color:#111">Stage 5</span><span class="tag" style="background:var(--accent3)">MVP</span><span class="tag">Iteration</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- S2 Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Our objectives today. One: create low-fidelity prototypes, paper and digital mockups. Two: conduct user testing and gather feedback properly. Three: apply iteration based on test results. Four: connect Design Thinking to your final project requirements. Five: plan a minimum viable product, or MVP. By the end of this session, you will have actually BUILT a prototype and TESTED it. Not just theory. Hands-on. Let's do this.">
+<div class="eyebrow">Session Objectives</div>
+<h2>Learning Objectives</h2>
+<div class="divider"></div>
+<ol style="gap:24px;margin-top:12px">
+<li><strong>Create</strong> low-fidelity prototypes (paper, digital mockups)</li>
+<li><strong>Conduct</strong> user testing and gather feedback properly</li>
+<li><strong>Apply</strong> iteration based on test results</li>
+<li><strong>Connect</strong> Design Thinking to your final project</li>
+<li><strong>Plan</strong> a Minimum Viable Product (MVP)</li>
+</ol>
+</div></div></div>
+
+<!-- S3 Recap 5 stages -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick recap. Five stages. Empathize: we did this last session. You interviewed classmates, observed their problems. Define: you wrote problem statements. Ideate: you brainstormed 20+ solutions. TODAY: Stage 4, Prototype. We BUILD something testable. Stage 5, Test. We get REAL feedback. Remember: this is NON-LINEAR. If testing shows your problem is wrong, go BACK to Empathize. If your prototype confuses people, go back to Ideate. That's the power of the process. No wasted effort because every loop teaches you something.">
+<h2>Recap: Where We Are</h2>
+<div class="divider"></div>
+<div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap">
+<div class="box" style="flex:1;min-width:160px;text-align:center;padding:24px;opacity:0.5"><p style="font-size:24px;color:var(--accent)">1. Empathize</p><p class="tiny">✅ Done</p></div>
+<div class="box" style="flex:1;min-width:160px;text-align:center;padding:24px;opacity:0.5"><p style="font-size:24px;color:var(--accent2)">2. Define</p><p class="tiny">✅ Done</p></div>
+<div class="box" style="flex:1;min-width:160px;text-align:center;padding:24px;opacity:0.5"><p style="font-size:24px;color:var(--accent3)">3. Ideate</p><p class="tiny">✅ Done</p></div>
+<div class="box" style="flex:1;min-width:160px;text-align:center;padding:24px;border:2px solid var(--accent)"><p style="font-size:24px;color:#b388ff">4. Prototype</p><p class="tiny">📍 TODAY</p></div>
+<div class="box" style="flex:1;min-width:160px;text-align:center;padding:24px;border:2px solid var(--accent)"><p style="font-size:24px;color:#a8dadc">5. Test</p><p class="tiny">📍 TODAY</p></div>
+</div>
+<div class="highlight-box" style="margin-top:24px;text-align:center"><p style="font-size:28px">Non-linear: if testing reveals wrong problem → go back. Every loop teaches something.</p></div>
+</div></div></div>
+
+<!-- S4 What is Prototype -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Stage 4: PROTOTYPE. What is a prototype? A simplified, testable version of a solution. Key word: SIMPLIFIED. It is NOT the final product. NOT polished. NOT complete. The purpose is to LEARN, not to ship. You build it to answer ONE question: 'does this concept work for users?' It should be CHEAP and FAST to build. Why? Because you EXPECT to throw it away and rebuild based on feedback. If you spend 3 months building before testing, you might waste 3 months. But if you prototype in 1 hour and test, you learn in 1 hour. Fail fast, learn faster.">
+<h2>Stage 4: Prototype 🛠️</h2>
+<div class="divider"></div>
+<div class="highlight-box"><p style="font-size:34px"><strong>Prototype:</strong> A simplified, testable version of a solution. NOT the final product. Purpose: learn fast, fail cheap.</p></div>
+<div class="grid-2" style="margin-top:24px">
+<div class="box"><h4 style="color:var(--accent3)">A Prototype IS:</h4><ul style="gap:12px"><li style="font-size:26px">Quick to build (minutes to hours)</li><li style="font-size:26px">Cheap (paper, free tools)</li><li style="font-size:26px">Testable (user can interact)</li><li style="font-size:26px">Disposable (expect to rebuild)</li><li style="font-size:26px">Focused on ONE question</li></ul></div>
+<div class="box"><h4 style="color:var(--accent)">A Prototype is NOT:</h4><ul style="gap:12px"><li style="font-size:26px">The final product</li><li style="font-size:26px">Polished or pretty</li><li style="font-size:26px">Feature-complete</li><li style="font-size:26px">Expensive to create</li><li style="font-size:26px">Something you're attached to</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S5 Types of Prototypes -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Four types of prototypes, from lowest to highest fidelity. Paper sketch: literally drawing screens on paper with a pen. Takes 5 minutes. Perfect for very early ideas, testing screen layouts, flows. Wireframe: more structured drawings showing app structure, user flow, where buttons go. Takes 30 minutes. Clickable mockup: using tools like Figma or Canva, you create screens that look like an app and you can click through them. Takes 2-4 hours. MVP or Minimum Viable Product: basic WORKING version with ONLY core features. Takes days to weeks. For your final project, you should aim for at least a clickable mockup. Paper prototypes are for TODAY's exercise.">
+<h2>Types of Prototypes</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Type</th><th>Effort</th><th>Fidelity</th><th>Use When</th></tr>
+<tr><td><strong>Paper Sketch</strong></td><td>5 minutes</td><td>Very Low</td><td>Early ideas, screen layouts</td></tr>
+<tr><td><strong>Wireframe</strong></td><td>30 minutes</td><td>Low</td><td>App structure, user flow</td></tr>
+<tr><td><strong>Clickable Mockup</strong></td><td>2-4 hours</td><td>Medium</td><td>Test interactions before coding</td></tr>
+<tr><td><strong>MVP</strong></td><td>Days-weeks</td><td>High</td><td>Validate core concept with real users</td></tr>
+</table>
+<div class="grid-2" style="margin-top:20px">
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:24px;color:var(--accent2)">Today's exercise: <strong>Paper Prototype</strong></p></div>
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:24px;color:var(--accent3)">Final project: <strong>Clickable Mockup</strong> minimum</p></div>
+</div>
+</div></div></div>
+
+<!-- S6 Prototyping Principles -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Five principles of prototyping. One: Build to LEARN, not to keep. Your prototype will be thrown away. That's expected. Don't get emotionally attached. Two: Start ROUGH. Don't polish early. Ugly is fine at this stage. Three: Make it TESTABLE. Users must be able to interact with it somehow. A drawing they can point at, a mockup they can click. Four: Focus on ONE key question per prototype. Not everything, just the most critical assumption you need to validate. Five: Fail fast, learn faster. Every 'failed' prototype that doesn't work just saved you months of building the wrong thing. That's a WIN, not a failure.">
+<h2>5 Prototyping Principles</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:16px;margin-top:12px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">1</span><div><strong>Build to LEARN</strong>, not to keep. Expect to throw it away.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">2</span><div><strong>Start ROUGH</strong>. Don't polish early. Ugly is fine.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">3</span><div><strong>Make it TESTABLE</strong>. Users must interact with it.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">4</span><div><strong>ONE question</strong> per prototype. What's the critical assumption?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:22px"><span style="font-size:36px;font-weight:900;color:var(--accent);min-width:40px">5</span><div><strong>Fail fast, learn faster</strong>. Every failed prototype saves months.</div></div>
+</div>
+</div></div></div>
+
+<!-- S7 Paper Prototyping -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let me show you how paper prototyping works. Step 1: Draw each screen on a separate piece of paper. The home screen, the next screen after tapping a button, etc. Step 2: Label the buttons and interactive elements. Step 3: When testing, YOU act as the 'computer.' User points at a button, you swap to the next paper showing what happens. This is called 'Wizard of Oz' testing because there's a human behind the curtain. It's amazingly effective! Companies worth billions have started with paper prototypes. Zappos literally started by taking photos of shoes from stores and posting them online before they had ANY inventory. Test the concept before building.">
+<h2>Paper Prototyping: How To</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="flex-col" style="gap:18px">
+<div class="box"><h4 style="color:var(--accent2)">Steps</h4>
+<ol style="gap:12px"><li style="font-size:26px">Draw each SCREEN on separate paper</li><li style="font-size:26px">Label buttons & interactive elements</li><li style="font-size:26px">Create arrows showing flow</li><li style="font-size:26px">Add sticky notes for pop-ups/menus</li><li style="font-size:26px">YOU act as the "computer" during testing</li></ol></div>
+</div>
+<div class="flex-col" style="gap:18px">
+<div class="box"><h4 style="color:var(--accent3)">Why It Works</h4>
+<ul style="gap:12px"><li style="font-size:26px">5 minutes to build = low cost of failure</li><li style="font-size:26px">Users focus on CONCEPT not visuals</li><li style="font-size:26px">Easy to modify (just redraw)</li><li style="font-size:26px">No tech skills needed</li><li style="font-size:26px">Zappos started this way → $1B company</li></ul></div>
+<div class="highlight-box" style="text-align:center;padding:18px"><p style="font-size:24px">"Wizard of Oz" testing:<br>human behind the curtain pretends to be the system</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S8 Stage 5 Test -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Stage 5: TEST. You have a prototype. Now you need REAL users to try it. Not your groupmates, not your friends, not your mom. TARGET users. The people who actually HAVE the problem you're solving. How to test: Step 1, give the prototype to the user. Step 2, observe SILENTLY. Don't explain, don't guide, don't help. Step 3, ask 'what do you think this does?' and 'what's confusing?' Step 4, note where they struggle, what they misunderstand. Step 5, ask 'would you use this? Why or why not?' The hardest part: staying SILENT when they struggle. You'll want to explain. DON'T. Their confusion is your most valuable data.">
+<h2>Stage 5: Test 🧪</h2>
+<div class="divider"></div>
+<div class="highlight-box" style="margin-bottom:16px"><p style="font-size:30px">Test with <strong>TARGET users</strong> (not friends/family). Their confusion is your most valuable data.</p></div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:32px;font-weight:900;color:var(--accent3);min-width:40px">1</span><div>Give prototype to user. <strong>No explanation.</strong></div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:32px;font-weight:900;color:var(--accent3);min-width:40px">2</span><div><strong>Observe SILENTLY.</strong> Don't guide, don't help.</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:32px;font-weight:900;color:var(--accent3);min-width:40px">3</span><div>Ask: "What do you think this does?" "What's confusing?"</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:32px;font-weight:900;color:var(--accent3);min-width:40px">4</span><div><strong>Note:</strong> where they struggle, what they misunderstand</div></div>
+<div class="box" style="display:flex;align-items:center;gap:20px;padding:20px"><span style="font-size:32px;font-weight:900;color:var(--accent3);min-width:40px">5</span><div>Ask: "Would you use this? Why or why not?"</div></div>
+</div>
+</div></div></div>
+
+<!-- S9 Testing Do's and Don'ts -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Testing do's and don'ts. DO: test with 5 users minimum. Research shows 5 users find 85% of usability problems. DO: ask open-ended questions. 'Tell me what you're thinking' not 'did you like it?' DO: record observations, not just opinions. DON'T: explain your design while testing. DON'T: ask leading questions like 'don't you think this is easy to use?' DON'T: take feedback personally. It's not about YOU, it's about the DESIGN. DON'T: test with your groupmates or family. They'll be nice, not honest. You need honest, even brutal, feedback.">
+<h2>Testing: Do's & Don'ts</h2>
+<div class="divider"></div>
+<div class="grid-2" style="margin-top:16px">
+<div class="box" style="border-color:var(--accent3)"><h4 style="color:var(--accent3)">✅ DO</h4>
+<ul style="gap:12px"><li style="font-size:24px">Test with <strong>5+ users</strong> (finds 85% of problems)</li><li style="font-size:24px">Ask open-ended questions</li><li style="font-size:24px">"Tell me what you're thinking"</li><li style="font-size:24px">Record OBSERVATIONS, not just opinions</li><li style="font-size:24px">Test with TARGET users (who have the problem)</li><li style="font-size:24px">Watch body language and hesitation</li></ul></div>
+<div class="box" style="border-color:var(--accent)"><h4 style="color:var(--accent)">❌ DON'T</h4>
+<ul style="gap:12px"><li style="font-size:24px">Explain your design during test</li><li style="font-size:24px">Ask leading questions ("isn't this easy?")</li><li style="font-size:24px">Take feedback personally</li><li style="font-size:24px">Test with groupmates/family (too nice)</li><li style="font-size:24px">Defend your design when criticized</li><li style="font-size:24px">Change the prototype MID-test</li></ul></div>
+</div>
+</div></div></div>
+
+<!-- S10 Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick check before we do the hands-on. Why do you think it's important to stay SILENT during testing? Why not just explain to the user what the button does? Think about it... Because in the REAL world, you won't be standing next to every user explaining your app. If they can't figure it out WITHOUT your help, the design has failed. Your prototype must speak for itself. That's what testing reveals: where your design fails to communicate. Okay, who can give me another reason? 1 minute think, then I'll call someone.">
+<div class="qa-pause"><h3>⏸️ Quick Think</h3><p style="font-size:34px;font-weight:600">Why stay SILENT during user testing?</p><p class="small">Why not just explain what each button does?</p><p class="tiny" style="margin-top:12px">💬 Think 1 min, then I'll call someone</p></div>
+</div></div></div>
+
+<!-- S11 Iteration -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="After testing: ITERATION. What worked? What failed? What surprised you? Four possible outcomes. Outcome 1: It works well. Keep and refine that part. Outcome 2: Confusing. Redesign that specific element. Outcome 3: Wrong problem. Go back to Empathize and Define. Outcome 4: New insight. Pivot or adjust your approach. Most first prototypes have a MIX of these outcomes. That's NORMAL. The goal is not to get it right first time. The goal is to LEARN as fast as possible. Each iteration cycle makes your solution better. Google, Facebook, every app you use went through HUNDREDS of iterations. Your favorite features didn't exist in version 1.">
+<h2>Iteration: Learn & Improve 🔄</h2>
+<div class="divider"></div>
+<p class="small" style="margin-bottom:12px">After testing, analyze results and decide next action:</p>
+<div class="grid-2" style="gap:20px">
+<div class="box" style="border-color:var(--accent3);padding:24px"><h4 style="color:var(--accent3);font-size:28px">✅ Works Well</h4><p style="font-size:24px;margin-top:8px">Keep & refine that part. Build on success.</p></div>
+<div class="box" style="border-color:var(--accent2);padding:24px"><h4 style="color:var(--accent2);font-size:28px">😕 Confusing</h4><p style="font-size:24px;margin-top:8px">Redesign that specific element. Test again.</p></div>
+<div class="box" style="border-color:var(--accent);padding:24px"><h4 style="color:var(--accent);font-size:28px">❌ Wrong Problem</h4><p style="font-size:24px;margin-top:8px">Go BACK to Empathize/Define. Reframe.</p></div>
+<div class="box" style="border-color:#b388ff;padding:24px"><h4 style="color:#b388ff;font-size:28px">💡 New Insight</h4><p style="font-size:24px;margin-top:8px">Pivot or adjust approach based on discovery.</p></div>
+</div>
+<div class="highlight-box" style="margin-top:16px;text-align:center"><p style="font-size:26px">Goal ≠ get it right first time. Goal = <strong>LEARN as fast as possible</strong>. Every loop makes it better.</p></div>
+</div></div></div>
+
+<!-- S12 MVP -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Now, the MVP: Minimum Viable Product. What's the simplest version of your product that delivers CORE VALUE and allows learning from REAL users? Key word: MINIMUM. Not 'everything we can think of.' Just the one core thing that solves the main problem. Too little means you can't test anything meaningful. A landing page only? Users can't experience the solution. Too much means you wasted resources before validating. Full product with all features? Months of work that might be wrong. MVP is the sweet spot: core feature working, solves ONE problem well, can get real feedback.">
+<h2>MVP: Minimum Viable Product</h2>
+<div class="divider"></div>
+<div class="highlight-box" style="margin-bottom:20px"><p style="font-size:32px">The <strong>simplest version</strong> that delivers core value AND allows learning from real users.</p></div>
+<div class="grid-3">
+<div class="box" style="text-align:center;border-color:var(--accent);padding:24px"><h4 style="color:var(--accent);font-size:24px">❌ Too Little</h4><p style="font-size:22px;margin-top:8px">Landing page only. Can't test anything meaningful.</p></div>
+<div class="box" style="text-align:center;border-color:var(--accent3);padding:24px"><h4 style="color:var(--accent3);font-size:24px">✅ MVP (Just Right)</h4><p style="font-size:22px;margin-top:8px">Core feature works. Solves ONE problem. Gets real feedback.</p></div>
+<div class="box" style="text-align:center;border-color:var(--accent2);padding:24px"><h4 style="color:var(--accent2);font-size:24px">❌ Too Much</h4><p style="font-size:22px;margin-top:8px">Full product, all features. Months wasted if wrong.</p></div>
+</div>
+<div class="grid-2" style="margin-top:20px">
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:24px"><strong>Facebook MVP (2004):</strong> Profile + wall + friend list. Harvard only. That's it.</p></div>
+<div class="box" style="text-align:center;padding:20px"><p style="font-size:24px"><strong>Dropbox MVP:</strong> Just a video showing the concept. No actual product yet.</p></div>
+</div>
+</div></div></div>
+
+<!-- S13 Famous MVPs -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Famous MVP examples to inspire you. Zappos, now worth over 1 billion: founder Nick Swinmurn went to shoe stores, took photos of shoes, posted them online. When someone ordered, he went BACK to the store, bought the shoe, and shipped it. No inventory. He was testing: will people buy shoes online? Answer: yes. Then he built the real business. Dropbox: made a 3-minute video showing the concept. Signup list went from 5,000 to 75,000 overnight. They hadn't built ANYTHING yet. They just validated demand. Airbnb: rented air mattresses in their apartment during a conference. That's it. Can we get strangers to pay to sleep in our place? Yes! Then they scaled. Start small. Validate. Then build.">
+<h2>Famous MVPs</h2>
+<div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Company</th><th>MVP</th><th>What They Tested</th><th>Result</th></tr>
+<tr><td><strong>Zappos</strong></td><td>Photos of shoes from stores, bought when ordered</td><td>Will people buy shoes online?</td><td>→ $1.2B acquisition</td></tr>
+<tr><td><strong>Dropbox</strong></td><td>3-min video of concept (no product)</td><td>Do people want cloud storage?</td><td>5K→75K signups overnight</td></tr>
+<tr><td><strong>Airbnb</strong></td><td>Air mattresses in their apartment</td><td>Will strangers pay to sleep here?</td><td>→ $100B company</td></tr>
+<tr><td><strong>Facebook</strong></td><td>Profile + wall, Harvard only</td><td>Will students use online directory?</td><td>→ 3B users</td></tr>
+<tr><td><strong>Buffer</strong></td><td>Landing page with pricing (no tool)</td><td>Will people pay to schedule tweets?</td><td>→ $20M/year revenue</td></tr>
+</table>
+<p class="tiny" style="margin-top:12px;text-align:center">Pattern: validate DEMAND before building the full product.</p>
+</div></div></div>
+
+<!-- S14 Tools -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Tools you can use for prototyping. Free and accessible! Paper and pen: fastest, zero cost. Canva: great for simple mockups and presentations, free tier. Figma: industry standard for interactive app prototypes, FREE for students. Google Slides: surprisingly good for clickable wireframes, free. Marvel App: quick mobile prototyping, free tier. For your final project, I STRONGLY recommend Figma or Canva. Both free, both produce professional-looking prototypes that you can show during your defense. And judges will be IMPRESSED that you prototyped rather than just talked about ideas.">
+<h2>Prototyping Tools (All Free!)</h2>
+<div class="divider"></div>
+<table style="margin-top:16px">
+<tr><th>Tool</th><th>Best For</th><th>Cost</th><th>Skill Level</th></tr>
+<tr><td><strong>Paper & Pen</strong></td><td>Fastest sketches, early exploration</td><td>Free</td><td>None needed</td></tr>
+<tr><td><strong>Canva</strong></td><td>Simple mockups, presentations</td><td>Free tier</td><td>Beginner</td></tr>
+<tr><td><strong>Figma</strong></td><td>Interactive app prototypes</td><td>Free for students</td><td>Intermediate</td></tr>
+<tr><td><strong>Google Slides</strong></td><td>Clickable wireframes</td><td>Free</td><td>Beginner</td></tr>
+<tr><td><strong>Marvel App</strong></td><td>Quick mobile prototyping</td><td>Free tier</td><td>Beginner</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:16px;text-align:center"><p style="font-size:26px">Final project recommendation: <strong>Figma or Canva</strong>. Judges love seeing actual prototypes.</p></div>
+</div></div></div>
+
+<!-- S15 Q&A 2 Workshop -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="WORKSHOP TIME! Graded activity. Same groups as last session. Take your TOP idea from the ideation exercise. You have 15 minutes to: Step 1, create a paper prototype. Draw at least 4 screens showing the main flow. Step 2, test with ANOTHER group. Give them your prototype silently. Observe for 3 minutes. Step 3, note their feedback. What confused them? What worked? Step 4, iterate. Improve your design based on feedback. Redraw the confusing parts. Then present your FINAL version to the class: 2 minutes per group. Show original, show feedback, show improved version. Let's go! Papers and pens ready!">
+<div class="qa-pause"><h3>🛠️ Workshop: Build & Test (Graded)</h3><p style="font-size:28px;font-weight:600">Same groups. Take your TOP idea from last session.</p>
+<div style="margin-top:16px;text-align:left;max-width:900px">
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:var(--accent);font-weight:800">Step 1 (10 min):</span><p style="font-size:22px">Create paper prototype – at least 4 screens, main flow</p></div>
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:var(--accent2);font-weight:800">Step 2 (5 min):</span><p style="font-size:22px">Test with ANOTHER group – give silently, observe</p></div>
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:var(--accent3);font-weight:800">Step 3 (3 min):</span><p style="font-size:22px">Note feedback – what confused? what worked?</p></div>
+<div style="display:flex;gap:12px;margin-bottom:10px"><span style="color:#b388ff;font-weight:800">Step 4 (5 min):</span><p style="font-size:22px">Iterate – improve design based on feedback</p></div>
+<div style="display:flex;gap:12px"><span style="color:#a8dadc;font-weight:800">Present (2 min):</span><p style="font-size:22px">Original → Feedback → Improved version</p></div>
+</div><p class="tiny" style="margin-top:12px">⏱️ Total: ~25 min. Papers and pens ready. GO!</p></div>
+</div></div></div>
+
+<!-- S16 Final Project Connection -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="How this connects to your FINAL PROJECT. Your final project must demonstrate Design Thinking. Here's the checklist the panel will look for. Evidence of empathy: WHO did you talk to? What did you discover? Problem statement: clearly defined using the format. Multiple solutions considered: show you ideated, not just picked first idea. Prototype: visual mockup or demo. Test plan: how would you validate with real users? Even if you don't have time to do full user testing, having a PLAN shows maturity. The panel will specifically ask about your process, not just your product.">
+<h2>Final Project: DT Requirements</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-size:28px">☑️</span><div><strong>Evidence of Empathy:</strong> Who did you talk to? What did you discover?</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-size:28px">☑️</span><div><strong>Problem Statement:</strong> [User] needs [need] because [insight]</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-size:28px">☑️</span><div><strong>Multiple Solutions:</strong> Show you ideated (not just first idea)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-size:28px">☑️</span><div><strong>Prototype:</strong> Visual mockup or working demo</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-size:28px">☑️</span><div><strong>Test Plan:</strong> How would you validate with real users?</div></div>
+</div>
+<p class="tiny" style="margin-top:12px;text-align:center">⚠️ Panel will ask about your PROCESS, not just your product.</p>
+</div></div></div>
+
+<!-- S17 Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways for today. Prototypes are for LEARNING, not shipping. Start rough, test fast. Paper prototypes take 5 minutes and reveal 80% of problems. Test with TARGET users, not friends. Stay SILENT during testing, their confusion is data. Iterate: improve based on what you learn. MVP equals simplest version that delivers core value. Famous companies started with laughably simple MVPs. For your final project: prototype is REQUIRED. Use Figma or Canva for professional results.">
+<h2>Key Takeaways</h2>
+<div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:8px">
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">1.</span><p class="small">Prototypes are for <strong>LEARNING</strong>, not shipping.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">2.</span><p class="small">Start rough, test fast. Paper = 5 min, reveals 80% of problems.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">3.</span><p class="small">Test with <strong>TARGET users</strong>, not friends/family.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">4.</span><p class="small">Stay <strong>SILENT</strong> during testing. Confusion = valuable data.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">5.</span><p class="small">Iterate: improve based on what you learn each round.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">6.</span><p class="small">MVP = simplest version with core value + real feedback.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">7.</span><p class="small">Zappos, Dropbox, Airbnb all started with tiny MVPs.</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">8.</span><p class="small">Final project: prototype <strong>REQUIRED</strong> (Figma/Canva).</p></div>
+</div>
+</div></div></div>
+
+<!-- S18 Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Quiz time! 15 items. Let's test your understanding of prototyping and testing. Get your papers!">
+<div class="eyebrow">Session 28</div>
+<h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1>
+<p class="subtitle">15 Items • Multiple Choice</p>
+</div></div></div>
+
+<!-- Quiz 15 items -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1. The purpose of a prototype is to blank."><h3>Q1. The purpose of a prototype is to ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Create the final polished product</p></div><div class="quiz-choice"><p class="small">B. Learn quickly and test ideas cheaply before full development</p></div><div class="quiz-choice"><p class="small">C. Impress investors with perfection</p></div><div class="quiz-choice"><p class="small">D. Replace user research entirely</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2. An MVP is blank."><h3>Q2. An MVP (Minimum Viable Product) is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. A product with every possible feature</p></div><div class="quiz-choice"><p class="small">B. The simplest version that delivers core value and enables learning</p></div><div class="quiz-choice"><p class="small">C. A broken, unusable product</p></div><div class="quiz-choice"><p class="small">D. A marketing slogan</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3. During user testing you should blank."><h3>Q3. During user testing, you should ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Explain every feature in detail first</p></div><div class="quiz-choice"><p class="small">B. Observe silently and note where users struggle</p></div><div class="quiz-choice"><p class="small">C. Only test with your groupmates</p></div><div class="quiz-choice"><p class="small">D. Skip feedback collection</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4. Iteration means blank."><h3>Q4. Iteration means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Giving up after one failure</p></div><div class="quiz-choice"><p class="small">B. Improving the design based on test feedback (repeat the cycle)</p></div><div class="quiz-choice"><p class="small">C. Starting from scratch every time</p></div><div class="quiz-choice"><p class="small">D. Ignoring user feedback completely</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5. The best first prototype is usually blank."><h3>Q5. The best first prototype is usually ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. A fully coded application</p></div><div class="quiz-choice"><p class="small">B. A paper sketch or simple wireframe</p></div><div class="quiz-choice"><p class="small">C. A 100-page document</p></div><div class="quiz-choice"><p class="small">D. An expensive 3D model</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6. Zappos validated their idea by blank."><h3>Q6. Zappos validated their concept by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Building a massive warehouse first</p></div><div class="quiz-choice"><p class="small">B. Posting shoe photos online, buying from stores when ordered</p></div><div class="quiz-choice"><p class="small">C. Spending $10M on advertising</p></div><div class="quiz-choice"><p class="small">D. Hiring 500 employees immediately</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7. How many users are needed to find 85 percent of usability problems?"><h3>Q7. ____ users find 85% of usability problems.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. 1</p></div><div class="quiz-choice"><p class="small">B. 5</p></div><div class="quiz-choice"><p class="small">C. 50</p></div><div class="quiz-choice"><p class="small">D. 500</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8. Wizard of Oz testing means blank."><h3>Q8. "Wizard of Oz" testing means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Testing only with wizards</p></div><div class="quiz-choice"><p class="small">B. A human simulates system behavior behind the scenes</p></div><div class="quiz-choice"><p class="small">C. Using magic to fix bugs</p></div><div class="quiz-choice"><p class="small">D. Testing in a theater</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9. Prototyping principle number 1 is blank."><h3>Q9. Prototyping principle #1 is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Build to ship</p></div><div class="quiz-choice"><p class="small">B. Build to LEARN, not to keep</p></div><div class="quiz-choice"><p class="small">C. Build to impress</p></div><div class="quiz-choice"><p class="small">D. Build to sell immediately</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10. If testing reveals you're solving the wrong problem you should blank."><h3>Q10. If testing reveals wrong problem, you should ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Continue building anyway</p></div><div class="quiz-choice"><p class="small">B. Go BACK to Empathize/Define stages</p></div><div class="quiz-choice"><p class="small">C. Give up entirely</p></div><div class="quiz-choice"><p class="small">D. Blame the users</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11. Dropbox's MVP was blank."><h3>Q11. Dropbox's MVP was ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. A fully working cloud storage system</p></div><div class="quiz-choice"><p class="small">B. A 3-minute video showing the concept (no actual product)</p></div><div class="quiz-choice"><p class="small">C. A paper flyer distributed on campus</p></div><div class="quiz-choice"><p class="small">D. A mobile app with all features</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12. During testing the hardest part is blank."><h3>Q12. During testing, the hardest part is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Finding paper and pens</p></div><div class="quiz-choice"><p class="small">B. Staying SILENT when users struggle (not explaining)</p></div><div class="quiz-choice"><p class="small">C. Choosing colors</p></div><div class="quiz-choice"><p class="small">D. Writing code</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13. A clickable mockup takes approximately blank."><h3>Q13. A clickable mockup (Figma/Canva) takes ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. 5 minutes</p></div><div class="quiz-choice"><p class="small">B. 2-4 hours</p></div><div class="quiz-choice"><p class="small">C. 6 months</p></div><div class="quiz-choice"><p class="small">D. 2 years</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14. The final project requires blank level of prototype."><h3>Q14. Final project requires at minimum a ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Mental idea only (no visual)</p></div><div class="quiz-choice"><p class="small">B. Clickable mockup or working demo</p></div><div class="quiz-choice"><p class="small">C. Fully coded deployed application</p></div><div class="quiz-choice"><p class="small">D. 3D printed model</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15. The key insight from famous MVPs is blank. And that's our quiz! Great session today."><h3>Q15. The key insight from famous MVPs is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. You need millions in funding to start</p></div><div class="quiz-choice"><p class="small">B. Validate DEMAND before building the full product</p></div><div class="quiz-choice"><p class="small">C. Build everything first, then ask if people want it</p></div><div class="quiz-choice"><p class="small">D. Copy competitors exactly</p></div></div></div></div></div>
+
+<!-- End -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's Session 28 complete! You've now covered ALL 5 stages of Design Thinking. Next session we move to Digital Entrepreneurship: startups, business models, and how to turn your innovation into a real business. Start thinking about your final project ideas seriously now. The groups from today's workshop can potentially become your final project groups. See you next session! Ingat!">
+<div class="eyebrow">End of Session 28</div>
+<h1 style="margin-top:20px">Thank You! 🎓</h1>
+<p class="subtitle" style="margin-top:12px">Next: Digital Entrepreneurship (Session 29)</p>
+<div class="divider" style="margin:24px auto;width:200px"></div>
+<p class="small">📝 Start thinking about final project ideas seriously!</p>
+<p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide')),viewports=Array.from(document.querySelectorAll('.slide-viewport')),navDots=document.getElementById('navDots'),progressBar=document.getElementById('progressBar'),slideCounter=document.getElementById('slideCounter');
+let currentSlide=0,scriptWindow=null,answerWindow=null;
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Slide ${i+1}`);b.addEventListener('click',()=>goToSlide(i));navDots.appendChild(b);});
+function scaleSlides(){viewports.forEach(vp=>{const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${s})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=viewports.indexOf(e.target);if(i>=0){currentSlide=i;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>obs.observe(vp));
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+function updateUI(){const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;syncScript();}
+document.addEventListener('keydown',e=>{
+if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}
+if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}
+else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}
+else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
+else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
+else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
+else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+});
+let tY=0;document.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;});document.addEventListener('touchend',e=>{const d=tY-e.changedTouches[0].clientY;if(Math.abs(d)>50){d>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+function openTeacherScript(){if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');syncScript();}
+function syncScript(){if(!scriptWindow||scriptWindow.closed)return;const sl=slides[currentSlide];const sc=sl.getAttribute('data-script')||'(No script)';const t=sl.querySelector('h1,h2,h3');const tt=t?t.textContent:'Slide '+(currentSlide+1);scriptWindow.document.open();scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body><div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div><div class="slide-title">${tt}</div><div class="script-text">${sc}</div><div class="tip">💡 Auto-updates as you navigate.</div></body></html>`);scriptWindow.document.close();}
+function openAnswerKey(){if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');answerWindow.document.open();answerWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}.header h2{font-size:20px;font-weight:700}.header p{font-size:13px;opacity:0.8;margin-top:4px}.item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #2a2a3a}.item:last-child{border-bottom:none}.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}.answer{color:#2a9d8f;font-weight:700;font-size:18px}.rationale{color:#8a8a9a;font-size:14px;margin-top:4px}.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}</style></head><body><div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 28 Quiz • Teacher Only</p></div><div class="item"><span class="num">1.</span><div><span class="answer">B</span> – Learn quickly and test ideas cheaply.<div class="rationale">Prototypes = learn fast, fail cheap, NOT final product.</div></div></div><div class="item"><span class="num">2.</span><div><span class="answer">B</span> – Simplest version that delivers core value and enables learning.<div class="rationale">Not too much (wasted), not too little (can't test).</div></div></div><div class="item"><span class="num">3.</span><div><span class="answer">B</span> – Observe silently and note where users struggle.<div class="rationale">Don't explain; their confusion IS the data you need.</div></div></div><div class="item"><span class="num">4.</span><div><span class="answer">B</span> – Improving design based on test feedback (repeat cycle).<div class="rationale">Learn → improve → test again. Non-linear.</div></div></div><div class="item"><span class="num">5.</span><div><span class="answer">B</span> – Paper sketch or simple wireframe.<div class="rationale">Cheapest, fastest, reveals core issues immediately.</div></div></div><div class="item"><span class="num">6.</span><div><span class="answer">B</span> – Posting shoe photos online, buying from stores when ordered.<div class="rationale">Validated demand with zero inventory investment.</div></div></div><div class="item"><span class="num">7.</span><div><span class="answer">B</span> – 5 users.<div class="rationale">Nielsen Norman Group research: 5 users find 85% of problems.</div></div></div><div class="item"><span class="num">8.</span><div><span class="answer">B</span> – Human simulates system behavior behind the scenes.<div class="rationale">Named after the man behind the curtain in Wizard of Oz.</div></div></div><div class="item"><span class="num">9.</span><div><span class="answer">B</span> – Build to LEARN, not to keep.<div class="rationale">Expect to throw away; purpose is learning.</div></div></div><div class="item"><span class="num">10.</span><div><span class="answer">B</span> – Go BACK to Empathize/Define stages.<div class="rationale">Non-linear process; wrong problem = restart understanding.</div></div></div><div class="item"><span class="num">11.</span><div><span class="answer">B</span> – 3-minute video of concept (no actual product).<div class="rationale">Validated demand: 5K→75K signups from video alone.</div></div></div><div class="item"><span class="num">12.</span><div><span class="answer">B</span> – Staying SILENT when users struggle.<div class="rationale">Natural instinct is to help/explain; resist it for real data.</div></div></div><div class="item"><span class="num">13.</span><div><span class="answer">B</span> – 2-4 hours.<div class="rationale">Medium fidelity; good for testing interactions.</div></div></div><div class="item"><span class="num">14.</span><div><span class="answer">B</span> – Clickable mockup or working demo.<div class="rationale">Panel expects visual evidence of your concept.</div></div></div><div class="item"><span class="num">15.</span><div><span class="answer">B</span> – Validate DEMAND before building full product.<div class="rationale">Common pattern: prove people want it, THEN build it.</div></div></div><div class="warn">⚠️ TEACHER ONLY – Do not display to students</div></body></html>`);answerWindow.document.close();}
+updateUI();
+})();
+</script>
+</body>
+</html>

@@ -1480,7 +1480,7 @@ const scriptContent=`<html><head><title>Teacher Script - Session 24</title><styl
 <p class="stage">[End with genuine encouragement] "I'm impressed by how much you've learned this semester. Go crush that exam!"</p>
 
 </body></html>`;
-document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
+document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&e.ctrlKey&&e.shiftKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
 </script>
 </body>
 </html>

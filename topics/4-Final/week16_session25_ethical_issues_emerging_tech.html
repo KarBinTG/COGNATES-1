@@ -549,7 +549,7 @@ else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(cur
 else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}
 else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}
 else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}
-else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
+else if(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}
 });
 
 let touchStartY=0;

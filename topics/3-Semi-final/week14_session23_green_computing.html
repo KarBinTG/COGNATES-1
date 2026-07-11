@@ -1549,7 +1549,7 @@ const scriptContent=`<html><head><title>Teacher Script - Session 23</title><styl
 <div class="bisaya">Bisaya: "Reflection paper: 300-500 words. Personal tech carbon footprint, surprises, 3 actions, BSIS sustainability role. Due next session. Graded output ni for Green Computing topic."</div>
 
 </body></html>`;
-document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
+document.addEventListener('keydown',function(e){if((e.key==='T'||e.key==='t')&&e.ctrlKey&&e.shiftKey&&!e.metaKey&&!e.altKey){const w=window.open('','TeacherScript','width=900,height=700,scrollbars=yes');w.document.write(scriptContent);w.document.close()}});
 </script>
 </body>
 </html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-teacher-version>
+<head>
+<script src="../../../assets/js/teacher-gate.js"></script>
+<script>document.documentElement.classList.add('teacher-checking');</script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../../../cronasia-icon.png">
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = 'KarBin the Great';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 31: Smart Applications & Industry 4.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}:root{--bg:#0f0f12;--fg:#e8e6e3;--accent:#e63946;--accent2:#f4a261;--accent3:#2a9d8f;--card:#1a1a20;--card2:#222230;--muted:#8a8a9a;--border:#2a2a3a;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}html{scroll-snap-type:y mandatory;scroll-behavior:smooth;scrollbar-width:none}html::-webkit-scrollbar{display:none}body{font-family:var(--font);font-size:40px;line-height:1.5;color:var(--fg);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}.slide-viewport{width:100vw;height:100vh;height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.slide-scale{width:1920px;height:1080px;position:relative;transform-origin:center center}.slide{width:100%;height:100%;padding:70px 90px;display:flex;flex-direction:column;justify-content:center;gap:32px;position:relative;overflow:hidden}h1{font-size:96px;font-weight:900;line-height:1.05;letter-spacing:-2px}h2{font-size:64px;font-weight:800;line-height:1.1;letter-spacing:-1px}h3{font-size:48px;font-weight:700;line-height:1.2}h4{font-size:36px;font-weight:600}.eyebrow{font-size:22px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}.subtitle{font-size:32px;color:var(--muted)}p{font-size:36px;line-height:1.6}.small{font-size:28px}.tiny{font-size:22px;color:var(--muted)}strong{color:var(--accent)}em{color:var(--accent2)}ul,ol{padding-left:48px;display:flex;flex-direction:column;gap:18px}li{font-size:32px;line-height:1.5}li::marker{color:var(--accent)}table{width:100%;border-collapse:collapse;font-size:28px}th{background:var(--accent);color:#fff;padding:14px 18px;text-align:left;font-weight:600;font-size:24px}td{padding:12px 18px;border-bottom:1px solid var(--border);font-size:26px}tr:nth-child(even) td{background:var(--card)}tr:hover td{background:var(--card2)}.box{background:var(--card);border-radius:16px;padding:32px;border:1px solid var(--border)}.highlight-box{background:linear-gradient(135deg,rgba(230,57,70,0.1),rgba(244,162,97,0.05));border:1px solid rgba(230,57,70,0.3);border-radius:16px;padding:28px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:28px}.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}.flex-col{display:flex;flex-direction:column;gap:14px}.stat-big{font-size:72px;font-weight:900;color:var(--accent);line-height:1}.stat-label{font-size:22px;color:var(--muted);margin-top:6px}.tag{display:inline-block;background:var(--accent);color:#fff;padding:6px 16px;border-radius:8px;font-size:22px;font-weight:600}.divider{width:100%;height:2px;background:linear-gradient(90deg,var(--accent),transparent);margin:10px 0}.qa-pause{background:linear-gradient(135deg,rgba(42,157,143,0.15),rgba(42,157,143,0.05));border:2px dashed var(--accent3);border-radius:20px;padding:44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}.qa-pause h3{color:var(--accent3)}.quiz-choice{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 24px;transition:background .2s}.quiz-choice:hover{background:var(--card2)}.nav-dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:5px;z-index:100}.nav-dots button{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--fg);background:transparent;cursor:pointer;padding:0;opacity:0.3;transition:all .3s}.nav-dots button.active{background:var(--accent);border-color:var(--accent);opacity:1;transform:scale(1.4)}.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:200;transition:width .3s ease}.slide-counter{position:fixed;bottom:20px;right:24px;font-size:16px;color:var(--muted);font-family:var(--mono);z-index:100}@media(max-width:1200px){body{font-size:34px}h1{font-size:72px}h2{font-size:50px}h3{font-size:38px}p{font-size:30px}li{font-size:28px}td,th{font-size:22px}.grid-2{grid-template-columns:1fr}}@media(max-width:768px){body{font-size:28px}h1{font-size:48px}h2{font-size:38px}h3{font-size:30px}p{font-size:24px}li{font-size:22px}.slide{padding:28px 20px;gap:16px}.grid-2,.grid-3{grid-template-columns:1fr}.nav-dots{display:none}}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- S1 Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="justify-content:center;text-align:center" data-script="Good morning class! This is one of the most important sessions sa entire course. Why? Because Industry 4.0 is where EVERYTHING we studied COMES TOGETHER. AI, IoT, Cloud, Big Data, Cybersecurity, Blockchain, XR, Robotics, 5G, Green Computing, all of it. They don't exist in isolation. In the real world, they work TOGETHER as an integrated system. Today I'll show you how these technologies CONVERGE to create smart factories, smart farms, smart hospitals, and smart cities. After today, you'll understand WHY we studied each topic and how they CONNECT. This is the big picture session. Let's go!">
+<div class="eyebrow">COGNATES 6 • IS Innovation & New Technologies • Week 19</div>
+<h1 style="margin-top:20px">Smart Applications &<br><span style="color:var(--accent)">Industry 4.0</span></h1>
+<p class="subtitle" style="margin-top:16px">Session 31 • Finals Period • 1 to 1.5 Hours</p>
+<div style="margin-top:32px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><span class="tag">Convergence</span><span class="tag" style="background:var(--accent2);color:#111">Smart Systems</span><span class="tag" style="background:var(--accent3)">Digital Twin</span><span class="tag">Industry 4.0</span></div>
+<p class="tiny" style="margin-top:40px">Instructor: Carvin Paul G. Tampos • Cronasia Foundation College, Inc.</p>
+</div></div></div>
+
+<!-- S2 Objectives -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Five objectives. One: define Industry 4.0 and its enabling technologies. Two: explain smart manufacturing concepts like digital twins and predictive maintenance. Three: describe smart agriculture applications relevant to GenSan. Four: identify smart healthcare innovations. Five: connect ALL course technologies into the Industry 4.0 framework. By the end, you'll see how every technology we studied plays a specific ROLE in the bigger picture.">
+<div class="eyebrow">Session Objectives</div><h2>Learning Objectives</h2><div class="divider"></div>
+<ol style="gap:24px;margin-top:12px"><li><strong>Define</strong> Industry 4.0 and its enabling technologies</li><li><strong>Explain</strong> smart manufacturing (digital twins, predictive maintenance)</li><li><strong>Describe</strong> smart agriculture applications (GenSan relevance)</li><li><strong>Identify</strong> smart healthcare innovations</li><li><strong>Connect</strong> ALL course technologies into the Industry 4.0 framework</li></ol>
+</div></div></div>
+
+<!-- S3 What is Industry 4.0 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="What IS Industry 4.0? The FOURTH industrial revolution. Let me give you context. Industry 1.0 in the 1780s: steam power mechanized production. Industry 2.0 in the 1870s: electricity enabled mass production. Assembly lines, Henry Ford. Industry 3.0 in the 1970s: computers automated production. CNC machines, PLCs. Industry 4.0, now: AI, IoT, cloud, robotics, and other smart technologies INTEGRATE into interconnected systems that communicate, analyze, and act AUTONOMOUSLY. The key word: INTEGRATION. Not just one technology, but ALL of them working together as ONE intelligent system.">
+<h2>What Is Industry 4.0?</h2><div class="divider"></div>
+<div class="highlight-box"><p style="font-size:32px">The <strong>fourth industrial revolution</strong>: integrating AI, IoT, cloud, big data, robotics, XR, and 5G into interconnected smart systems that communicate, analyze, and act autonomously.</p></div>
+<table style="margin-top:20px">
+<tr><th>Era</th><th>Technology</th><th>Impact</th><th>Key Word</th></tr>
+<tr><td><strong>1.0</strong> (1780s)</td><td>Steam power</td><td>Mechanized production</td><td>Mechanization</td></tr>
+<tr><td><strong>2.0</strong> (1870s)</td><td>Electricity</td><td>Mass production</td><td>Electrification</td></tr>
+<tr><td><strong>3.0</strong> (1970s)</td><td>Computers</td><td>Automated production</td><td>Automation</td></tr>
+<tr><td><strong>4.0</strong> (2010s+)</td><td>AI, IoT, Cloud, Robots</td><td>Smart connected systems</td><td><strong>Integration</strong></td></tr>
+</table>
+</div></div></div>
+
+<!-- S4 Technology Stack -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Here's the beautiful thing: EVERY topic we covered this semester has a ROLE in Industry 4.0. AI provides intelligence and prediction. IoT provides sensing and data collection. Cloud computing provides storage and processing power. Big Data provides analytics and insights. Cybersecurity protects all these connected systems. Blockchain provides trust and traceability. XR provides visualization and training. Robotics provides physical automation. 5G provides connectivity and speed. Green Computing ensures sustainability. Ethics guides all decisions. See? Nothing was random. It was all building toward this moment of convergence.">
+<h2>The Technology Stack</h2><div class="divider"></div>
+<p class="small" style="margin-bottom:8px">Every course topic has a role. Nothing was random.</p>
+<table style="font-size:26px">
+<tr><th>Technology</th><th>Role in Industry 4.0</th><th>Week Covered</th></tr>
+<tr><td><strong>AI/ML</strong></td><td>Intelligence and prediction</td><td>Week 3</td></tr>
+<tr><td><strong>IoT</strong></td><td>Sensing and data collection</td><td>Week 4</td></tr>
+<tr><td><strong>Cloud</strong></td><td>Storage and processing</td><td>Week 6</td></tr>
+<tr><td><strong>Big Data</strong></td><td>Analytics and insights</td><td>Week 7</td></tr>
+<tr><td><strong>Cybersecurity</strong></td><td>Protection of systems</td><td>Week 8</td></tr>
+<tr><td><strong>Blockchain</strong></td><td>Trust and traceability</td><td>Week 9</td></tr>
+<tr><td><strong>XR</strong></td><td>Visualization and training</td><td>Week 11</td></tr>
+<tr><td><strong>Robotics</strong></td><td>Physical automation</td><td>Week 12</td></tr>
+<tr><td><strong>5G + Edge</strong></td><td>Connectivity and speed</td><td>Week 13</td></tr>
+<tr><td><strong>Green Computing</strong></td><td>Sustainability</td><td>Week 14</td></tr>
+</table>
+</div></div></div>
+
+<!-- S5 How They Connect -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Here's how they connect as a FLOW. IoT GENERATES data from the physical world through sensors. 5G TRANSMITS that data at ultra-low latency. Cloud and Edge STORES and PROCESSES it. AI ANALYZES it and makes decisions. Big Data provides the SCALE to handle massive volumes. Robotics ACTS on those decisions in the physical world. XR VISUALIZES complex information for humans. Blockchain VERIFIES trust between parties. Cybersecurity PROTECTS everything from attacks. Green Computing ensures it's all SUSTAINABLE. And Ethics GUIDES all decisions about what to build and how. One chain, one system, one revolution.">
+<h2>How Everything Connects</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">📡</span><div>IoT <strong>GENERATES</strong> data from physical world</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">⚡</span><div>5G <strong>TRANSMITS</strong> at ultra-low latency</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">☁️</span><div>Cloud/Edge <strong>STORES & PROCESSES</strong></div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">🧠</span><div>AI <strong>ANALYZES & DECIDES</strong></div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">🤖</span><div>Robotics <strong>ACTS</strong> in physical world</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">👓</span><div>XR <strong>VISUALIZES</strong> for human understanding</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="font-size:28px">🔗</span><div>Blockchain <strong>VERIFIES</strong> trust • Cybersecurity <strong>PROTECTS</strong> • Green IT ensures <strong>SUSTAINABILITY</strong></div></div>
+</div>
+</div></div></div>
+
+<!-- S6 Q&A 1 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Quick check! Can you think of ONE system you use daily that already combines multiple technologies from our course? Hint: your PHONE. IoT sensors (GPS, accelerometer, camera). 5G connectivity. Cloud storage (Google Photos). AI (face unlock, autocorrect, recommendations). Big Data (your usage patterns analyzed). Cybersecurity (fingerprint, encryption). That's 6 technologies in your POCKET. Industry 4.0 is just doing this at FACTORY and CITY scale. What other examples can you think of? 2 minutes, share with seatmate.">
+<div class="qa-pause"><h3>⏸️ Quick Think</h3><p style="font-size:34px;font-weight:600">Name ONE system you use daily that combines<br><em>multiple</em> course technologies.</p><p class="small">Hint: your phone already uses IoT + 5G + Cloud + AI + Big Data + Cybersecurity</p><p class="tiny" style="margin-top:12px">💬 What other examples? (2 min)</p></div>
+</div></div></div>
+
+<!-- S7 Smart Manufacturing -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Smart Manufacturing. This is Industry 4.0 applied to factories. Five key concepts. Digital Twin: a virtual copy of your factory, synced in real-time. Any change in the physical factory updates the digital version. You can TEST modifications virtually before implementing physically. Saves millions. Predictive Maintenance: IoT sensors plus AI predict equipment failures BEFORE they happen. Instead of waiting for a machine to break, you fix it when sensors detect early warning signs. Reduces downtime by 50%. Quality 4.0: AI-powered vision systems inspect EVERY product. Zero defects. Lights-out Factory: fully automated, no humans needed. 24/7 production. Mass Customization: flexible robots produce custom orders at mass-production efficiency.">
+<h2>Smart Manufacturing</h2><div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Concept</th><th>How It Works</th><th>Benefit</th></tr>
+<tr><td><strong>Digital Twin</strong></td><td>Virtual replica synced with real factory</td><td>Test changes virtually, save millions</td></tr>
+<tr><td><strong>Predictive Maintenance</strong></td><td>IoT sensors + AI predict failures</td><td>50% less downtime</td></tr>
+<tr><td><strong>Quality 4.0</strong></td><td>AI vision inspects every product</td><td>Zero-defect manufacturing</td></tr>
+<tr><td><strong>Lights-out Factory</strong></td><td>Fully automated, no humans</td><td>24/7 production</td></tr>
+<tr><td><strong>Mass Customization</strong></td><td>Flexible robots, custom orders</td><td>Unique products at mass scale</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px">PH: Samsung PEZA factories already automating. Toyota PH using predictive maintenance.</p></div>
+</div></div></div>
+
+<!-- S8 Digital Twin Deep Dive -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Digital Twin in more detail. Imagine you have a PERFECT virtual copy of a physical system. A factory, a city, a building, a human body. Changes in the REAL world automatically update the DIGITAL version via IoT sensors. And you can simulate changes DIGITALLY before applying them PHYSICALLY. Example: Before rearranging a factory floor, you test the new layout in the digital twin. Will it improve efficiency? Will workers collide? Will material flow be smooth? Test virtually, THEN implement. Singapore has a digital twin of the ENTIRE city. They simulate traffic changes, building placement, even weather effects before making real decisions. GE uses digital twins for jet engines: every engine has a virtual copy that monitors health in real-time.">
+<h2>Digital Twin: Deep Dive</h2><div class="divider"></div>
+<div class="grid-2" style="margin-top:12px">
+<div class="flex-col" style="gap:16px">
+<div class="highlight-box"><p style="font-size:28px"><strong>Digital Twin:</strong> Real-time virtual replica of a physical system. Changes in real world update digital. Test modifications virtually before applying physically.</p></div>
+<div class="box"><h4 style="font-size:28px;color:var(--accent2)">How It Works</h4>
+<ul style="gap:10px"><li style="font-size:24px">IoT sensors collect real-time data</li><li style="font-size:24px">Data feeds into virtual model</li><li style="font-size:24px">AI runs simulations on virtual model</li><li style="font-size:24px">Results applied to physical system</li></ul></div>
+</div>
+<div class="flex-col" style="gap:16px">
+<div class="box"><h4 style="font-size:28px;color:var(--accent3)">Real Examples</h4>
+<ul style="gap:10px"><li style="font-size:24px"><strong>Singapore:</strong> Digital twin of entire city</li><li style="font-size:24px"><strong>GE:</strong> Every jet engine has virtual copy</li><li style="font-size:24px"><strong>Siemens:</strong> Factory simulation before building</li><li style="font-size:24px"><strong>Tesla:</strong> Every car has digital twin for updates</li></ul></div>
+<div class="box" style="text-align:center;padding:24px"><div class="stat-big" style="font-size:56px">$48B</div><p class="stat-label">Digital twin market by 2026</p></div>
+</div>
+</div>
+</div></div></div>
+
+<!-- S9 Smart Agriculture -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Smart Agriculture. This is SUPER relevant for us in GenSan and Region 12. Agriculture is 25% of Philippine workforce pero has minimal tech adoption. HUGE opportunity. Precision farming: IoT soil sensors measure moisture, pH, nutrients. AI determines exact amount of water and fertilizer needed for each section. Result: 30-50% LESS water and fertilizer used, HIGHER yield. Crop monitoring: drones with cameras fly over fields. Computer vision detects disease, pest damage, or nutrient deficiency EARLY. Before a human eye would notice. Supply chain tracking with blockchain: for GenSan tuna, from the moment a fish is caught, every step is recorded immutably. Japanese buyers can scan a QR code and see the ENTIRE verified history of their tuna.">
+<h2>Smart Agriculture 🌾</h2><div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Application</th><th>Technologies Used</th><th>Impact</th></tr>
+<tr><td><strong>Precision Farming</strong></td><td>IoT sensors + AI + drones</td><td>30-50% less water/fertilizer, higher yield</td></tr>
+<tr><td><strong>Crop Monitoring</strong></td><td>Computer vision + drones</td><td>Early disease detection (before human eye)</td></tr>
+<tr><td><strong>Supply Chain Tracking</strong></td><td>Blockchain + IoT</td><td>Verified origin, freshness (GenSan tuna!)</td></tr>
+<tr><td><strong>Climate Prediction</strong></td><td>Big Data + AI</td><td>Optimized planting schedules</td></tr>
+<tr><td><strong>Autonomous Equipment</strong></td><td>Robotics + GPS + 5G</td><td>24/7 farming, labor shortage solution</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px"><strong>GenSan opportunity:</strong> Tuna blockchain traceability. Rice precision farming in South Cotabato. Coconut yield optimization.</p></div>
+</div></div></div>
+
+<!-- S10 GenSan Tuna Case -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Let me paint the picture for GenSan tuna specifically. This is a REAL Industry 4.0 opportunity in YOUR city. Step 1: Fisher catches tuna. IoT sensors on the boat record GPS location, time, weight, water temperature. Step 2: Processing plant. IoT monitors handling temperature, quality inspection via AI vision. Step 3: Cold chain transport. IoT temperature sensors ensure fish stays at correct temperature throughout. Step 4: Export customs. Blockchain records inspection, clearance automatically. Step 5: Restaurant in Tokyo. Chef scans QR code, sees ENTIRE verified history. Where it was caught, how it was handled, temperature throughout. That's Industry 4.0 applied to YOUR local economy. And nobody is doing this well yet in GenSan. Opportunity is OPEN.">
+<h2>Case: GenSan Tuna Supply Chain</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:60px">Step 1</span><div style="font-size:26px"><strong>Catch:</strong> IoT on boat → GPS, time, weight, water temp recorded</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent2);font-weight:800;font-size:24px;min-width:60px">Step 2</span><div style="font-size:26px"><strong>Processing:</strong> IoT temp monitoring + AI quality inspection</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:var(--accent3);font-weight:800;font-size:24px;min-width:60px">Step 3</span><div style="font-size:26px"><strong>Transport:</strong> IoT cold chain sensors (correct temp throughout)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:#b388ff;font-weight:800;font-size:24px;min-width:60px">Step 4</span><div style="font-size:26px"><strong>Customs:</strong> Blockchain auto-records inspection & clearance</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:20px"><span style="color:#a8dadc;font-weight:800;font-size:24px;min-width:60px">Step 5</span><div style="font-size:26px"><strong>Tokyo restaurant:</strong> QR scan → full verified history displayed</div></div>
+</div>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px">Nobody doing this well in GenSan yet. <strong>Opportunity is OPEN.</strong></p></div>
+</div></div></div>
+
+<!-- S11 Smart Healthcare -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Smart Healthcare. Remote surgery using 5G plus robotics plus XR. A specialist in Manila can operate on a patient in GenSan using a robotic arm with 1 millisecond latency. AI diagnostics: AI detects diseases from X-rays, CT scans, even retinal photos with accuracy matching or exceeding human doctors. Wearable monitoring: your smartwatch continuously tracks heart rate, blood oxygen, sleep. Alerts you AND your doctor if something abnormal. Drug discovery: AI analyzes millions of molecular combinations in days instead of years. VR therapy: proven effective for PTSD, phobias, pain management. Philippine relevance: doctor shortage in provinces. Telemedicine growing. PhilHealth digitizing. This is where tech saves actual lives.">
+<h2>Smart Healthcare 🏥</h2><div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Application</th><th>Technologies</th><th>Impact</th></tr>
+<tr><td><strong>Remote Surgery</strong></td><td>5G + Robotics + XR</td><td>Specialist operates from anywhere</td></tr>
+<tr><td><strong>AI Diagnostics</strong></td><td>AI + Big Data</td><td>Detect disease from scans (= human accuracy)</td></tr>
+<tr><td><strong>Wearable Monitoring</strong></td><td>IoT + Cloud</td><td>Continuous health tracking + alerts</td></tr>
+<tr><td><strong>Drug Discovery</strong></td><td>AI + Big Data</td><td>Millions of combinations in days vs years</td></tr>
+<tr><td><strong>VR Therapy</strong></td><td>XR + AI</td><td>PTSD, phobias, pain management</td></tr>
+<tr><td><strong>Smart Hospitals</strong></td><td>IoT + AI + Cloud</td><td>Automated logistics, scheduling</td></tr>
+</table>
+<p class="tiny" style="margin-top:12px;text-align:center">PH relevance: Doctor shortage in provinces. Telemedicine growing. Tech saves lives.</p>
+</div></div></div>
+
+<!-- S12 Smart Cities -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Smart Cities. Entire urban infrastructure connected and intelligent. Smart traffic: IoT sensors plus AI analyze traffic flow in real-time. Adjust signal timing automatically. Reduce congestion 20-30%. Smart energy: IoT on the power grid detects demand patterns. AI optimizes distribution. Reduces waste. Smart security: AI cameras with edge computing detect anomalies instantly. Alert authorities in seconds. Smart waste: sensors in garbage bins tell collectors which bins are full. No more collecting half-empty bins or overflowing ones. Smart buildings: IoT controls heating, cooling, lighting based on occupancy. Saves 30-40% energy. In the Philippines, we're early but growing. MMDA smart traffic. Meralco smart meters. BGC smart city features.">
+<h2>Smart Cities 🏙️</h2><div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>System</th><th>Technologies</th><th>Benefit</th></tr>
+<tr><td><strong>Smart Traffic</strong></td><td>IoT + AI + 5G</td><td>20-30% less congestion</td></tr>
+<tr><td><strong>Smart Energy</strong></td><td>IoT + AI + Cloud</td><td>Optimized grid, reduced waste</td></tr>
+<tr><td><strong>Smart Security</strong></td><td>AI + Cameras + Edge</td><td>Instant anomaly detection</td></tr>
+<tr><td><strong>Smart Waste</strong></td><td>IoT sensors in bins</td><td>Efficient collection routes</td></tr>
+<tr><td><strong>Smart Buildings</strong></td><td>IoT + AI</td><td>30-40% energy savings</td></tr>
+<tr><td><strong>Smart Water</strong></td><td>IoT + AI</td><td>Leak detection, quality monitoring</td></tr>
+</table>
+<p class="tiny" style="margin-top:12px;text-align:center">PH: MMDA smart traffic, Meralco smart meters, BGC features. Growing fast.</p>
+</div></div></div>
+
+<!-- S13 Q&A 2 -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Graded activity! Choose one smart application area: manufacturing, agriculture, healthcare, or city. Analyze for GenSan or Region 12 specifically. Questions to answer: Which technologies combine? What data is generated? What decisions are automated? What remains human? Is it feasible in Philippine context? What's the biggest barrier? Groups of 3-4, present your analysis in 3 minutes. You have 10 minutes to prepare. This is practice for your final project thinking. Go!">
+<div class="qa-pause"><h3>🛠️ Case Study Analysis (Graded)</h3><p style="font-size:28px;font-weight:600">Choose: Manufacturing | Agriculture | Healthcare | Smart City</p><p class="small">Analyze for GenSan / Region 12 specifically.</p>
+<div style="margin-top:12px;text-align:left;max-width:800px">
+<ul style="gap:8px;padding-left:24px"><li style="font-size:22px">Which technologies combine?</li><li style="font-size:22px">What data is generated?</li><li style="font-size:22px">What decisions are automated?</li><li style="font-size:22px">What remains human?</li><li style="font-size:22px">PH feasibility? Biggest barrier?</li></ul>
+</div><p class="tiny" style="margin-top:12px">⏱️ 10 min prepare, 3 min present per group</p></div>
+</div></div></div>
+
+<!-- S14 PH Readiness -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Philippine Industry 4.0 readiness. Let's be honest about where we are. Internet connectivity: 76% penetration but speed ranks 47th globally. Rural gaps remain. Digital workforce: growing fast, BPO experience helps, but need higher-level tech skills. Government support: DTI has Inclusive Innovation Strategy pero implementation is slow. Startup ecosystem: growing with QBO, IdeaSpace, but limited VC compared to neighbors like Singapore. Manufacturing: PEZA zones automating pero SMEs far behind. Education: CHED updating curricula pero gap between teaching and industry needs. The biggest challenges for us: infrastructure in provinces, cost for SMEs, workforce skills gap. But these are also OPPORTUNITIES for YOU as BSIS graduates.">
+<h2>Philippine Industry 4.0 Readiness</h2><div class="divider"></div>
+<table style="margin-top:12px">
+<tr><th>Factor</th><th>Status</th><th>Gap</th></tr>
+<tr><td><strong>Internet</strong></td><td>76% penetration</td><td>Speed #47, rural gaps</td></tr>
+<tr><td><strong>Workforce</strong></td><td>Growing (BPO base)</td><td>Need higher-level tech skills</td></tr>
+<tr><td><strong>Gov't Support</strong></td><td>DTI Innovation Strategy</td><td>Implementation slow</td></tr>
+<tr><td><strong>Startups</strong></td><td>Growing ecosystem</td><td>Limited VC vs neighbors</td></tr>
+<tr><td><strong>Manufacturing</strong></td><td>PEZA zones automating</td><td>SMEs (99%) far behind</td></tr>
+<tr><td><strong>Education</strong></td><td>CHED updating</td><td>Gap: teaching vs industry</td></tr>
+</table>
+<div class="highlight-box" style="margin-top:12px;text-align:center"><p style="font-size:26px">Challenges = <strong>opportunities</strong> for BSIS graduates who understand both tech AND local context.</p></div>
+</div></div></div>
+
+<!-- S15 Your BSIS Role -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Your role as BSIS graduates in Industry 4.0. You understand the FULL technology landscape. That's rare. You can EVALUATE which technology fits which problem. Not everything needs AI. Not everything needs blockchain. You bridge BUSINESS and TECHNOLOGY. Pure CS people often can't talk to business owners. Pure business people can't evaluate tech. You do both. You think ETHICALLY about implementation. Privacy, fairness, sustainability. You design with USERS at the center through Design Thinking. And you're prepared for a rapidly changing world because you understand the PRINCIPLES, not just current tools. Tools change. Principles remain. That's your BSIS advantage.">
+<h2>Your BSIS Role in Industry 4.0</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:22px"><span style="font-size:28px">🌐</span><div>Understand <strong>FULL technology landscape</strong> (rare!)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:22px"><span style="font-size:28px">🔍</span><div><strong>Evaluate</strong> which tech fits which problem (not everything needs AI)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:22px"><span style="font-size:28px">🌉</span><div><strong>Bridge</strong> business AND technology (unique value)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:22px"><span style="font-size:28px">⚖️</span><div>Think <strong>ETHICALLY</strong> about implementation</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:22px"><span style="font-size:28px">👤</span><div>Design with <strong>USERS at center</strong> (Design Thinking)</div></div>
+<div class="box" style="display:flex;align-items:center;gap:16px;padding:22px"><span style="font-size:28px">🚀</span><div>Prepared for change: understand <strong>principles</strong>, not just current tools</div></div>
+</div>
+</div></div></div>
+
+<!-- S16 Summary -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Key takeaways. Industry 4.0 is the CONVERGENCE of all emerging technologies we studied. Every technology has a specific role: IoT senses, 5G transmits, Cloud stores, AI decides, Robotics acts. Smart manufacturing: digital twins, predictive maintenance, zero-defect production. Smart agriculture: precision farming, drone monitoring, blockchain traceability. Directly relevant to GenSan tuna and Region 12 farming. Smart healthcare: remote surgery, AI diagnostics, wearable monitoring. Philippines is early but growing. Challenges equal opportunities for YOU. Next session: we synthesize everything and prepare for your final exam and project.">
+<h2>Key Takeaways</h2><div class="divider"></div>
+<div style="display:flex;flex-direction:column;gap:11px;margin-top:8px">
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">1.</span><p class="small">Industry 4.0 = <strong>CONVERGENCE</strong> of all course technologies</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">2.</span><p class="small">Each tech has a role: IoT senses → 5G transmits → Cloud stores → AI decides → Robots act</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">3.</span><p class="small">Digital twins: test virtually before implementing physically</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">4.</span><p class="small">Smart agriculture: <strong>GenSan tuna + Region 12 farming</strong> = direct opportunity</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">5.</span><p class="small">Smart healthcare: tech saves lives in underserved areas</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">6.</span><p class="small">PH challenges = opportunities for BSIS graduates</p></div>
+<div style="display:flex;gap:14px;align-items:baseline"><span style="color:var(--accent);font-weight:800;font-size:24px;min-width:28px">7.</span><p class="small">Your advantage: full landscape + business bridge + ethics + user-centered</p></div>
+</div>
+</div></div></div>
+
+<!-- S17 Quiz Title -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="Quiz! 15 items on Industry 4.0, smart systems, and technology convergence.">
+<div class="eyebrow">Session 31</div><h1 style="color:var(--accent);margin-top:16px">Quiz Time 📝</h1><p class="subtitle">15 Items • Multiple Choice</p>
+</div></div></div>
+
+<!-- Quiz 15 items -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 1."><h3>Q1. Industry 4.0 is characterized by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Steam power</p></div><div class="quiz-choice"><p class="small">B. Integration of AI, IoT, cloud, robotics, and other smart technologies</p></div><div class="quiz-choice"><p class="small">C. Manual labor only</p></div><div class="quiz-choice"><p class="small">D. Paper-based processes</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 2."><h3>Q2. A Digital Twin is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. An identical physical copy</p></div><div class="quiz-choice"><p class="small">B. A real-time virtual replica synced with the physical system</p></div><div class="quiz-choice"><p class="small">C. A twin sibling in tech</p></div><div class="quiz-choice"><p class="small">D. A backup hard drive</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 3."><h3>Q3. Predictive maintenance reduces downtime by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. 10%</p></div><div class="quiz-choice"><p class="small">B. 25%</p></div><div class="quiz-choice"><p class="small">C. 50%</p></div><div class="quiz-choice"><p class="small">D. 100%</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 4."><h3>Q4. In the technology stack, IoT's role is to ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Process data</p></div><div class="quiz-choice"><p class="small">B. Sense and collect data from the physical world</p></div><div class="quiz-choice"><p class="small">C. Make ethical decisions</p></div><div class="quiz-choice"><p class="small">D. Generate revenue</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 5."><h3>Q5. Smart agriculture uses precision farming to ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Use MORE water and fertilizer</p></div><div class="quiz-choice"><p class="small">B. Use 30-50% LESS resources through sensor-guided optimization</p></div><div class="quiz-choice"><p class="small">C. Eliminate all farming</p></div><div class="quiz-choice"><p class="small">D. Replace farmers with robots completely</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 6."><h3>Q6. The most relevant Industry 4.0 application for GenSan is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Space exploration</p></div><div class="quiz-choice"><p class="small">B. Smart fishing/agriculture with IoT + blockchain supply chain</p></div><div class="quiz-choice"><p class="small">C. Nuclear power</p></div><div class="quiz-choice"><p class="small">D. Luxury fashion</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 7."><h3>Q7. In Industry 4.0, AI's specific role is to ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Generate electricity</p></div><div class="quiz-choice"><p class="small">B. Analyze data and make intelligent decisions</p></div><div class="quiz-choice"><p class="small">C. Build physical products</p></div><div class="quiz-choice"><p class="small">D. Provide internet access</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 8."><h3>Q8. "Lights-out factory" means ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Factory has power outage</p></div><div class="quiz-choice"><p class="small">B. Fully automated production without human workers present</p></div><div class="quiz-choice"><p class="small">C. Energy-saving light switches</p></div><div class="quiz-choice"><p class="small">D. Factory is closed permanently</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 9."><h3>Q9. Blockchain's role in smart agriculture is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Watering crops</p></div><div class="quiz-choice"><p class="small">B. Verifying supply chain traceability (origin to consumer)</p></div><div class="quiz-choice"><p class="small">C. Replacing soil</p></div><div class="quiz-choice"><p class="small">D. Generating weather</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 10."><h3>Q10. The biggest Industry 4.0 challenge for PH SMEs is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Too many skilled workers</p></div><div class="quiz-choice"><p class="small">B. Cost of adoption (expensive smart systems)</p></div><div class="quiz-choice"><p class="small">C. Perfect infrastructure</p></div><div class="quiz-choice"><p class="small">D. Excess funding</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 11."><h3>Q11. Smart healthcare's remote surgery requires ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Only a phone call</p></div><div class="quiz-choice"><p class="small">B. 5G (1ms latency) + Robotics + XR visualization</p></div><div class="quiz-choice"><p class="small">C. Only email</p></div><div class="quiz-choice"><p class="small">D. Paper instructions</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 12."><h3>Q12. Industry 3.0 was characterized by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Steam power</p></div><div class="quiz-choice"><p class="small">B. Electricity</p></div><div class="quiz-choice"><p class="small">C. Computers and automation</p></div><div class="quiz-choice"><p class="small">D. AI and IoT</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 13."><h3>Q13. Smart city traffic systems reduce congestion by ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. 1-2%</p></div><div class="quiz-choice"><p class="small">B. 20-30%</p></div><div class="quiz-choice"><p class="small">C. 90%</p></div><div class="quiz-choice"><p class="small">D. They increase congestion</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Number 14."><h3>Q14. The BSIS advantage in Industry 4.0 is ____.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. Only knowing one technology</p></div><div class="quiz-choice"><p class="small">B. Understanding full landscape + bridging business and technology</p></div><div class="quiz-choice"><p class="small">C. Avoiding all technology</p></div><div class="quiz-choice"><p class="small">D. Only memorizing definitions</p></div></div></div></div></div>
+
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" data-script="Last one! Number 15."><h3>Q15. The digital twin market is projected to reach ____ by 2026.</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:14px"><div class="quiz-choice"><p class="small">A. $1 billion</p></div><div class="quiz-choice"><p class="small">B. $48 billion</p></div><div class="quiz-choice"><p class="small">C. $500 million</p></div><div class="quiz-choice"><p class="small">D. $1 trillion</p></div></div></div></div></div>
+
+<!-- End -->
+<div class="slide-viewport"><div class="slide-scale"><div class="slide" style="text-align:center;justify-content:center" data-script="That's Session 31! Next and FINAL content session: we synthesize the entire course, review for the final exam, and do your final project dry runs. Then Week 20 is your final presentation and exam. The finish line is near! Keep working on those projects. See you, ingat!">
+<div class="eyebrow">End of Session 31</div><h1 style="margin-top:20px">Thank You! 🎓</h1><p class="subtitle" style="margin-top:12px">Next: Course Synthesis & Final Prep (Session 32)</p><div class="divider" style="margin:24px auto;width:200px"></div><p class="small">📝 Final project presentations: Week 20. Prepare NOW!</p><p class="tiny" style="margin-top:32px">COGNATES 6 • Cronasia Foundation College</p>
+</div></div></div>
+
+<nav class="nav-dots" id="navDots"></nav><div class="slide-counter" id="slideCounter"></div>
+
+<script>
+(function(){
+'use strict';
+const slides=Array.from(document.querySelectorAll('.slide')),viewports=Array.from(document.querySelectorAll('.slide-viewport')),navDots=document.getElementById('navDots'),progressBar=document.getElementById('progressBar'),slideCounter=document.getElementById('slideCounter');
+let currentSlide=0,scriptWindow=null,answerWindow=null;
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label',`Slide ${i+1}`);b.addEventListener('click',()=>goToSlide(i));navDots.appendChild(b);});
+function scaleSlides(){viewports.forEach(vp=>{const s=Math.min(vp.clientWidth/1920,vp.clientHeight/1080);const ss=vp.querySelector('.slide-scale');if(ss)ss.style.transform=`scale(${s})`;});}
+scaleSlides();window.addEventListener('resize',scaleSlides);
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const i=viewports.indexOf(e.target);if(i>=0){currentSlide=i;updateUI();}}});},{threshold:0.5});
+viewports.forEach(vp=>obs.observe(vp));
+function goToSlide(i){if(i>=0&&i<viewports.length){viewports[i].scrollIntoView({behavior:'smooth'});currentSlide=i;updateUI();}}
+function updateUI(){const dots=navDots.querySelectorAll('button');dots.forEach((d,i)=>d.classList.toggle('active',i===currentSlide));progressBar.style.width=((currentSlide+1)/slides.length*100)+'%';slideCounter.textContent=`${currentSlide+1} / ${slides.length}`;syncScript();}
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();openAnswerKey();return;}if(e.key==='ArrowDown'||e.key==='ArrowRight'||e.key===' '){e.preventDefault();goToSlide(currentSlide+1);}else if(e.key==='ArrowUp'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(currentSlide-1);}else if(e.key==='Home'||e.key.toLowerCase()==='r'){e.preventDefault();goToSlide(0);}else if(e.key==='End'){e.preventDefault();goToSlide(slides.length-1);}else if(e.key.toLowerCase()==='f'){e.preventDefault();document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();}else if(e.key.toLowerCase()==='t'){e.preventDefault();openTeacherScript();}});
+let tY=0;document.addEventListener('touchstart',e=>{tY=e.touches[0].clientY;});document.addEventListener('touchend',e=>{const d=tY-e.changedTouches[0].clientY;if(Math.abs(d)>50){d>0?goToSlide(currentSlide+1):goToSlide(currentSlide-1);}});
+function openTeacherScript(){if(scriptWindow&&!scriptWindow.closed){scriptWindow.focus();syncScript();return;}scriptWindow=window.open('','_blank','width=600,height=800,scrollbars=yes,resizable=yes');syncScript();}
+function syncScript(){if(!scriptWindow||scriptWindow.closed)return;const sl=slides[currentSlide];const sc=sl.getAttribute('data-script')||'(No script)';const t=sl.querySelector('h1,h2,h3');const tt=t?t.textContent:'Slide '+(currentSlide+1);scriptWindow.document.open();scriptWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Teacher Script</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:40px;line-height:1.8}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:24px;text-align:center}.header h2{font-size:18px}.header .num{font-size:14px;opacity:0.8;margin-top:4px}.slide-title{font-size:22px;font-weight:700;color:#f4a261;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}.script-text{font-size:20px;line-height:2;white-space:pre-wrap}.tip{margin-top:24px;padding:16px;background:rgba(42,157,143,0.15);border:1px solid rgba(42,157,143,0.3);border-radius:8px;font-size:14px;color:#2a9d8f}</style></head><body><div class="header"><h2>🎤 TEACHER SCRIPT</h2><div class="num">Slide ${currentSlide+1} of ${slides.length}</div></div><div class="slide-title">${tt}</div><div class="script-text">${sc}</div><div class="tip">💡 Auto-updates as you navigate.</div></body></html>`);scriptWindow.document.close();}
+function openAnswerKey(){if(answerWindow&&!answerWindow.closed){answerWindow.focus();return;}answerWindow=window.open('','_blank','width=550,height=750,scrollbars=yes,resizable=yes');answerWindow.document.open();answerWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Answer Key</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',system-ui,sans-serif;background:#1a1a2e;color:#e8e6e3;padding:36px;line-height:1.7}.header{background:#e63946;color:#fff;padding:16px 24px;border-radius:12px;margin-bottom:28px;text-align:center}.header h2{font-size:20px;font-weight:700}.header p{font-size:13px;opacity:0.8;margin-top:4px}.item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #2a2a3a}.item:last-child{border-bottom:none}.num{color:#e63946;font-weight:800;font-size:18px;min-width:32px}.answer{color:#2a9d8f;font-weight:700;font-size:18px}.rationale{color:#8a8a9a;font-size:14px;margin-top:4px}.warn{margin-top:28px;padding:16px;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:8px;font-size:13px;color:#e63946;text-align:center}</style></head><body><div class="header"><h2>🔑 ANSWER KEY</h2><p>Session 31 Quiz • Teacher Only</p></div><div class="item"><span class="num">1.</span><div><span class="answer">B</span> – Integration of AI, IoT, cloud, robotics, smart tech.<div class="rationale">Industry 4.0 = convergence of all emerging technologies.</div></div></div><div class="item"><span class="num">2.</span><div><span class="answer">B</span> – Real-time virtual replica synced with physical system.<div class="rationale">Digital twin mirrors and updates from real world.</div></div></div><div class="item"><span class="num">3.</span><div><span class="answer">C</span> – 50%.<div class="rationale">IoT + AI predict failures before they occur.</div></div></div><div class="item"><span class="num">4.</span><div><span class="answer">B</span> – Sense and collect data from the physical world.<div class="rationale">IoT = sensing layer of the technology stack.</div></div></div><div class="item"><span class="num">5.</span><div><span class="answer">B</span> – 30-50% LESS resources through sensor optimization.<div class="rationale">Precise application based on actual soil needs.</div></div></div><div class="item"><span class="num">6.</span><div><span class="answer">B</span> – Smart fishing/agriculture with IoT + blockchain.<div class="rationale">GenSan = Tuna Capital; Region 12 = agricultural.</div></div></div><div class="item"><span class="num">7.</span><div><span class="answer">B</span> – Analyze data and make intelligent decisions.<div class="rationale">AI = intelligence layer of the stack.</div></div></div><div class="item"><span class="num">8.</span><div><span class="answer">B</span> – Fully automated production without humans present.<div class="rationale">24/7 operation, no human workers needed on floor.</div></div></div><div class="item"><span class="num">9.</span><div><span class="answer">B</span> – Verifying supply chain traceability.<div class="rationale">Immutable record from catch to consumer.</div></div></div><div class="item"><span class="num">10.</span><div><span class="answer">B</span> – Cost of adoption (expensive for small businesses).<div class="rationale">99% of PH businesses are SMEs; can't afford smart systems.</div></div></div><div class="item"><span class="num">11.</span><div><span class="answer">B</span> – 5G + Robotics + XR.<div class="rationale">1ms latency + robotic arm + visual guidance = remote surgery.</div></div></div><div class="item"><span class="num">12.</span><div><span class="answer">C</span> – Computers and automation.<div class="rationale">1970s: PLCs, CNC machines, computerized production.</div></div></div><div class="item"><span class="num">13.</span><div><span class="answer">B</span> – 20-30%.<div class="rationale">AI-optimized signal timing + real-time flow analysis.</div></div></div><div class="item"><span class="num">14.</span><div><span class="answer">B</span> – Full landscape + bridging business and technology.<div class="rationale">Rare combination that pure CS or pure business lacks.</div></div></div><div class="item"><span class="num">15.</span><div><span class="answer">B</span> – $48 billion.<div class="rationale">Rapid growth market as more industries adopt digital twins.</div></div></div><div class="warn">⚠️ TEACHER ONLY – Do not display to students</div></body></html>`);answerWindow.document.close();}
+updateUI();
+})();
+</script>
+</body>
+</html>
